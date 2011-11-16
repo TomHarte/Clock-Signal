@@ -1,0 +1,7 @@
+//
+// Prefix header for all source files of the 'ZX81' target in the 'ZX81' project
+//
+
+#ifdef __OBJC__
+	#import <Cocoa/Cocoa.h>
+#endif

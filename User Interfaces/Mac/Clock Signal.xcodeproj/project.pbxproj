@@ -1,0 +1,848 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		4B04BD281469E84F007B41BA /* LineGraph.m in Sources */ = {isa = PBXBuildFile; fileRef = 4B04BD271469E84F007B41BA /* LineGraph.m */; };
+		4B0A5231146575840058F817 /* FlatBus.c in Sources */ = {isa = PBXBuildFile; fileRef = 4B0A5230146575840058F817 /* FlatBus.c */; };
+		4B11846A146DD4C700CDBD1A /* Z80Disassembler.c in Sources */ = {isa = PBXBuildFile; fileRef = 4B118469146DD4C700CDBD1A /* Z80Disassembler.c */; };
+		4B1A4A59145C49B700340AD2 /* BusNode.c in Sources */ = {isa = PBXBuildFile; fileRef = 4B1A4A58145C49B700340AD2 /* BusNode.c */; };
+		4B1A4A5D145C90FA00340AD2 /* ClockGenerator.c in Sources */ = {isa = PBXBuildFile; fileRef = 4B1A4A5C145C90FA00340AD2 /* ClockGenerator.c */; };
+		4B78985A141C6C3D006B4E39 /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4B789859141C6C3D006B4E39 /* OpenGL.framework */; };
+		4BA04D7A1451E63B00DA159C /* Z80CBPageDecode.c in Sources */ = {isa = PBXBuildFile; fileRef = 4BA04D541451E63B00DA159C /* Z80CBPageDecode.c */; };
+		4BA04D7B1451E63B00DA159C /* Z80EDPageDecode.c in Sources */ = {isa = PBXBuildFile; fileRef = 4BA04D561451E63B00DA159C /* Z80EDPageDecode.c */; };
+		4BA04D7C1451E63B00DA159C /* Z80StandardPageDecode.c in Sources */ = {isa = PBXBuildFile; fileRef = 4BA04D581451E63B00DA159C /* Z80StandardPageDecode.c */; };
+		4BA04D7D1451E63B00DA159C /* Z80Arithmetic16BitOps.c in Sources */ = {isa = PBXBuildFile; fileRef = 4BA04D5B1451E63B00DA159C /* Z80Arithmetic16BitOps.c */; };
+		4BA04D7E1451E63B00DA159C /* Z80Arithmetic8BitOps.c in Sources */ = {isa = PBXBuildFile; fileRef = 4BA04D5D1451E63B00DA159C /* Z80Arithmetic8BitOps.c */; };
+		4BA04D7F1451E63B00DA159C /* Z80BitwiseOps.c in Sources */ = {isa = PBXBuildFile; fileRef = 4BA04D5F1451E63B00DA159C /* Z80BitwiseOps.c */; };
+		4BA04D801451E63B00DA159C /* Z80RotateAndShiftOps.c in Sources */ = {isa = PBXBuildFile; fileRef = 4BA04D611451E63B00DA159C /* Z80RotateAndShiftOps.c */; };
+		4BA04D811451E63B00DA159C /* Z80SetResetTestOps.c in Sources */ = {isa = PBXBuildFile; fileRef = 4BA04D631451E63B00DA159C /* Z80SetResetTestOps.c */; };
+		4BA04D821451E63B00DA159C /* Z80ScheduleInputOrOutput.c in Sources */ = {isa = PBXBuildFile; fileRef = 4BA04D661451E63B00DA159C /* Z80ScheduleInputOrOutput.c */; };
+		4BA04D831451E63B00DA159C /* Z80ScheduleInstructionFetch.c in Sources */ = {isa = PBXBuildFile; fileRef = 4BA04D681451E63B00DA159C /* Z80ScheduleInstructionFetch.c */; };
+		4BA04D841451E63B00DA159C /* Z80ScheduleReadOrWrite.c in Sources */ = {isa = PBXBuildFile; fileRef = 4BA04D6A1451E63B00DA159C /* Z80ScheduleReadOrWrite.c */; };
+		4BA04D851451E63B00DA159C /* Z80StandardSchedulingComponents.c in Sources */ = {isa = PBXBuildFile; fileRef = 4BA04D6C1451E63B00DA159C /* Z80StandardSchedulingComponents.c */; };
+		4BA04D861451E63B00DA159C /* Z80Internals.c in Sources */ = {isa = PBXBuildFile; fileRef = 4BA04D6E1451E63B00DA159C /* Z80Internals.c */; };
+		4BA04D871451E63B00DA159C /* Z80.c in Sources */ = {isa = PBXBuildFile; fileRef = 4BA04D701451E63B00DA159C /* Z80.c */; };
+		4BA04D891451E63B00DA159C /* CRT.c in Sources */ = {isa = PBXBuildFile; fileRef = 4BA04D781451E63B00DA159C /* CRT.c */; };
+		4BA04D931451E69700DA159C /* ZX8081.c in Sources */ = {isa = PBXBuildFile; fileRef = 4BA04D911451E69700DA159C /* ZX8081.c */; };
+		4BB4AFAC143BC9BE00636C4F /* AbstractTape.c in Sources */ = {isa = PBXBuildFile; fileRef = 4BB4AFA2143BC9BE00636C4F /* AbstractTape.c */; };
+		4BB4AFAE143BC9BE00636C4F /* ZX80Tape.c in Sources */ = {isa = PBXBuildFile; fileRef = 4BB4AFAA143BC9BE00636C4F /* ZX80Tape.c */; };
+		4BB84DC914532C770088DC19 /* BusState.c in Sources */ = {isa = PBXBuildFile; fileRef = 4BB84DC814532C770088DC19 /* BusState.c */; };
+		4BBC163E1452DAD100B12D3E /* TapePlayer.c in Sources */ = {isa = PBXBuildFile; fileRef = 4BBC163C1452DAD100B12D3E /* TapePlayer.c */; };
+		4BBC16421452DF7D00B12D3E /* StaticMemory.c in Sources */ = {isa = PBXBuildFile; fileRef = 4BBC16411452DF7D00B12D3E /* StaticMemory.c */; };
+		4BBC16491452E01B00B12D3E /* ReferenceCountedObject.c in Sources */ = {isa = PBXBuildFile; fileRef = 4BBC16481452E01B00B12D3E /* ReferenceCountedObject.c */; };
+		4BBCCFAB14411C81001EC07C /* ParallelDispatch.c in Sources */ = {isa = PBXBuildFile; fileRef = 4BBCCFAA14411C81001EC07C /* ParallelDispatch.c */; };
+		4BD960F01443751300BF196E /* OwnThreadTimer.m in Sources */ = {isa = PBXBuildFile; fileRef = 4BD960EF1443751300BF196E /* OwnThreadTimer.m */; };
+		4BE229FE141986CE00F3A516 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4BE229FD141986CE00F3A516 /* Cocoa.framework */; };
+		4BE26CAE1437D3AD0047B4F3 /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4BE26CAD1437D3AD0047B4F3 /* AudioToolbox.framework */; };
+		4BE3E15714389DDA004FC04F /* Credits.rtf in Resources */ = {isa = PBXBuildFile; fileRef = 4BE3E12814389DDA004FC04F /* Credits.rtf */; };
+		4BE3E15814389DDA004FC04F /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 4BE3E12A14389DDA004FC04F /* InfoPlist.strings */; };
+		4BE3E20014389F30004FC04F /* ZX80Document.m in Sources */ = {isa = PBXBuildFile; fileRef = 4BE3E1D114389F30004FC04F /* ZX80Document.m */; };
+		4BE3E20314389F30004FC04F /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 4BE3E1D614389F30004FC04F /* MainMenu.xib */; };
+		4BE3E20414389F30004FC04F /* Z80DebugDrawer.xib in Resources */ = {isa = PBXBuildFile; fileRef = 4BE3E1D814389F30004FC04F /* Z80DebugDrawer.xib */; };
+		4BE3E20514389F30004FC04F /* ZX80Document.xib in Resources */ = {isa = PBXBuildFile; fileRef = 4BE3E1DA14389F30004FC04F /* ZX80Document.xib */; };
+		4BE3E20914389F30004FC04F /* Z80DebugDrawer.m in Sources */ = {isa = PBXBuildFile; fileRef = 4BE3E1E214389F30004FC04F /* Z80DebugDrawer.m */; };
+		4BE3E20A14389F30004FC04F /* CSOpenGLViewBillboard.m in Sources */ = {isa = PBXBuildFile; fileRef = 4BE3E1E414389F30004FC04F /* CSOpenGLViewBillboard.m */; };
+		4BE3E20B14389F30004FC04F /* LinearFilter.c in Sources */ = {isa = PBXBuildFile; fileRef = 4BE3E1E914389F30004FC04F /* LinearFilter.c */; };
+		4BE3E20D14389FA9004FC04F /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 4BE3E20C14389FA9004FC04F /* main.m */; };
+		4BE3E21A1438A070004FC04F /* zx80rom.bin in Resources */ = {isa = PBXBuildFile; fileRef = 4BE3E2181438A070004FC04F /* zx80rom.bin */; };
+		4BE3E21B1438A070004FC04F /* zx81rom.bin in Resources */ = {isa = PBXBuildFile; fileRef = 4BE3E2191438A070004FC04F /* zx81rom.bin */; };
+		4BEA017F145D982E00B3E6E1 /* ZX8081MachineState.c in Sources */ = {isa = PBXBuildFile; fileRef = 4BEA017E145D982E00B3E6E1 /* ZX8081MachineState.c */; };
+		4BEA0181145DBE5100B3E6E1 /* PassthroughBusNode.c in Sources */ = {isa = PBXBuildFile; fileRef = 4BEA0180145DBE5100B3E6E1 /* PassthroughBusNode.c */; };
+		4BEA0194145DFF5600B3E6E1 /* Array.c in Sources */ = {isa = PBXBuildFile; fileRef = 4BEA0192145DFF5600B3E6E1 /* Array.c */; };
+		4BFE159B146097AE0096FA78 /* Component.c in Sources */ = {isa = PBXBuildFile; fileRef = 4BFE159A146097AE0096FA78 /* Component.c */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		4B04BD261469E84F007B41BA /* LineGraph.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LineGraph.h; sourceTree = "<group>"; };
+		4B04BD271469E84F007B41BA /* LineGraph.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LineGraph.m; sourceTree = "<group>"; };
+		4B0A522E146575780058F817 /* FlatBus.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FlatBus.h; path = "Flat Bus/FlatBus.h"; sourceTree = "<group>"; };
+		4B0A5230146575840058F817 /* FlatBus.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = FlatBus.c; path = "Flat Bus/FlatBus.c"; sourceTree = "<group>"; };
+		4B118467146DD4B900CDBD1A /* Z80Disassembler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Z80Disassembler.h; path = "Z80 Disassembler/Z80Disassembler.h"; sourceTree = "<group>"; };
+		4B118469146DD4C700CDBD1A /* Z80Disassembler.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = Z80Disassembler.c; path = "Z80 Disassembler/Z80Disassembler.c"; sourceTree = "<group>"; };
+		4B1A4A54145C466E00340AD2 /* BusNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BusNode.h; sourceTree = "<group>"; };
+		4B1A4A57145C480F00340AD2 /* BusNodeInternals.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BusNodeInternals.h; path = "Bus Node/BusNodeInternals.h"; sourceTree = "<group>"; };
+		4B1A4A58145C49B700340AD2 /* BusNode.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = BusNode.c; path = "Bus Node/BusNode.c"; sourceTree = "<group>"; };
+		4B1A4A5C145C90FA00340AD2 /* ClockGenerator.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = ClockGenerator.c; path = "Clock Generator/ClockGenerator.c"; sourceTree = "<group>"; };
+		4B1A4A5E145C910D00340AD2 /* ClockGenerator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ClockGenerator.h; path = "Clock Generator/ClockGenerator.h"; sourceTree = "<group>"; };
+		4B789859141C6C3D006B4E39 /* OpenGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGL.framework; path = System/Library/Frameworks/OpenGL.framework; sourceTree = SDKROOT; };
+		4BA04D541451E63B00DA159C /* Z80CBPageDecode.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = Z80CBPageDecode.c; sourceTree = "<group>"; };
+		4BA04D551451E63B00DA159C /* Z80CBPageDecode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Z80CBPageDecode.h; sourceTree = "<group>"; };
+		4BA04D561451E63B00DA159C /* Z80EDPageDecode.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = Z80EDPageDecode.c; sourceTree = "<group>"; };
+		4BA04D571451E63B00DA159C /* Z80EDPageDecode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Z80EDPageDecode.h; sourceTree = "<group>"; };
+		4BA04D581451E63B00DA159C /* Z80StandardPageDecode.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = Z80StandardPageDecode.c; sourceTree = "<group>"; };
+		4BA04D591451E63B00DA159C /* Z80StandardPageDecode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Z80StandardPageDecode.h; sourceTree = "<group>"; };
+		4BA04D5B1451E63B00DA159C /* Z80Arithmetic16BitOps.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = Z80Arithmetic16BitOps.c; sourceTree = "<group>"; };
+		4BA04D5C1451E63B00DA159C /* Z80Arithmetic16BitOps.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Z80Arithmetic16BitOps.h; sourceTree = "<group>"; };
+		4BA04D5D1451E63B00DA159C /* Z80Arithmetic8BitOps.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = Z80Arithmetic8BitOps.c; sourceTree = "<group>"; };
+		4BA04D5E1451E63B00DA159C /* Z80Arithmetic8BitOps.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Z80Arithmetic8BitOps.h; sourceTree = "<group>"; };
+		4BA04D5F1451E63B00DA159C /* Z80BitwiseOps.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = Z80BitwiseOps.c; sourceTree = "<group>"; };
+		4BA04D601451E63B00DA159C /* Z80BitwiseOps.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Z80BitwiseOps.h; sourceTree = "<group>"; };
+		4BA04D611451E63B00DA159C /* Z80RotateAndShiftOps.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = Z80RotateAndShiftOps.c; sourceTree = "<group>"; };
+		4BA04D621451E63B00DA159C /* Z80RotateAndShiftOps.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Z80RotateAndShiftOps.h; sourceTree = "<group>"; };
+		4BA04D631451E63B00DA159C /* Z80SetResetTestOps.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = Z80SetResetTestOps.c; sourceTree = "<group>"; };
+		4BA04D641451E63B00DA159C /* Z80SetResetTestOps.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Z80SetResetTestOps.h; sourceTree = "<group>"; };
+		4BA04D661451E63B00DA159C /* Z80ScheduleInputOrOutput.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = Z80ScheduleInputOrOutput.c; sourceTree = "<group>"; };
+		4BA04D671451E63B00DA159C /* Z80ScheduleInputOrOutput.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Z80ScheduleInputOrOutput.h; sourceTree = "<group>"; };
+		4BA04D681451E63B00DA159C /* Z80ScheduleInstructionFetch.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = Z80ScheduleInstructionFetch.c; sourceTree = "<group>"; };
+		4BA04D691451E63B00DA159C /* Z80ScheduleInstructionFetch.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Z80ScheduleInstructionFetch.h; sourceTree = "<group>"; };
+		4BA04D6A1451E63B00DA159C /* Z80ScheduleReadOrWrite.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = Z80ScheduleReadOrWrite.c; sourceTree = "<group>"; };
+		4BA04D6B1451E63B00DA159C /* Z80ScheduleReadOrWrite.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Z80ScheduleReadOrWrite.h; sourceTree = "<group>"; };
+		4BA04D6C1451E63B00DA159C /* Z80StandardSchedulingComponents.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = Z80StandardSchedulingComponents.c; sourceTree = "<group>"; };
+		4BA04D6D1451E63B00DA159C /* Z80StandardSchedulingComponents.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Z80StandardSchedulingComponents.h; sourceTree = "<group>"; };
+		4BA04D6E1451E63B00DA159C /* Z80Internals.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = Z80Internals.c; sourceTree = "<group>"; };
+		4BA04D6F1451E63B00DA159C /* Z80Internals.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Z80Internals.h; sourceTree = "<group>"; };
+		4BA04D701451E63B00DA159C /* Z80.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = Z80.c; sourceTree = "<group>"; };
+		4BA04D711451E63B00DA159C /* Z80.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Z80.h; sourceTree = "<group>"; };
+		4BA04D781451E63B00DA159C /* CRT.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = CRT.c; sourceTree = "<group>"; };
+		4BA04D791451E63B00DA159C /* CRT.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CRT.h; sourceTree = "<group>"; };
+		4BA04D911451E69700DA159C /* ZX8081.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ZX8081.c; sourceTree = "<group>"; };
+		4BA04D921451E69700DA159C /* ZX8081.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZX8081.h; sourceTree = "<group>"; };
+		4BB4AFA2143BC9BE00636C4F /* AbstractTape.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = AbstractTape.c; sourceTree = "<group>"; };
+		4BB4AFA3143BC9BE00636C4F /* AbstractTape.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AbstractTape.h; sourceTree = "<group>"; };
+		4BB4AFA5143BC9BE00636C4F /* AbstractTapeInternals.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AbstractTapeInternals.h; sourceTree = "<group>"; };
+		4BB4AFAA143BC9BE00636C4F /* ZX80Tape.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ZX80Tape.c; sourceTree = "<group>"; };
+		4BB4AFAB143BC9BE00636C4F /* ZX80Tape.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZX80Tape.h; sourceTree = "<group>"; };
+		4BB84DC6145328530088DC19 /* StandardBusLines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StandardBusLines.h; sourceTree = "<group>"; };
+		4BB84DC814532C770088DC19 /* BusState.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = BusState.c; sourceTree = "<group>"; };
+		4BBC163C1452DAD100B12D3E /* TapePlayer.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = TapePlayer.c; sourceTree = "<group>"; };
+		4BBC163D1452DAD100B12D3E /* TapePlayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TapePlayer.h; sourceTree = "<group>"; };
+		4BBC16401452DF6F00B12D3E /* StaticMemory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StaticMemory.h; sourceTree = "<group>"; };
+		4BBC16411452DF7D00B12D3E /* StaticMemory.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = StaticMemory.c; sourceTree = "<group>"; };
+		4BBC16451452DFF400B12D3E /* ReferenceCountedObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ReferenceCountedObject.h; sourceTree = "<group>"; };
+		4BBC16481452E01B00B12D3E /* ReferenceCountedObject.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ReferenceCountedObject.c; sourceTree = "<group>"; };
+		4BBCCFA914411B3B001EC07C /* ParallelDispatch.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ParallelDispatch.h; path = "Parallel Dispatch/ParallelDispatch.h"; sourceTree = "<group>"; };
+		4BBCCFAA14411C81001EC07C /* ParallelDispatch.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = ParallelDispatch.c; path = "Parallel Dispatch/ParallelDispatch.c"; sourceTree = "<group>"; };
+		4BBD8E0214198AC7002ADB76 /* CoreVideo.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreVideo.framework; path = System/Library/Frameworks/CoreVideo.framework; sourceTree = SDKROOT; };
+		4BD960EE1443751300BF196E /* OwnThreadTimer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OwnThreadTimer.h; sourceTree = "<group>"; };
+		4BD960EF1443751300BF196E /* OwnThreadTimer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OwnThreadTimer.m; sourceTree = "<group>"; };
+		4BE121521450375600117A22 /* BusState.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BusState.h; sourceTree = "<group>"; };
+		4BE229F9141986CE00F3A516 /* Clock Signal.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Clock Signal.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		4BE229FD141986CE00F3A516 /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
+		4BE22A00141986CE00F3A516 /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = System/Library/Frameworks/AppKit.framework; sourceTree = SDKROOT; };
+		4BE22A01141986CE00F3A516 /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = System/Library/Frameworks/CoreData.framework; sourceTree = SDKROOT; };
+		4BE22A02141986CE00F3A516 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
+		4BE26CAD1437D3AD0047B4F3 /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = System/Library/Frameworks/AudioToolbox.framework; sourceTree = SDKROOT; };
+		4BE3E12914389DDA004FC04F /* en */ = {isa = PBXFileReference; lastKnownFileType = text.rtf; name = en; path = en.lproj/Credits.rtf; sourceTree = "<group>"; };
+		4BE3E12B14389DDA004FC04F /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		4BE3E1D014389F30004FC04F /* ZX80Document.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZX80Document.h; sourceTree = "<group>"; };
+		4BE3E1D114389F30004FC04F /* ZX80Document.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ZX80Document.m; sourceTree = "<group>"; };
+		4BE3E1D714389F30004FC04F /* en */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = en; path = en.lproj/MainMenu.xib; sourceTree = "<group>"; };
+		4BE3E1D914389F30004FC04F /* en */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = en; path = en.lproj/Z80DebugDrawer.xib; sourceTree = "<group>"; };
+		4BE3E1DB14389F30004FC04F /* en */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = en; path = en.lproj/ZX80Document.xib; sourceTree = "<group>"; };
+		4BE3E1E114389F30004FC04F /* Z80DebugDrawer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Z80DebugDrawer.h; sourceTree = "<group>"; };
+		4BE3E1E214389F30004FC04F /* Z80DebugDrawer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Z80DebugDrawer.m; sourceTree = "<group>"; };
+		4BE3E1E314389F30004FC04F /* CSOpenGLViewBillboard.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CSOpenGLViewBillboard.h; sourceTree = "<group>"; };
+		4BE3E1E414389F30004FC04F /* CSOpenGLViewBillboard.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CSOpenGLViewBillboard.m; sourceTree = "<group>"; };
+		4BE3E1E914389F30004FC04F /* LinearFilter.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = LinearFilter.c; sourceTree = "<group>"; };
+		4BE3E1EA14389F30004FC04F /* LinearFilter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LinearFilter.h; sourceTree = "<group>"; };
+		4BE3E20C14389FA9004FC04F /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = SOURCE_ROOT; };
+		4BE3E2181438A070004FC04F /* zx80rom.bin */ = {isa = PBXFileReference; lastKnownFileType = archive.macbinary; path = zx80rom.bin; sourceTree = "<group>"; };
+		4BE3E2191438A070004FC04F /* zx81rom.bin */ = {isa = PBXFileReference; lastKnownFileType = archive.macbinary; path = zx81rom.bin; sourceTree = "<group>"; };
+		4BE3E2411438A088004FC04F /* Clock Signal-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "Clock Signal-Info.plist"; sourceTree = "<group>"; };
+		4BE3E2421438A088004FC04F /* Clock Signal-Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "Clock Signal-Prefix.pch"; sourceTree = "<group>"; };
+		4BEA017B145D913D00B3E6E1 /* PassthroughBusNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PassthroughBusNode.h; path = "Passthrough Node/PassthroughBusNode.h"; sourceTree = "<group>"; };
+		4BEA017D145D976500B3E6E1 /* ZX8081MachineState.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZX8081MachineState.h; sourceTree = "<group>"; };
+		4BEA017E145D982E00B3E6E1 /* ZX8081MachineState.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ZX8081MachineState.c; sourceTree = "<group>"; };
+		4BEA0180145DBE5100B3E6E1 /* PassthroughBusNode.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = PassthroughBusNode.c; path = "Passthrough Node/PassthroughBusNode.c"; sourceTree = "<group>"; };
+		4BEA0192145DFF5600B3E6E1 /* Array.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = Array.c; sourceTree = "<group>"; };
+		4BEA0193145DFF5600B3E6E1 /* Array.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Array.h; sourceTree = "<group>"; };
+		4BFE159A146097AE0096FA78 /* Component.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = Component.c; path = Component/Component.c; sourceTree = "<group>"; };
+		4BFE159D146097C80096FA78 /* Component.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Component.h; path = Component/Component.h; sourceTree = "<group>"; };
+		4BFE159F146098C90096FA78 /* ComponentInternals.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ComponentInternals.h; path = Component/ComponentInternals.h; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		4BE229F6141986CE00F3A516 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				4BE26CAE1437D3AD0047B4F3 /* AudioToolbox.framework in Frameworks */,
+				4B78985A141C6C3D006B4E39 /* OpenGL.framework in Frameworks */,
+				4BE229FE141986CE00F3A516 /* Cocoa.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		4B0A52371465774D0058F817 /* Flat Bus */ = {
+			isa = PBXGroup;
+			children = (
+				4B0A522E146575780058F817 /* FlatBus.h */,
+				4B0A5230146575840058F817 /* FlatBus.c */,
+			);
+			name = "Flat Bus";
+			sourceTree = "<group>";
+		};
+		4B11846B146DD4CA00CDBD1A /* Z80 Disassembler */ = {
+			isa = PBXGroup;
+			children = (
+				4B118467146DD4B900CDBD1A /* Z80Disassembler.h */,
+				4B118469146DD4C700CDBD1A /* Z80Disassembler.c */,
+			);
+			name = "Z80 Disassembler";
+			sourceTree = "<group>";
+		};
+		4B1A4A56145C47F400340AD2 /* Bus Node */ = {
+			isa = PBXGroup;
+			children = (
+				4B1A4A57145C480F00340AD2 /* BusNodeInternals.h */,
+				4B1A4A58145C49B700340AD2 /* BusNode.c */,
+			);
+			name = "Bus Node";
+			sourceTree = "<group>";
+		};
+		4B1A4A5F145C911200340AD2 /* Clock Generator */ = {
+			isa = PBXGroup;
+			children = (
+				4B1A4A5C145C90FA00340AD2 /* ClockGenerator.c */,
+				4B1A4A5E145C910D00340AD2 /* ClockGenerator.h */,
+			);
+			name = "Clock Generator";
+			sourceTree = "<group>";
+		};
+		4BA04D501451E63B00DA159C /* Components */ = {
+			isa = PBXGroup;
+			children = (
+				4BBC163F1452DF6F00B12D3E /* Static Memory */,
+				4BA04D511451E63B00DA159C /* Z80 */,
+			);
+			name = Components;
+			path = ../../Components;
+			sourceTree = "<group>";
+		};
+		4BA04D511451E63B00DA159C /* Z80 */ = {
+			isa = PBXGroup;
+			children = (
+				4BA04D521451E63B00DA159C /* Implementation */,
+				4BA04D701451E63B00DA159C /* Z80.c */,
+				4BA04D711451E63B00DA159C /* Z80.h */,
+			);
+			path = Z80;
+			sourceTree = "<group>";
+		};
+		4BA04D521451E63B00DA159C /* Implementation */ = {
+			isa = PBXGroup;
+			children = (
+				4BA04D531451E63B00DA159C /* Instruction Pages */,
+				4BA04D5A1451E63B00DA159C /* Operations */,
+				4BA04D651451E63B00DA159C /* Scheduling Building Blocks */,
+				4BA04D6E1451E63B00DA159C /* Z80Internals.c */,
+				4BA04D6F1451E63B00DA159C /* Z80Internals.h */,
+			);
+			path = Implementation;
+			sourceTree = "<group>";
+		};
+		4BA04D531451E63B00DA159C /* Instruction Pages */ = {
+			isa = PBXGroup;
+			children = (
+				4BA04D541451E63B00DA159C /* Z80CBPageDecode.c */,
+				4BA04D551451E63B00DA159C /* Z80CBPageDecode.h */,
+				4BA04D561451E63B00DA159C /* Z80EDPageDecode.c */,
+				4BA04D571451E63B00DA159C /* Z80EDPageDecode.h */,
+				4BA04D581451E63B00DA159C /* Z80StandardPageDecode.c */,
+				4BA04D591451E63B00DA159C /* Z80StandardPageDecode.h */,
+			);
+			path = "Instruction Pages";
+			sourceTree = "<group>";
+		};
+		4BA04D5A1451E63B00DA159C /* Operations */ = {
+			isa = PBXGroup;
+			children = (
+				4BA04D5B1451E63B00DA159C /* Z80Arithmetic16BitOps.c */,
+				4BA04D5C1451E63B00DA159C /* Z80Arithmetic16BitOps.h */,
+				4BA04D5D1451E63B00DA159C /* Z80Arithmetic8BitOps.c */,
+				4BA04D5E1451E63B00DA159C /* Z80Arithmetic8BitOps.h */,
+				4BA04D5F1451E63B00DA159C /* Z80BitwiseOps.c */,
+				4BA04D601451E63B00DA159C /* Z80BitwiseOps.h */,
+				4BA04D611451E63B00DA159C /* Z80RotateAndShiftOps.c */,
+				4BA04D621451E63B00DA159C /* Z80RotateAndShiftOps.h */,
+				4BA04D631451E63B00DA159C /* Z80SetResetTestOps.c */,
+				4BA04D641451E63B00DA159C /* Z80SetResetTestOps.h */,
+			);
+			path = Operations;
+			sourceTree = "<group>";
+		};
+		4BA04D651451E63B00DA159C /* Scheduling Building Blocks */ = {
+			isa = PBXGroup;
+			children = (
+				4BA04D661451E63B00DA159C /* Z80ScheduleInputOrOutput.c */,
+				4BA04D671451E63B00DA159C /* Z80ScheduleInputOrOutput.h */,
+				4BA04D681451E63B00DA159C /* Z80ScheduleInstructionFetch.c */,
+				4BA04D691451E63B00DA159C /* Z80ScheduleInstructionFetch.h */,
+				4BA04D6A1451E63B00DA159C /* Z80ScheduleReadOrWrite.c */,
+				4BA04D6B1451E63B00DA159C /* Z80ScheduleReadOrWrite.h */,
+				4BA04D6C1451E63B00DA159C /* Z80StandardSchedulingComponents.c */,
+				4BA04D6D1451E63B00DA159C /* Z80StandardSchedulingComponents.h */,
+			);
+			path = "Scheduling Building Blocks";
+			sourceTree = "<group>";
+		};
+		4BA04D761451E63B00DA159C /* Peripherals */ = {
+			isa = PBXGroup;
+			children = (
+				4BBC163B1452DAD100B12D3E /* Tape Player */,
+				4BA04D771451E63B00DA159C /* CRT */,
+			);
+			name = Peripherals;
+			path = ../../Peripherals;
+			sourceTree = "<group>";
+		};
+		4BA04D771451E63B00DA159C /* CRT */ = {
+			isa = PBXGroup;
+			children = (
+				4BA04D781451E63B00DA159C /* CRT.c */,
+				4BA04D791451E63B00DA159C /* CRT.h */,
+			);
+			path = CRT;
+			sourceTree = "<group>";
+		};
+		4BA04D8F1451E69700DA159C /* Machines */ = {
+			isa = PBXGroup;
+			children = (
+				4BA04D901451E69700DA159C /* ZX80 and ZX81 */,
+			);
+			name = Machines;
+			path = ../../Machines;
+			sourceTree = "<group>";
+		};
+		4BA04D901451E69700DA159C /* ZX80 and ZX81 */ = {
+			isa = PBXGroup;
+			children = (
+				4BA04D911451E69700DA159C /* ZX8081.c */,
+				4BA04D921451E69700DA159C /* ZX8081.h */,
+				4BEA017D145D976500B3E6E1 /* ZX8081MachineState.h */,
+				4BEA017E145D982E00B3E6E1 /* ZX8081MachineState.c */,
+			);
+			path = "ZX80 and ZX81";
+			sourceTree = "<group>";
+		};
+		4BB4AFA0143BC9BE00636C4F /* Tape */ = {
+			isa = PBXGroup;
+			children = (
+				4BB4AFA1143BC9BE00636C4F /* Abstract Tape */,
+				4BB4AFA9143BC9BE00636C4F /* ZX80 */,
+			);
+			path = Tape;
+			sourceTree = "<group>";
+		};
+		4BB4AFA1143BC9BE00636C4F /* Abstract Tape */ = {
+			isa = PBXGroup;
+			children = (
+				4BB4AFA2143BC9BE00636C4F /* AbstractTape.c */,
+				4BB4AFA3143BC9BE00636C4F /* AbstractTape.h */,
+				4BB4AFA4143BC9BE00636C4F /* Implementation */,
+			);
+			path = "Abstract Tape";
+			sourceTree = "<group>";
+		};
+		4BB4AFA4143BC9BE00636C4F /* Implementation */ = {
+			isa = PBXGroup;
+			children = (
+				4BB4AFA5143BC9BE00636C4F /* AbstractTapeInternals.h */,
+			);
+			path = Implementation;
+			sourceTree = "<group>";
+		};
+		4BB4AFA9143BC9BE00636C4F /* ZX80 */ = {
+			isa = PBXGroup;
+			children = (
+				4BB4AFAA143BC9BE00636C4F /* ZX80Tape.c */,
+				4BB4AFAB143BC9BE00636C4F /* ZX80Tape.h */,
+			);
+			path = ZX80;
+			sourceTree = "<group>";
+		};
+		4BBC163B1452DAD100B12D3E /* Tape Player */ = {
+			isa = PBXGroup;
+			children = (
+				4BBC163C1452DAD100B12D3E /* TapePlayer.c */,
+				4BBC163D1452DAD100B12D3E /* TapePlayer.h */,
+			);
+			path = "Tape Player";
+			sourceTree = "<group>";
+		};
+		4BBC163F1452DF6F00B12D3E /* Static Memory */ = {
+			isa = PBXGroup;
+			children = (
+				4BBC16401452DF6F00B12D3E /* StaticMemory.h */,
+				4BBC16411452DF7D00B12D3E /* StaticMemory.c */,
+			);
+			path = "Static Memory";
+			sourceTree = "<group>";
+		};
+		4BBC16441452DFF400B12D3E /* Reference Counted Object */ = {
+			isa = PBXGroup;
+			children = (
+				4BBC16451452DFF400B12D3E /* ReferenceCountedObject.h */,
+				4BBC16481452E01B00B12D3E /* ReferenceCountedObject.c */,
+			);
+			path = "Reference Counted Object";
+			sourceTree = "<group>";
+		};
+		4BBCCFA714411B0D001EC07C /* Parallel Dispatch */ = {
+			isa = PBXGroup;
+			children = (
+				4BBCCFA914411B3B001EC07C /* ParallelDispatch.h */,
+				4BBCCFAA14411C81001EC07C /* ParallelDispatch.c */,
+			);
+			name = "Parallel Dispatch";
+			sourceTree = "<group>";
+		};
+		4BE121511450375600117A22 /* Bus */ = {
+			isa = PBXGroup;
+			children = (
+				4BB84DC6145328530088DC19 /* StandardBusLines.h */,
+				4BE121521450375600117A22 /* BusState.h */,
+				4B1A4A54145C466E00340AD2 /* BusNode.h */,
+				4BB84DC814532C770088DC19 /* BusState.c */,
+				4B1A4A56145C47F400340AD2 /* Bus Node */,
+				4B1A4A5F145C911200340AD2 /* Clock Generator */,
+				4BEA0182145DBE6E00B3E6E1 /* Passthrough Node */,
+				4BFE159E146097CC0096FA78 /* Component */,
+				4B0A52371465774D0058F817 /* Flat Bus */,
+			);
+			name = Bus;
+			path = ../../Bus;
+			sourceTree = "<group>";
+		};
+		4BE229EE141986CE00F3A516 = {
+			isa = PBXGroup;
+			children = (
+				4BE3E0E614389DA3004FC04F /* Source */,
+				4BE22A04141986CE00F3A516 /* Supporting Files */,
+				4BE229FC141986CE00F3A516 /* Frameworks */,
+				4BE229FA141986CE00F3A516 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		4BE229FA141986CE00F3A516 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				4BE229F9141986CE00F3A516 /* Clock Signal.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		4BE229FC141986CE00F3A516 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				4BE26CAD1437D3AD0047B4F3 /* AudioToolbox.framework */,
+				4B789859141C6C3D006B4E39 /* OpenGL.framework */,
+				4BBD8E0214198AC7002ADB76 /* CoreVideo.framework */,
+				4BE229FD141986CE00F3A516 /* Cocoa.framework */,
+				4BE229FF141986CE00F3A516 /* Other Frameworks */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		4BE229FF141986CE00F3A516 /* Other Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				4BE22A00141986CE00F3A516 /* AppKit.framework */,
+				4BE22A01141986CE00F3A516 /* CoreData.framework */,
+				4BE22A02141986CE00F3A516 /* Foundation.framework */,
+			);
+			name = "Other Frameworks";
+			sourceTree = "<group>";
+		};
+		4BE22A04141986CE00F3A516 /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				4BE3E2171438A070004FC04F /* Resources */,
+				4BE3E20C14389FA9004FC04F /* main.m */,
+				4BE3E2411438A088004FC04F /* Clock Signal-Info.plist */,
+				4BE3E2421438A088004FC04F /* Clock Signal-Prefix.pch */,
+				4BE3E12814389DDA004FC04F /* Credits.rtf */,
+				4BE3E12A14389DDA004FC04F /* InfoPlist.strings */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		4BE3E0E614389DA3004FC04F /* Source */ = {
+			isa = PBXGroup;
+			children = (
+				4BE121511450375600117A22 /* Bus */,
+				4BA04D501451E63B00DA159C /* Components */,
+				4BE3E1BC14389F30004FC04F /* File Formats */,
+				4BA04D8F1451E69700DA159C /* Machines */,
+				4BA04D761451E63B00DA159C /* Peripherals */,
+				4BE3E1C814389F30004FC04F /* User Interfaces */,
+				4BE3E1E514389F30004FC04F /* Utilities */,
+			);
+			name = Source;
+			sourceTree = "<group>";
+		};
+		4BE3E1BC14389F30004FC04F /* File Formats */ = {
+			isa = PBXGroup;
+			children = (
+				4BB4AFA0143BC9BE00636C4F /* Tape */,
+			);
+			name = "File Formats";
+			path = "../../File Formats";
+			sourceTree = "<group>";
+		};
+		4BE3E1C814389F30004FC04F /* User Interfaces */ = {
+			isa = PBXGroup;
+			children = (
+				4BE3E1C914389F30004FC04F /* Mac */,
+			);
+			name = "User Interfaces";
+			path = ..;
+			sourceTree = "<group>";
+		};
+		4BE3E1C914389F30004FC04F /* Mac */ = {
+			isa = PBXGroup;
+			children = (
+				4BE3E1CF14389F30004FC04F /* Controller */,
+				4BE3E1E014389F30004FC04F /* View */,
+			);
+			path = Mac;
+			sourceTree = "<group>";
+		};
+		4BE3E1CF14389F30004FC04F /* Controller */ = {
+			isa = PBXGroup;
+			children = (
+				4BE3E1D614389F30004FC04F /* MainMenu.xib */,
+				4BE3E1DA14389F30004FC04F /* ZX80Document.xib */,
+				4BE3E1D014389F30004FC04F /* ZX80Document.h */,
+				4BE3E1D114389F30004FC04F /* ZX80Document.m */,
+				4BD960EE1443751300BF196E /* OwnThreadTimer.h */,
+				4BD960EF1443751300BF196E /* OwnThreadTimer.m */,
+			);
+			path = Controller;
+			sourceTree = "<group>";
+		};
+		4BE3E1E014389F30004FC04F /* View */ = {
+			isa = PBXGroup;
+			children = (
+				4BE3E1D814389F30004FC04F /* Z80DebugDrawer.xib */,
+				4BE3E1E114389F30004FC04F /* Z80DebugDrawer.h */,
+				4BE3E1E214389F30004FC04F /* Z80DebugDrawer.m */,
+				4BE3E1E314389F30004FC04F /* CSOpenGLViewBillboard.h */,
+				4BE3E1E414389F30004FC04F /* CSOpenGLViewBillboard.m */,
+				4B04BD261469E84F007B41BA /* LineGraph.h */,
+				4B04BD271469E84F007B41BA /* LineGraph.m */,
+			);
+			path = View;
+			sourceTree = "<group>";
+		};
+		4BE3E1E514389F30004FC04F /* Utilities */ = {
+			isa = PBXGroup;
+			children = (
+				4BEA0191145DFF5600B3E6E1 /* Array */,
+				4BBC16441452DFF400B12D3E /* Reference Counted Object */,
+				4BBCCFA714411B0D001EC07C /* Parallel Dispatch */,
+				4BE3E1E614389F30004FC04F /* Linear Filter */,
+				4B11846B146DD4CA00CDBD1A /* Z80 Disassembler */,
+			);
+			name = Utilities;
+			path = ../../Utilities;
+			sourceTree = "<group>";
+		};
+		4BE3E1E614389F30004FC04F /* Linear Filter */ = {
+			isa = PBXGroup;
+			children = (
+				4BE3E1E914389F30004FC04F /* LinearFilter.c */,
+				4BE3E1EA14389F30004FC04F /* LinearFilter.h */,
+			);
+			path = "Linear Filter";
+			sourceTree = "<group>";
+		};
+		4BE3E2171438A070004FC04F /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				4BE3E2181438A070004FC04F /* zx80rom.bin */,
+				4BE3E2191438A070004FC04F /* zx81rom.bin */,
+			);
+			name = Resources;
+			path = ../../Resources;
+			sourceTree = "<group>";
+		};
+		4BEA0182145DBE6E00B3E6E1 /* Passthrough Node */ = {
+			isa = PBXGroup;
+			children = (
+				4BEA017B145D913D00B3E6E1 /* PassthroughBusNode.h */,
+				4BEA0180145DBE5100B3E6E1 /* PassthroughBusNode.c */,
+			);
+			name = "Passthrough Node";
+			sourceTree = "<group>";
+		};
+		4BEA0191145DFF5600B3E6E1 /* Array */ = {
+			isa = PBXGroup;
+			children = (
+				4BEA0192145DFF5600B3E6E1 /* Array.c */,
+				4BEA0193145DFF5600B3E6E1 /* Array.h */,
+			);
+			path = Array;
+			sourceTree = "<group>";
+		};
+		4BFE159E146097CC0096FA78 /* Component */ = {
+			isa = PBXGroup;
+			children = (
+				4BFE159A146097AE0096FA78 /* Component.c */,
+				4BFE159D146097C80096FA78 /* Component.h */,
+				4BFE159F146098C90096FA78 /* ComponentInternals.h */,
+			);
+			name = Component;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		4BE229F8141986CE00F3A516 /* Clock Signal */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 4BE22A1A141986CE00F3A516 /* Build configuration list for PBXNativeTarget "Clock Signal" */;
+			buildPhases = (
+				4BE229F5141986CE00F3A516 /* Sources */,
+				4BE229F6141986CE00F3A516 /* Frameworks */,
+				4BE229F7141986CE00F3A516 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "Clock Signal";
+			productName = "Clock Signal";
+			productReference = 4BE229F9141986CE00F3A516 /* Clock Signal.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		4BE229F0141986CE00F3A516 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 0420;
+				ORGANIZATIONNAME = acrossair;
+			};
+			buildConfigurationList = 4BE229F3141986CE00F3A516 /* Build configuration list for PBXProject "Clock Signal" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+			);
+			mainGroup = 4BE229EE141986CE00F3A516;
+			productRefGroup = 4BE229FA141986CE00F3A516 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				4BE229F8141986CE00F3A516 /* Clock Signal */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		4BE229F7141986CE00F3A516 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				4BE3E15714389DDA004FC04F /* Credits.rtf in Resources */,
+				4BE3E15814389DDA004FC04F /* InfoPlist.strings in Resources */,
+				4BE3E20314389F30004FC04F /* MainMenu.xib in Resources */,
+				4BE3E20414389F30004FC04F /* Z80DebugDrawer.xib in Resources */,
+				4BE3E20514389F30004FC04F /* ZX80Document.xib in Resources */,
+				4BE3E21A1438A070004FC04F /* zx80rom.bin in Resources */,
+				4BE3E21B1438A070004FC04F /* zx81rom.bin in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		4BE229F5141986CE00F3A516 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				4BE3E20014389F30004FC04F /* ZX80Document.m in Sources */,
+				4BE3E20914389F30004FC04F /* Z80DebugDrawer.m in Sources */,
+				4BE3E20A14389F30004FC04F /* CSOpenGLViewBillboard.m in Sources */,
+				4BE3E20B14389F30004FC04F /* LinearFilter.c in Sources */,
+				4BE3E20D14389FA9004FC04F /* main.m in Sources */,
+				4BB4AFAC143BC9BE00636C4F /* AbstractTape.c in Sources */,
+				4BB4AFAE143BC9BE00636C4F /* ZX80Tape.c in Sources */,
+				4BBCCFAB14411C81001EC07C /* ParallelDispatch.c in Sources */,
+				4BD960F01443751300BF196E /* OwnThreadTimer.m in Sources */,
+				4BA04D7A1451E63B00DA159C /* Z80CBPageDecode.c in Sources */,
+				4BA04D7B1451E63B00DA159C /* Z80EDPageDecode.c in Sources */,
+				4BA04D7C1451E63B00DA159C /* Z80StandardPageDecode.c in Sources */,
+				4BA04D7D1451E63B00DA159C /* Z80Arithmetic16BitOps.c in Sources */,
+				4BA04D7E1451E63B00DA159C /* Z80Arithmetic8BitOps.c in Sources */,
+				4BA04D7F1451E63B00DA159C /* Z80BitwiseOps.c in Sources */,
+				4BA04D801451E63B00DA159C /* Z80RotateAndShiftOps.c in Sources */,
+				4BA04D811451E63B00DA159C /* Z80SetResetTestOps.c in Sources */,
+				4BA04D821451E63B00DA159C /* Z80ScheduleInputOrOutput.c in Sources */,
+				4BA04D831451E63B00DA159C /* Z80ScheduleInstructionFetch.c in Sources */,
+				4BA04D841451E63B00DA159C /* Z80ScheduleReadOrWrite.c in Sources */,
+				4BA04D851451E63B00DA159C /* Z80StandardSchedulingComponents.c in Sources */,
+				4BA04D861451E63B00DA159C /* Z80Internals.c in Sources */,
+				4BA04D871451E63B00DA159C /* Z80.c in Sources */,
+				4BA04D891451E63B00DA159C /* CRT.c in Sources */,
+				4BA04D931451E69700DA159C /* ZX8081.c in Sources */,
+				4BBC163E1452DAD100B12D3E /* TapePlayer.c in Sources */,
+				4BBC16421452DF7D00B12D3E /* StaticMemory.c in Sources */,
+				4BBC16491452E01B00B12D3E /* ReferenceCountedObject.c in Sources */,
+				4BB84DC914532C770088DC19 /* BusState.c in Sources */,
+				4B1A4A59145C49B700340AD2 /* BusNode.c in Sources */,
+				4B1A4A5D145C90FA00340AD2 /* ClockGenerator.c in Sources */,
+				4BEA017F145D982E00B3E6E1 /* ZX8081MachineState.c in Sources */,
+				4BEA0181145DBE5100B3E6E1 /* PassthroughBusNode.c in Sources */,
+				4BEA0194145DFF5600B3E6E1 /* Array.c in Sources */,
+				4BFE159B146097AE0096FA78 /* Component.c in Sources */,
+				4B0A5231146575840058F817 /* FlatBus.c in Sources */,
+				4B04BD281469E84F007B41BA /* LineGraph.m in Sources */,
+				4B11846A146DD4C700CDBD1A /* Z80Disassembler.c in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXVariantGroup section */
+		4BE3E12814389DDA004FC04F /* Credits.rtf */ = {
+			isa = PBXVariantGroup;
+			children = (
+				4BE3E12914389DDA004FC04F /* en */,
+			);
+			name = Credits.rtf;
+			sourceTree = "<group>";
+		};
+		4BE3E12A14389DDA004FC04F /* InfoPlist.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				4BE3E12B14389DDA004FC04F /* en */,
+			);
+			name = InfoPlist.strings;
+			sourceTree = "<group>";
+		};
+		4BE3E1D614389F30004FC04F /* MainMenu.xib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				4BE3E1D714389F30004FC04F /* en */,
+			);
+			name = MainMenu.xib;
+			path = ..;
+			sourceTree = "<group>";
+		};
+		4BE3E1D814389F30004FC04F /* Z80DebugDrawer.xib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				4BE3E1D914389F30004FC04F /* en */,
+			);
+			name = Z80DebugDrawer.xib;
+			path = ..;
+			sourceTree = "<group>";
+		};
+		4BE3E1DA14389F30004FC04F /* ZX80Document.xib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				4BE3E1DB14389F30004FC04F /* en */,
+			);
+			name = ZX80Document.xib;
+			path = ..;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		4BE22A18141986CE00F3A516 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
+				COPY_PHASE_STRIP = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_MISSING_PROTOTYPES = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.7;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = macosx;
+			};
+			name = Debug;
+		};
+		4BE22A19141986CE00F3A516 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
+				COPY_PHASE_STRIP = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_MISSING_PROTOTYPES = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.7;
+				SDKROOT = macosx;
+			};
+			name = Release;
+		};
+		4BE22A1B141986CE00F3A516 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD_32_64_BIT)";
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "Clock Signal-Prefix.pch";
+				INFOPLIST_FILE = "Clock Signal-Info.plist";
+				MACOSX_DEPLOYMENT_TARGET = 10.5;
+				PRODUCT_NAME = "Clock Signal";
+				WRAPPER_EXTENSION = app;
+			};
+			name = Debug;
+		};
+		4BE22A1C141986CE00F3A516 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD_32_64_BIT)";
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "Clock Signal-Prefix.pch";
+				INFOPLIST_FILE = "Clock Signal-Info.plist";
+				MACOSX_DEPLOYMENT_TARGET = 10.5;
+				PRODUCT_NAME = "Clock Signal";
+				WRAPPER_EXTENSION = app;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		4BE229F3141986CE00F3A516 /* Build configuration list for PBXProject "Clock Signal" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				4BE22A18141986CE00F3A516 /* Debug */,
+				4BE22A19141986CE00F3A516 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		4BE22A1A141986CE00F3A516 /* Build configuration list for PBXNativeTarget "Clock Signal" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				4BE22A1B141986CE00F3A516 /* Debug */,
+				4BE22A1C141986CE00F3A516 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 4BE229F0141986CE00F3A516 /* Project object */;
+}
