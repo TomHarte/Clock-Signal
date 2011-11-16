@@ -6,6 +6,14 @@
 //  Copyright 2011 acrossair. All rights reserved.
 //
 
+/*
+
+	Some 'standard' lines, to bring some sort of uniformity to
+	the order that components expect lines to be represented in
+	within the CSBusState structure
+
+*/
+
 #ifndef ClockSignal_StandardBusLines_h
 #define ClockSignal_StandardBusLines_h
 
