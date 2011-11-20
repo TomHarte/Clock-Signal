@@ -43,9 +43,9 @@
 		4BE3E15814389DDA004FC04F /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 4BE3E12A14389DDA004FC04F /* InfoPlist.strings */; };
 		4BE3E20014389F30004FC04F /* ZX80Document.m in Sources */ = {isa = PBXBuildFile; fileRef = 4BE3E1D114389F30004FC04F /* ZX80Document.m */; };
 		4BE3E20314389F30004FC04F /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 4BE3E1D614389F30004FC04F /* MainMenu.xib */; };
-		4BE3E20414389F30004FC04F /* Z80DebugDrawer.xib in Resources */ = {isa = PBXBuildFile; fileRef = 4BE3E1D814389F30004FC04F /* Z80DebugDrawer.xib */; };
+		4BE3E20414389F30004FC04F /* Z80DebugInterface.xib in Resources */ = {isa = PBXBuildFile; fileRef = 4BE3E1D814389F30004FC04F /* Z80DebugInterface.xib */; };
 		4BE3E20514389F30004FC04F /* ZX80Document.xib in Resources */ = {isa = PBXBuildFile; fileRef = 4BE3E1DA14389F30004FC04F /* ZX80Document.xib */; };
-		4BE3E20914389F30004FC04F /* Z80DebugDrawer.m in Sources */ = {isa = PBXBuildFile; fileRef = 4BE3E1E214389F30004FC04F /* Z80DebugDrawer.m */; };
+		4BE3E20914389F30004FC04F /* Z80DebugInterface.m in Sources */ = {isa = PBXBuildFile; fileRef = 4BE3E1E214389F30004FC04F /* Z80DebugInterface.m */; };
 		4BE3E20A14389F30004FC04F /* CSOpenGLViewBillboard.m in Sources */ = {isa = PBXBuildFile; fileRef = 4BE3E1E414389F30004FC04F /* CSOpenGLViewBillboard.m */; };
 		4BE3E20B14389F30004FC04F /* LinearFilter.c in Sources */ = {isa = PBXBuildFile; fileRef = 4BE3E1E914389F30004FC04F /* LinearFilter.c */; };
 		4BE3E20D14389FA9004FC04F /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 4BE3E20C14389FA9004FC04F /* main.m */; };
@@ -132,10 +132,10 @@
 		4BE3E1D014389F30004FC04F /* ZX80Document.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZX80Document.h; sourceTree = "<group>"; };
 		4BE3E1D114389F30004FC04F /* ZX80Document.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ZX80Document.m; sourceTree = "<group>"; };
 		4BE3E1D714389F30004FC04F /* en */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = en; path = en.lproj/MainMenu.xib; sourceTree = "<group>"; };
-		4BE3E1D914389F30004FC04F /* en */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = en; path = en.lproj/Z80DebugDrawer.xib; sourceTree = "<group>"; };
+		4BE3E1D914389F30004FC04F /* en */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = en; path = en.lproj/Z80DebugInterface.xib; sourceTree = "<group>"; };
 		4BE3E1DB14389F30004FC04F /* en */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = en; path = en.lproj/ZX80Document.xib; sourceTree = "<group>"; };
-		4BE3E1E114389F30004FC04F /* Z80DebugDrawer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Z80DebugDrawer.h; sourceTree = "<group>"; };
-		4BE3E1E214389F30004FC04F /* Z80DebugDrawer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Z80DebugDrawer.m; sourceTree = "<group>"; };
+		4BE3E1E114389F30004FC04F /* Z80DebugInterface.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Z80DebugInterface.h; sourceTree = "<group>"; };
+		4BE3E1E214389F30004FC04F /* Z80DebugInterface.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Z80DebugInterface.m; sourceTree = "<group>"; };
 		4BE3E1E314389F30004FC04F /* CSOpenGLViewBillboard.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CSOpenGLViewBillboard.h; sourceTree = "<group>"; };
 		4BE3E1E414389F30004FC04F /* CSOpenGLViewBillboard.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CSOpenGLViewBillboard.m; sourceTree = "<group>"; };
 		4BE3E1E914389F30004FC04F /* LinearFilter.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = LinearFilter.c; sourceTree = "<group>"; };
@@ -521,9 +521,9 @@
 		4BE3E1E014389F30004FC04F /* View */ = {
 			isa = PBXGroup;
 			children = (
-				4BE3E1D814389F30004FC04F /* Z80DebugDrawer.xib */,
-				4BE3E1E114389F30004FC04F /* Z80DebugDrawer.h */,
-				4BE3E1E214389F30004FC04F /* Z80DebugDrawer.m */,
+				4BE3E1D814389F30004FC04F /* Z80DebugInterface.xib */,
+				4BE3E1E114389F30004FC04F /* Z80DebugInterface.h */,
+				4BE3E1E214389F30004FC04F /* Z80DebugInterface.m */,
 				4BE3E1E314389F30004FC04F /* CSOpenGLViewBillboard.h */,
 				4BE3E1E414389F30004FC04F /* CSOpenGLViewBillboard.m */,
 				4B04BD261469E84F007B41BA /* LineGraph.h */,
@@ -646,7 +646,7 @@
 				4BE3E15714389DDA004FC04F /* Credits.rtf in Resources */,
 				4BE3E15814389DDA004FC04F /* InfoPlist.strings in Resources */,
 				4BE3E20314389F30004FC04F /* MainMenu.xib in Resources */,
-				4BE3E20414389F30004FC04F /* Z80DebugDrawer.xib in Resources */,
+				4BE3E20414389F30004FC04F /* Z80DebugInterface.xib in Resources */,
 				4BE3E20514389F30004FC04F /* ZX80Document.xib in Resources */,
 				4BE3E21A1438A070004FC04F /* zx80rom.bin in Resources */,
 				4BE3E21B1438A070004FC04F /* zx81rom.bin in Resources */,
@@ -661,7 +661,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				4BE3E20014389F30004FC04F /* ZX80Document.m in Sources */,
-				4BE3E20914389F30004FC04F /* Z80DebugDrawer.m in Sources */,
+				4BE3E20914389F30004FC04F /* Z80DebugInterface.m in Sources */,
 				4BE3E20A14389F30004FC04F /* CSOpenGLViewBillboard.m in Sources */,
 				4BE3E20B14389F30004FC04F /* LinearFilter.c in Sources */,
 				4BE3E20D14389FA9004FC04F /* main.m in Sources */,
@@ -729,12 +729,12 @@
 			path = ..;
 			sourceTree = "<group>";
 		};
-		4BE3E1D814389F30004FC04F /* Z80DebugDrawer.xib */ = {
+		4BE3E1D814389F30004FC04F /* Z80DebugInterface.xib */ = {
 			isa = PBXVariantGroup;
 			children = (
 				4BE3E1D914389F30004FC04F /* en */,
 			);
-			name = Z80DebugDrawer.xib;
+			name = Z80DebugInterface.xib;
 			path = ..;
 			sourceTree = "<group>";
 		};
