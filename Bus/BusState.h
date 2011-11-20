@@ -45,10 +45,18 @@ typedef struct
 
 	bool signalOnTrueOnly;
 
-	// standard test is:
+	// The standard test is:
 	//
-	//	anything in observedLines has changed, or
-	//	the current status of those lines in the lineMask is as dictated by lineValues
+	//	(1)	components are active for messaging when bus&lineMask == lineValues;
+	//	(2)	components are messaged immediately when they become active and
+	//		immediately when they become inactive;
+	//	(3)	components are also messaged if any of the lines in changedLines
+	//		changes value while they are active.
+	//
+	// Components that have requested to be signalled on true only may not
+	// be signalled when they become inactive, if it's faster for the bus not
+	// to message them (so, it's a hint, effectively to say that the component
+	// acts only on the true condition)
 
 } CSBusCondition;
 
@@ -56,7 +64,7 @@ uint64_t csBusCondition_observedLines(CSBusCondition condition);
 
 // quick helpers for building messaging tests
 
-// applies both limbs of the test
+// applies the complete list
 CSBusCondition csBus_maskCondition(uint64_t observedLines, uint64_t lineMask, uint64_t lineValues, bool signalOnTrueOnly);
 
 // applies the test: do the relevant lines have the dictated values?
@@ -71,6 +79,8 @@ CSBusCondition csBus_resetCondition(uint64_t relevantLines, bool signalOnTrueOnl
 // applies the test: have any of the relevant lines changed value?
 CSBusCondition csBus_changeCondition(uint64_t relevantLines);
 
+// the impossible condition is always false, so a component that
+// connects with the impossible condition will never be signalled
 CSBusCondition csBus_impossibleCondition(void);
 bool csBusCondition_isImpossible(CSBusCondition condition);
 

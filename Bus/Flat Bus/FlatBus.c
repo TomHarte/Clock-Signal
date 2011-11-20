@@ -25,7 +25,7 @@ typedef struct
 		void *components;
 		CSBusState state;
 		CSBusState lastExternalState;
-		uint64_t allObservedSetLines, allObservedResetLines;
+		uint64_t allObservedSetLines, allObservedResetLines, allObservedChangeLines;
 	} clockedComponents, trueFalseComponents, trueComponents;
 
 } CSFlatBus;
@@ -36,6 +36,7 @@ static void csFlatBus_addComponentToSet(struct CSFlatBusComponentSet *set, void 
 
 	set->allObservedSetLines = 0;
 	set->allObservedResetLines = 0;
+	set->allObservedChangeLines = 0;
 
 	unsigned int numberOfComponents;
 	void **components = csArray_getCArray(set->components, &numberOfComponents);
@@ -46,12 +47,13 @@ static void csFlatBus_addComponentToSet(struct CSFlatBusComponentSet *set, void 
 		uint64_t lineMask = component->condition.lineMask;
 		uint64_t lineValues = component->condition.lineValues;
 
-		uint64_t setLineMask = changedLines & lineMask & lineValues;
-		uint64_t resetLineMask = (changedLines & lineMask & lineValues) ^ lineMask;
+		uint64_t setLineMask = lineMask & lineValues;
+		uint64_t resetLineMask = lineMask & ~lineValues;
 		uint64_t changeLineMask = changedLines &~ (setLineMask | resetLineMask);
 
-		set->allObservedSetLines |= setLineMask | changeLineMask;
-		set->allObservedResetLines |= resetLineMask | changeLineMask;
+		set->allObservedSetLines |= setLineMask;// | changeLineMask;
+		set->allObservedResetLines |= resetLineMask;// | changeLineMask;
+		set->allObservedChangeLines |= changeLineMask;
 	}	
 }
 
@@ -171,7 +173,7 @@ static void csFlatBus_message(void *opaqueBusNode, CSBusState *internalState, CS
 	flatBus->trueComponents.lastExternalState = totalState;
 
 	setLines = totalState.lineValues & changedLines;
-	resetLines = totalState.lineValues & ~changedLines;
+	resetLines = ~totalState.lineValues & changedLines;
 
 	// is it possible some are now true that weren't a moment ago from the true set?
 	if(flatBus->trueComponents.allObservedSetLines&setLines || flatBus->trueComponents.allObservedResetLines&resetLines)
@@ -207,10 +209,13 @@ static void csFlatBus_message(void *opaqueBusNode, CSBusState *internalState, CS
 	flatBus->trueFalseComponents.lastExternalState = totalState;
 
 	setLines = totalState.lineValues & changedLines;
-	resetLines = totalState.lineValues & ~changedLines;
+	resetLines = ~totalState.lineValues & changedLines;
 
-	// maybe some have gone true from the true/false set?
-	if(flatBus->trueFalseComponents.allObservedSetLines&setLines || flatBus->trueFalseComponents.allObservedResetLines&resetLines)
+	// maybe some have gone true or mutated while true from the true/false set?
+	if(
+		(flatBus->trueFalseComponents.allObservedSetLines&setLines) || 
+		(flatBus->trueFalseComponents.allObservedResetLines&resetLines) ||
+		(flatBus->trueFalseComponents.allObservedChangeLines&changedLines))
 	{
 		flatBus->trueFalseComponents.state.lineValues = -1;
 
@@ -220,20 +225,22 @@ static void csFlatBus_message(void *opaqueBusNode, CSBusState *internalState, CS
 		{
 			CSBusComponent *component = (CSBusComponent *)components[numberOfComponents];
 
-			if(component->condition.changedLines&changedLines)
-			{
-				bool newEvaluation = 
-					(component->condition.lineValues == (component->condition.lineMask&totalState.lineValues));
+			// so, logic is:
+			//
+			//	if
+			//			mask condition has changed, or
+			//			mask condition is true and one of the other monitored lines has changed
+			bool newEvaluation = component->condition.lineValues == (component->condition.lineMask&totalState.lineValues);
 
-				if(newEvaluation != component->lastResult)
-				{
-					component->handlerFunction(
-						component->context,
-						&component->currentInternalState,
-						totalState,
-						newEvaluation);
-					component->lastResult = newEvaluation;
-				}
+			if(
+				(newEvaluation != component->lastResult) || (newEvaluation && component->condition.changedLines&changedLines))
+			{
+				component->handlerFunction(
+					component->context,
+					&component->currentInternalState,
+					totalState,
+					newEvaluation);
+				component->lastResult = newEvaluation;
 			}
 
 			flatBus->trueFalseComponents.state.lineValues &= component->currentInternalState.lineValues;
@@ -241,7 +248,7 @@ static void csFlatBus_message(void *opaqueBusNode, CSBusState *internalState, CS
 	}
 	else
 	{
-		// nobody has become true, so check everyone that's currently true to see if they've become false
+		// nobody has become true or mutated, so check everyone that's currently true to see if they've become false
 		if( (flatBus->trueFalseComponents.allObservedSetLines | flatBus->trueFalseComponents.allObservedResetLines)&changedLines)
 		{
 			flatBus->trueFalseComponents.state.lineValues = -1;
@@ -253,20 +260,17 @@ static void csFlatBus_message(void *opaqueBusNode, CSBusState *internalState, CS
 				CSBusComponent *component = (CSBusComponent *)components[numberOfComponents];
 				if(component->lastResult)
 				{
-					if(component->condition.changedLines&changedLines)
-					{
-						bool newEvaluation = 
-							(component->condition.lineValues == (component->condition.lineMask&totalState.lineValues));
+					bool newEvaluation = 
+							component->condition.lineValues == (component->condition.lineMask&totalState.lineValues);
 
-						if(newEvaluation != component->lastResult)
-						{
-							component->handlerFunction(
-								component->context,
-								&component->currentInternalState,
-								totalState,
-								newEvaluation);
-							component->lastResult = newEvaluation;
-						}
+					if(!newEvaluation)
+					{
+						component->handlerFunction(
+							component->context,
+							&component->currentInternalState,
+							totalState,
+							newEvaluation);
+						component->lastResult = newEvaluation;
 					}
 
 					flatBus->trueFalseComponents.state.lineValues &= component->currentInternalState.lineValues;

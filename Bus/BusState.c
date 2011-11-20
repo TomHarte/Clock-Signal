@@ -38,7 +38,7 @@ CSBusCondition csBus_testCondition(uint64_t relevantLines, uint64_t lineValues, 
 {
 	CSBusCondition test;
 
-	test.changedLines = relevantLines;
+	test.changedLines = 0;
 	test.lineMask = relevantLines;
 	test.lineValues = lineValues;
 	test.signalOnTrueOnly = signalOnTrueOnly;
@@ -50,7 +50,7 @@ CSBusCondition csBus_setCondition(uint64_t relevantLines, bool signalOnTrueOnly)
 {
 	CSBusCondition test;
 
-	test.changedLines = relevantLines;
+	test.changedLines = 0;
 	test.lineMask = relevantLines;
 	test.lineValues = relevantLines;
 	test.signalOnTrueOnly = signalOnTrueOnly;
@@ -62,7 +62,7 @@ CSBusCondition csBus_resetCondition(uint64_t relevantLines, bool signalOnTrueOnl
 {
 	CSBusCondition test;
 
-	test.changedLines = relevantLines;
+	test.changedLines = 0;
 	test.lineMask = relevantLines;
 	test.lineValues = 0;
 	test.signalOnTrueOnly = signalOnTrueOnly;
@@ -76,7 +76,7 @@ CSBusCondition csBus_changeCondition(uint64_t relevantLines)
 
 	test.changedLines = relevantLines;
 	test.lineMask = 0;
-	test.lineValues = 1;
+	test.lineValues = 0;
 	test.signalOnTrueOnly = true;
 
 	return test;
@@ -95,11 +95,13 @@ CSBusCondition csBus_impossibleCondition(void)
 
 bool csBusCondition_isImpossible(CSBusCondition condition)
 {
-	// test can never be satisfied if fails to observe any lines
-	// and applies a mask test that can't be satisfied — because
-	// no lines are tested but a non-zero result is required
+	// test can never be satisfied if:
+	//
+	//	(i)		no lines are observed for changes, and
+	//	(ii)	the mask condition requires some lines to be set but the mask doesn't
+	//			allow them to be
 	return
-		(!condition.changedLines) &&
-		(!condition.lineMask && condition.lineValues);
+		!condition.changedLines &&
+		condition.lineValues &&
+		!(condition.lineMask & condition.lineValues);
 }
-
