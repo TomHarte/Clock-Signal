@@ -10,6 +10,7 @@
 #define ClockSignal_ReferenceCountedObject_h
 
 #include "stdint.h"
+#include <stdio.h>
 
 typedef struct
 {
@@ -17,12 +18,14 @@ typedef struct
 
 	const char *type;
 	void (* dealloc)(void *object);
-	const char *(* description)(void *object);
+	char *(* copyDescription)(void *object);
 } CSReferenceCountedObject;
 
 void csObject_init(void *object);
 void *csObject_retain(void *object);
 void csObject_release(void *object);
-const char *csObject_description(void *object);
+
+char *csObject_copyDescription(void *object);
+void csObject_printDescription(void *object, FILE *outputstream);
 
 #endif
