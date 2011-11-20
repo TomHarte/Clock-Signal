@@ -16,9 +16,9 @@ typedef struct
 {
 	CSReferenceCountedObject referenceCountedObject;
 
-	const char *text;
+	char *text;
 	uint16_t address;
-} Z80Line;
+} Z80AssemblyLine;
 
 // this will return a csArray filled with Z80Lines
 void *csZ80Disassembler_createDisassembly(uint8_t *sourceData, uint16_t startAddress, uint16_t length);

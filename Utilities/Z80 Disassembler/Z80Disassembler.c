@@ -10,8 +10,60 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <stdarg.h>
+#include <string.h>
 #include "Array.h"
 #include "stdbool.h"
+
+/*
+
+	Z80 assembly line is a retively simple container,
+	so this is all there is to it
+
+*/
+static void z80AssemblyLine_destroy(void *opaqueLine)
+{
+	Z80AssemblyLine *line = (Z80AssemblyLine *)opaqueLine;
+	if(line->text) free(line->text);
+}
+
+static void z80AssemblyLine_setText(void *opaqueLine, const char *text)
+{
+	Z80AssemblyLine *line = (Z80AssemblyLine *)opaqueLine;
+	if(line->text) free(line->text);
+	line->text = strdup(text);
+}
+
+static char *z80AssemblyLine_description(void *opaqueLine)
+{
+	Z80AssemblyLine *line = (Z80AssemblyLine *)opaqueLine;
+
+	size_t bufferLength = 6 + strlen(line->text);
+	char *returnBuffer = (char *)malloc(bufferLength);
+	snprintf(returnBuffer, bufferLength, "%04x\t%s", line->address, line->text);
+
+	return returnBuffer;
+}
+
+static Z80AssemblyLine *z80AssemblyLine_create(uint16_t address)
+{
+	Z80AssemblyLine *line = (Z80AssemblyLine *)calloc(1, sizeof(Z80AssemblyLine));
+
+	if(line)
+	{
+		csObject_init(line);
+		line->address = address;
+		line->referenceCountedObject.dealloc = z80AssemblyLine_destroy;
+		line->referenceCountedObject.copyDescription = z80AssemblyLine_description;
+	}
+
+	return line;
+}
+
+/*
+
+	The disassembler proper starts here
+
+*/
 
 static char *ccTable[] = {"NZ", "Z", "NC", "C", "PO", "PE", "P", "M"};
 static char *aluTable[] = {"ADD A,", "ADC A,", "SUB ", "SBC A,", "AND", "XOR", "OR", "CP"};
@@ -32,6 +84,8 @@ typedef struct
 	uint16_t length;
 	void *output;
 	void *releasePool;
+	
+	void *currentLine;
 
 	char *indexRegister;
 	bool addOffset;
@@ -73,18 +127,30 @@ static char *csZ80Disassembler_getAddress(CSZ80DisassemblerState *state)
 
 static void csZ80Disassembler_beginOpcode(CSZ80DisassemblerState *state)
 {
-	printf("%04x: ", state->currentOffset + state->startAddress);
+	state->currentLine = z80AssemblyLine_create(state->currentOffset + state->startAddress);
 }
 
 static void csZ80Disassembler_setOutput(CSZ80DisassemblerState *state, char *text, ...)
 {
-	va_list args;
-	va_start(args, text);
+	if(state->currentLine)
+	{
+		va_list args;
+		va_start(args, text);
 
-	vprintf(text, args);
-	printf("\n");
+		char temporaryBufer[50];
+		vsnprintf(temporaryBufer, 50, text, args);
 
-	va_end(args);
+		z80AssemblyLine_setText(state->currentLine, temporaryBufer);
+
+		va_end(args);
+	}
+}
+
+static void csZ80Disassembler_endOpcode(CSZ80DisassemblerState *state)
+{
+	csArray_addObject(state->output, state->currentLine);
+	csObject_release(state->currentLine);
+	state->currentLine = NULL;
 }
 
 static char *indexPlusOffset(CSZ80DisassemblerState *state, int8_t offset)
@@ -414,10 +480,13 @@ void *csZ80Disassembler_createDisassembly(uint8_t *sourceData, uint16_t startAdd
 		// start a new opcode (which allows us to store the start address)
 		csZ80Disassembler_beginOpcode(&state);
 
-		// begin disassembly of the opcode
+		// perform disassembly of the opcode
 		state.indexRegister = "HL";
 		state.addOffset = false;
 		csZ80Disassembler_disassembleStandardPage(&state);
+
+		// finish it off (which will add it to the list)
+		csZ80Disassembler_endOpcode(&state);
 
 		// clean up the release pool
 		unsigned int numberOfThingsToFree;
