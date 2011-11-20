@@ -432,7 +432,7 @@ static void ZX80DocumentInstructionObserverBreakIn(void *z80, void *context)
 	}
 }
 
-- (void)debugDrawerPause:(Z80DebugInterface *)drawer
+- (void)debugInterfacePause:(Z80DebugInterface *)drawer
 {
 	@synchronized(self)
 	{
