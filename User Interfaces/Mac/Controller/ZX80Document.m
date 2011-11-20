@@ -742,6 +742,7 @@ static void ZX80DocumentCRTBreakIn(
 
 	// quick test
 	void *object = csZ80Disassembler_createDisassembly((uint8_t *)[contentsOfROM bytes], 0, [contentsOfROM length]);
+	csObject_printDescription(object, stdout);
 	csObject_release(object);
 
 	// do some tidying up and set our outputter as the
