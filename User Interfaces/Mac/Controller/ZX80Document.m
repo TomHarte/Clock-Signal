@@ -9,7 +9,6 @@
 #import "ZX80Document.h"
 #import "Z80.h"
 #import "Z80Internals.h"
-#import "Z80DebugDrawer.h"
 #include "ZX8081.h"
 #include "CRT.h"
 #import <OpenGL/gl.h>
@@ -26,7 +25,7 @@
 
 @property (assign) void *ULA;
 
-@property (nonatomic, retain) Z80DebugDrawer *debugDrawer;
+@property (nonatomic, retain) Z80DebugInterface *debugInterface;
 @property (assign) void *tape;
 
 @property (assign) AudioQueueRef audioQueue;
@@ -44,7 +43,7 @@
 @synthesize isRunning;
 
 @synthesize lastInternalTime;
-@synthesize debugDrawer;
+@synthesize debugInterface;
 @synthesize machineOptionsDrawer;
 
 @synthesize textureID;
@@ -200,7 +199,7 @@ static void	ZX80DocumentAudioCallout(
 	glDeleteTextures(1, &textureID);
 
 	self.openGLView = nil;
-	self.debugDrawer = nil;
+	self.debugInterface = nil;
 
 	if (self.tape)
 		cstape_release(self.tape);
@@ -237,10 +236,9 @@ static void	ZX80DocumentAudioCallout(
 	openGLView.keyDelegate = self;
 
 	// get a Z80 debug drawer
-	self.debugDrawer = [Z80DebugDrawer debugDrawer];
-
-	debugDrawer.parentWindow = [self windowForSheet];
-	debugDrawer.delegate = self;
+	self.debugInterface = [Z80DebugInterface debugInterface];
+//	debugDrawer.parentWindow = [self windowForSheet];
+	debugInterface.delegate = self;
 
 	[machineOptionsDrawer openOnEdge:NSMaxXEdge];
 //	[debugDrawer openOnEdge:NSMinXEdge];
@@ -251,7 +249,7 @@ static void	ZX80DocumentAudioCallout(
 	[self reconfigureMachine:nil];
 }
 
-- (void *)z80ForDebugDrawer
+- (void *)z80ForDebugInterface
 {
 	return llzx8081_getCPU(ULA);
 }
@@ -337,7 +335,7 @@ static void	ZX80DocumentAudioCallout(
 - (void)z80WillFetchInstruction
 {
 	instructionRunningCount--;
-	atBreakpoint = (llz80_monitor_getInternalValue([self z80ForDebugDrawer], LLZ80MonitorValuePCRegister) == targetAddress);
+	atBreakpoint = (llz80_monitor_getInternalValue([self z80ForDebugInterface], LLZ80MonitorValuePCRegister) == targetAddress);
 }
 
 static void ZX80DocumentInstructionObserverBreakIn(void *z80, void *context)
@@ -362,7 +360,7 @@ static void ZX80DocumentInstructionObserverBreakIn(void *z80, void *context)
 
 	ula->lastPC = pc;
 }*/
-- (void)debugDrawerRunForHalfACycle:(Z80DebugDrawer *)drawer
+- (void)debugInterfaceRunForHalfACycle:(Z80DebugInterface *)drawer
 {
 	@synchronized(self)
 	{
@@ -377,7 +375,7 @@ static void ZX80DocumentInstructionObserverBreakIn(void *z80, void *context)
 	[drawer refresh];
 }
 
-- (void)debugDrawerRunForOneInstruction:(Z80DebugDrawer *)drawer
+- (void)debugInterfaceRunForOneInstruction:(Z80DebugInterface *)drawer
 {
 	@synchronized(self)
 	{
@@ -389,18 +387,18 @@ static void ZX80DocumentInstructionObserverBreakIn(void *z80, void *context)
 	
 	instructionRunningCount = 1;
 
-	void *instructionObserver = llz80_monitor_addInstructionObserver([self z80ForDebugDrawer], ZX80DocumentInstructionObserverBreakIn, self);
+	void *instructionObserver = llz80_monitor_addInstructionObserver([self z80ForDebugInterface], ZX80DocumentInstructionObserverBreakIn, self);
 	while(instructionRunningCount)
 	{
 		llzx8081_runForHalfCycles(ULA, 1);
 		[drawer updateBus];
 	}
-	llz80_monitor_removeInstructionObserver([self z80ForDebugDrawer], instructionObserver);
+	llz80_monitor_removeInstructionObserver([self z80ForDebugInterface], instructionObserver);
 
 	[drawer refresh];
 }
 
-- (void)debugDrawer:(Z80DebugDrawer *)drawer runUntilAddress:(uint16_t)address
+- (void)debugInterface:(Z80DebugInterface *)drawer runUntilAddress:(uint16_t)address
 {
 	@synchronized(self)
 	{
@@ -414,18 +412,18 @@ static void ZX80DocumentInstructionObserverBreakIn(void *z80, void *context)
 	atBreakpoint = NO;
 
 	int maxCycles = 3250000;
-	void *instructionObserver = llz80_monitor_addInstructionObserver([self z80ForDebugDrawer], ZX80DocumentInstructionObserverBreakIn, self);
+	void *instructionObserver = llz80_monitor_addInstructionObserver([self z80ForDebugInterface], ZX80DocumentInstructionObserverBreakIn, self);
 	while(!atBreakpoint && maxCycles--)
 	{
 		llzx8081_runForHalfCycles(ULA, 1);
 		[drawer updateBus];
 	}
-	llz80_monitor_removeInstructionObserver([self z80ForDebugDrawer], instructionObserver);
+	llz80_monitor_removeInstructionObserver([self z80ForDebugInterface], instructionObserver);
 
 	[drawer refresh];
 }
 
-- (void)debugDrawerRun:(Z80DebugDrawer *)drawer
+- (void)debugInterfaceRun:(Z80DebugInterface *)drawer
 {
 	@synchronized(self)
 	{
@@ -434,7 +432,7 @@ static void ZX80DocumentInstructionObserverBreakIn(void *z80, void *context)
 	}
 }
 
-- (void)debugDrawerPause:(Z80DebugDrawer *)drawer
+- (void)debugDrawerPause:(Z80DebugInterface *)drawer
 {
 	@synchronized(self)
 	{
@@ -444,9 +442,9 @@ static void ZX80DocumentInstructionObserverBreakIn(void *z80, void *context)
 	}
 }
 
-- (IBAction)showDebugDrawer:(id)sender
+- (IBAction)showDebugger:(id)sender
 {
-	[debugDrawer openOnEdge:NSMinXEdge];
+	[debugInterface show];
 }
 
 - (IBAction)showMachineDrawer:(id)sender

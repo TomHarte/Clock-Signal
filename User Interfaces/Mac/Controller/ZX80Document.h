@@ -9,7 +9,7 @@
 #import <Cocoa/Cocoa.h>
 #import <AudioToolbox/AudioToolbox.h>
 #import "CSOpenGLViewBillboard.h"
-#import "Z80DebugDrawer.h"
+#import "Z80DebugInterface.h"
 #import "OwnThreadTimer.h"
 
 #define kZX80DocumentNumAudioBuffers	3
@@ -41,7 +41,7 @@
 
 		void *ULA;
 
-		Z80DebugDrawer *debugDrawer;
+		Z80DebugInterface *debugInterface;
 		void *tape;
 
 		AudioQueueRef audioQueue;
@@ -63,7 +63,7 @@
 
 @property (nonatomic, assign) IBOutlet NSDrawer *machineOptionsDrawer;
 
-- (IBAction)showDebugDrawer:(id)sender;
+- (IBAction)showDebugger:(id)sender;
 - (IBAction)showMachineDrawer:(id)sender;
 
 @property (nonatomic, assign) IBOutlet NSSlider *speedSlider;
