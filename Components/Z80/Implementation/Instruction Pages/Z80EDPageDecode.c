@@ -576,7 +576,7 @@ void llz80_iop_doRRD(LLZ80ProcessorState *z80, LLZ80InternalInstruction *instruc
 	llz80_calculateParity(z80->aRegister);
 	z80->generalFlags =
 		parity |
-		z80->generalFlags&LLZ80FlagCarry;
+		(z80->generalFlags&LLZ80FlagCarry);
 	z80->lastSignResult = z80->lastZeroResult =
 	z80->bit5And3Flags = z80->aRegister;
 }
@@ -590,7 +590,7 @@ void llz80_iop_doRLD(LLZ80ProcessorState *z80, LLZ80InternalInstruction *instruc
 	llz80_calculateParity(z80->aRegister);
 	z80->generalFlags =
 		parity |
-		z80->generalFlags&LLZ80FlagCarry;
+		(z80->generalFlags&LLZ80FlagCarry);
 	z80->lastSignResult = z80->lastZeroResult =
 	z80->bit5And3Flags = z80->aRegister;
 }
