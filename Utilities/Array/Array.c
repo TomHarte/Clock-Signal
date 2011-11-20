@@ -10,6 +10,7 @@
 #include "ReferenceCountedObject.h"
 #include <stdlib.h>
 #include <string.h>
+#include <stdio.h>
 
 typedef struct
 {
@@ -44,6 +45,57 @@ static void csArray_destroy(void *opaqueArray)
 	free(array->objects);
 }
 
+static char *csArray_description(void *opaqueArray)
+{
+	// we'll want to grow this storage dynamically, so
+	// frame things in that context
+	size_t returnStringLength = 3;
+	char *returnString = (char *)malloc(returnStringLength);
+	char *outputPointer = returnString;
+
+	// open with a curly brace
+	outputPointer[0] = '{';
+	outputPointer[1] = '\n';
+	outputPointer += 2;
+
+	// iterate through the contents, getting descriptions
+	// for them where they report it
+	unsigned int numberOfObjects;
+	void **objects = csArray_getCArray(opaqueArray, &numberOfObjects);
+	for(int c = 0; c < numberOfObjects; c++)
+	{
+		char *newDescription = csObject_copyDescription(objects[c]);
+		
+		while((outputPointer - returnString) + strlen(newDescription) + 5 > returnStringLength)
+		{
+			// output pointer is possibly about to end up
+			// pointing off into space, so we'll need to
+			// be able to fix that
+			size_t outputOffset = outputPointer - returnString;
+
+			// ask for a double sized buffer
+			size_t newLength = returnStringLength + 256;
+			char *newString = (char *)realloc(returnString, newLength);
+
+			// return what we have if the extra storage isn't available
+			if(!newString) return returnString;
+
+			// otherwise update our outlook
+			returnString = newString;
+			returnStringLength = newLength;
+			outputPointer = returnString + outputOffset;
+		}
+
+		// append the new description
+		sprintf(outputPointer, "\t%s\n", newDescription);
+		outputPointer += strlen(outputPointer);
+	}
+	outputPointer[0] = '}';
+	outputPointer[1] = '\0';
+
+	return returnString;
+}
+
 void *csArray_create(bool retainObjects)
 {
 	CSRetainedArray *array = (CSRetainedArray *)calloc(1, sizeof(CSRetainedArray));
@@ -52,6 +104,7 @@ void *csArray_create(bool retainObjects)
 	{
 		csObject_init(array);
 		array->referenceCountedObject.dealloc = csArray_destroy;
+		array->referenceCountedObject.copyDescription = csArray_description;
 
 		if(retainObjects)
 		{
