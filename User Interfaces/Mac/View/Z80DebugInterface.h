@@ -86,7 +86,6 @@
 */
 - (IBAction)runForOneInstruction:(id)sender;
 - (IBAction)runForHalfACycle:(id)sender;
-- (IBAction)showBus:(id)sender;
 - (IBAction)runUntilAddress:(id)sender;
 - (IBAction)run:(id)sender;
 - (IBAction)pause:(id)sender;
