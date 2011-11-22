@@ -3,7 +3,7 @@
 //  LLCRT
 //
 //  Created by Thomas Harte on 22/09/2011.
-//  Copyright 2011 acrossair. All rights reserved.
+//  Copyright 2011 Thomas Harte. All rights reserved.
 //
 
 #include <stdio.h>

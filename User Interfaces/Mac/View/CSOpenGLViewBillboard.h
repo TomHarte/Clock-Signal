@@ -3,7 +3,7 @@
 //  Clock Signal
 //
 //  Created by Thomas Harte on 08/09/2011.
-//  Copyright (c) 2011 acrossair. All rights reserved.
+//  Copyright (c) 2011 Thomas Harte. All rights reserved.
 //
 
 @protocol CSKeyDelegate <NSObject>

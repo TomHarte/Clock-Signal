@@ -3,7 +3,7 @@
 //  Clock Signal
 //
 //  Created by Thomas Harte on 08/11/2011.
-//  Copyright 2011 acrossair. All rights reserved.
+//  Copyright 2011 Thomas Harte. All rights reserved.
 //
 
 #import <Cocoa/Cocoa.h>

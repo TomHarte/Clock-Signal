@@ -3,7 +3,7 @@
 //  LLZ80
 //
 //  Created by Thomas Harte on 15/09/2011.
-//  Copyright 2011 acrossair. All rights reserved.
+//  Copyright 2011 Thomas Harte. All rights reserved.
 //
 
 #include "Z80SetResetTestOps.h"

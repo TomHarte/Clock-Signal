@@ -3,7 +3,7 @@
 //  ZX81
 //
 //  Created by Thomas Harte on 11/09/2011.
-//  Copyright (c) 2011 acrossair. All rights reserved.
+//  Copyright (c) 2011 Thomas Harte. All rights reserved.
 //
 
 #include <stdio.h>
