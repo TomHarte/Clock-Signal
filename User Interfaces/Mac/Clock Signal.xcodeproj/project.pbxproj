@@ -151,6 +151,7 @@
 		4BEA0180145DBE5100B3E6E1 /* PassthroughBusNode.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = PassthroughBusNode.c; path = "Passthrough Node/PassthroughBusNode.c"; sourceTree = "<group>"; };
 		4BEA0192145DFF5600B3E6E1 /* Array.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = Array.c; sourceTree = "<group>"; };
 		4BEA0193145DFF5600B3E6E1 /* Array.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Array.h; sourceTree = "<group>"; };
+		4BED67BF147C694300FA2460 /* Directory Naming Scheme.rtf */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.rtf; name = "Directory Naming Scheme.rtf"; path = "../../Directory Naming Scheme.rtf"; sourceTree = "<group>"; };
 		4BFE159A146097AE0096FA78 /* Component.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = Component.c; path = Component/Component.c; sourceTree = "<group>"; };
 		4BFE159D146097C80096FA78 /* Component.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Component.h; path = Component/Component.h; sourceTree = "<group>"; };
 		4BFE159F146098C90096FA78 /* ComponentInternals.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ComponentInternals.h; path = Component/ComponentInternals.h; sourceTree = "<group>"; };
@@ -460,6 +461,7 @@
 				4BE3E2421438A088004FC04F /* Clock Signal-Prefix.pch */,
 				4BE3E12814389DDA004FC04F /* Credits.rtf */,
 				4BE3E12A14389DDA004FC04F /* InfoPlist.strings */,
+				4BED67C2147C694A00FA2460 /* Not part of build */,
 			);
 			name = "Supporting Files";
 			sourceTree = "<group>";
@@ -580,6 +582,14 @@
 				4BEA0193145DFF5600B3E6E1 /* Array.h */,
 			);
 			path = Array;
+			sourceTree = "<group>";
+		};
+		4BED67C2147C694A00FA2460 /* Not part of build */ = {
+			isa = PBXGroup;
+			children = (
+				4BED67BF147C694300FA2460 /* Directory Naming Scheme.rtf */,
+			);
+			name = "Not part of build";
 			sourceTree = "<group>";
 		};
 		4BFE159E146097CC0096FA78 /* Component */ = {
