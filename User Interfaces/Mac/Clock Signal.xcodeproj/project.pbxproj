@@ -31,6 +31,7 @@
 		4BA04D931451E69700DA159C /* ZX8081.c in Sources */ = {isa = PBXBuildFile; fileRef = 4BA04D911451E69700DA159C /* ZX8081.c */; };
 		4BB4AFAC143BC9BE00636C4F /* AbstractTape.c in Sources */ = {isa = PBXBuildFile; fileRef = 4BB4AFA2143BC9BE00636C4F /* AbstractTape.c */; };
 		4BB4AFAE143BC9BE00636C4F /* ZX80Tape.c in Sources */ = {isa = PBXBuildFile; fileRef = 4BB4AFAA143BC9BE00636C4F /* ZX80Tape.c */; };
+		4BB5AE7C15F41F5B00B6F758 /* DynamicRam.c in Sources */ = {isa = PBXBuildFile; fileRef = 4BB5AE7B15F41F5B00B6F758 /* DynamicRam.c */; };
 		4BB84DC914532C770088DC19 /* BusState.c in Sources */ = {isa = PBXBuildFile; fileRef = 4BB84DC814532C770088DC19 /* BusState.c */; };
 		4BBC163E1452DAD100B12D3E /* TapePlayer.c in Sources */ = {isa = PBXBuildFile; fileRef = 4BBC163C1452DAD100B12D3E /* TapePlayer.c */; };
 		4BBC16421452DF7D00B12D3E /* StaticMemory.c in Sources */ = {isa = PBXBuildFile; fileRef = 4BBC16411452DF7D00B12D3E /* StaticMemory.c */; };
@@ -107,6 +108,8 @@
 		4BB4AFA5143BC9BE00636C4F /* AbstractTapeInternals.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AbstractTapeInternals.h; sourceTree = "<group>"; };
 		4BB4AFAA143BC9BE00636C4F /* ZX80Tape.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ZX80Tape.c; sourceTree = "<group>"; };
 		4BB4AFAB143BC9BE00636C4F /* ZX80Tape.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZX80Tape.h; sourceTree = "<group>"; };
+		4BB5AE7B15F41F5B00B6F758 /* DynamicRam.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = DynamicRam.c; path = "Dynamic RAM/DynamicRam.c"; sourceTree = "<group>"; };
+		4BB5AE7E15F41F7300B6F758 /* DynamicRAM.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = DynamicRAM.h; path = "Dynamic RAM/DynamicRAM.h"; sourceTree = "<group>"; };
 		4BB84DC6145328530088DC19 /* StandardBusLines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StandardBusLines.h; sourceTree = "<group>"; };
 		4BB84DC814532C770088DC19 /* BusState.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = BusState.c; sourceTree = "<group>"; };
 		4BBC163C1452DAD100B12D3E /* TapePlayer.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = TapePlayer.c; sourceTree = "<group>"; };
@@ -212,6 +215,7 @@
 			children = (
 				4BBC163F1452DF6F00B12D3E /* Static Memory */,
 				4BA04D511451E63B00DA159C /* Z80 */,
+				4BB5AE7D15F41F5F00B6F758 /* Dynamic RAM */,
 			);
 			name = Components;
 			path = ../../Components;
@@ -357,6 +361,15 @@
 				4BB4AFAB143BC9BE00636C4F /* ZX80Tape.h */,
 			);
 			path = ZX80;
+			sourceTree = "<group>";
+		};
+		4BB5AE7D15F41F5F00B6F758 /* Dynamic RAM */ = {
+			isa = PBXGroup;
+			children = (
+				4BB5AE7B15F41F5B00B6F758 /* DynamicRam.c */,
+				4BB5AE7E15F41F7300B6F758 /* DynamicRAM.h */,
+			);
+			name = "Dynamic RAM";
 			sourceTree = "<group>";
 		};
 		4BBC163B1452DAD100B12D3E /* Tape Player */ = {
@@ -708,6 +721,7 @@
 				4B0A5231146575840058F817 /* FlatBus.c in Sources */,
 				4B04BD281469E84F007B41BA /* LineGraph.m in Sources */,
 				4B11846A146DD4C700CDBD1A /* Z80Disassembler.c in Sources */,
+				4BB5AE7C15F41F5B00B6F758 /* DynamicRam.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
