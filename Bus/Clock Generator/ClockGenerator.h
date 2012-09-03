@@ -6,10 +6,12 @@
 //  Copyright 2011 Thomas Harte. All rights reserved.
 //
 
+#import "stdint.h"
+
 #ifndef ClockSignal_ClockGenerator_h
 #define ClockSignal_ClockGenerator_h
 
-void *csClockGenerator_createWithBus(void *bus);
+void *csClockGenerator_createWithBus(void *bus, uint32_t ticksPerSecond);
 void csClockGenerator_runForHalfCycles(void *opaqueGenerator, unsigned int halfCycles);
 unsigned int csClockGenerator_getHalfCyclesToDate(void *);
 

@@ -203,7 +203,7 @@ static void llzx80801_createMachine(LLZX80ULAState *ula)
 	}*/
 
 	// get a tree from that
-	ula->machineState->clockGenerator = csClockGenerator_createWithBus(bus);
+	ula->machineState->clockGenerator = csClockGenerator_createWithBus(bus, 3250000);
 	csObject_release(bus);
 
 	// install the current ROM

@@ -23,6 +23,7 @@ typedef struct
 	unsigned int halfCyclesToDate;
 	CSBusComponent *component;
 	CSBusState currentBusState;
+	uint32_t ticksPerSecond;
 
 } CSClockGenerator;
 
@@ -32,7 +33,7 @@ static void csClockGenerator_destroy(void *opaqueGenerator)
 	csObject_release(generator->component);
 }
 
-void *csClockGenerator_createWithBus(void *bus)
+void *csClockGenerator_createWithBus(void *bus, uint32_t ticksPerSecond)
 {
 	CSClockGenerator *generator = (CSClockGenerator *)calloc(1, sizeof(CSClockGenerator));
 
@@ -42,6 +43,7 @@ void *csClockGenerator_createWithBus(void *bus)
 		generator->referenceCountedObject.dealloc = csClockGenerator_destroy;
 		generator->component = csBusNode_createComponent(bus);
 		generator->currentBusState = csBus_defaultState();
+		generator->ticksPerSecond = ticksPerSecond;
 	}
 
 	return generator;
@@ -56,7 +58,7 @@ void csClockGenerator_runForHalfCycles(void *opaqueGenerator, unsigned int halfC
 	while(halfCycles--)
 	{
 		generator->currentBusState.lineValues ^= CSBusStandardClockLine;
-		generator->component->handlerFunction(generator->component->context, &throwawayState, generator->currentBusState, true);
+		generator->component->handlerFunction(generator->component->context, &throwawayState, generator->currentBusState, true, 0);
 		generator->halfCyclesToDate++;
 	}
 //	printf("clock generator loop done\n");

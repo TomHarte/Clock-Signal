@@ -54,7 +54,7 @@ static void llzx80ula_considerSync(LLZX8081MachineState *machineState)
       8K-64K   Area occupied by 64K RAM pack.
 
 */
-static void llzx80ula_observeRefresh(void *opaqueMachineState, CSBusState *internalState, CSBusState externalState, bool conditionIsTrue)
+static void llzx80ula_observeRefresh(void *opaqueMachineState, CSBusState *internalState, CSBusState externalState, bool conditionIsTrue, CSComponentNanoseconds timeSinceLaunch)
 {
 	// if this is a memory refresh cycle then make a note
 	// of the address and echo bit 6 to the INT line,
@@ -98,7 +98,7 @@ static void llzx80ula_observeRefresh(void *opaqueMachineState, CSBusState *inter
 	}
 }
 
-static void llzx80ula_observeIORead(void *opaqueMachineState, CSBusState *internalState, CSBusState externalState, bool conditionIsTrue)
+static void llzx80ula_observeIORead(void *opaqueMachineState, CSBusState *internalState, CSBusState externalState, bool conditionIsTrue, CSComponentNanoseconds timeSinceLaunch)
 {
 	// an IO read request
 	if(conditionIsTrue)
@@ -153,7 +153,7 @@ static void llzx80ula_observeIORead(void *opaqueMachineState, CSBusState *intern
 	}
 }
 
-static void llzx80ula_observeIOWrite(void *opaqueMachineState, CSBusState *internalState, CSBusState externalState, bool conditionIsTrue)
+static void llzx80ula_observeIOWrite(void *opaqueMachineState, CSBusState *internalState, CSBusState externalState, bool conditionIsTrue, CSComponentNanoseconds timeSinceLaunch)
 {
 	if(conditionIsTrue)
 	{
@@ -191,7 +191,7 @@ static void llzx80ula_observeIOWrite(void *opaqueMachineState, CSBusState *inter
 	}
 }
 
-static void llzx80ula_observeIntAck(void *opaqueMachineState, CSBusState *internalState, CSBusState externalState, bool conditionIsTrue)
+static void llzx80ula_observeIntAck(void *opaqueMachineState, CSBusState *internalState, CSBusState externalState, bool conditionIsTrue, CSComponentNanoseconds timeSinceLaunch)
 {
 	if(!conditionIsTrue) return;
 
@@ -204,7 +204,7 @@ static void llzx80ula_observeIntAck(void *opaqueMachineState, CSBusState *intern
 
 
 // This one is hooked up for the ZX80 only
-static void llzx80ula_observeMachineCycleOne(void *opaqueMachineState, CSBusState *internalState, CSBusState externalState, bool conditionIsTrue)
+static void llzx80ula_observeMachineCycleOne(void *opaqueMachineState, CSBusState *internalState, CSBusState externalState, bool conditionIsTrue, CSComponentNanoseconds timeSinceLaunch)
 {
 	if(!conditionIsTrue) return;
 
@@ -230,7 +230,7 @@ static void llzx80ula_observeMachineCycleOne(void *opaqueMachineState, CSBusStat
 }
 
 // This one is hooked up for the ZX81 only
-static void llzx80ula_observeClock(void *opaqueMachineState, CSBusState *internalState, CSBusState externalState, bool conditionIsTrue)
+static void llzx80ula_observeClock(void *opaqueMachineState, CSBusState *internalState, CSBusState externalState, bool conditionIsTrue, CSComponentNanoseconds timeSinceLaunch)
 {
 	if(!conditionIsTrue) return;
 
@@ -259,7 +259,7 @@ static void llzx80ula_observeClock(void *opaqueMachineState, CSBusState *interna
 	llzx80ula_considerSync(machineState);
 }
 
-static void llzx80ula_observeVideoRead(void *opaqueMachineState, CSBusState *internalState, CSBusState externalState, bool conditionIsTrue)
+static void llzx80ula_observeVideoRead(void *opaqueMachineState, CSBusState *internalState, CSBusState externalState, bool conditionIsTrue, CSComponentNanoseconds timeSinceLaunch)
 {
 	// condition: data&0x40 is low, m1 is low, address&0x8000 is high
 	if(conditionIsTrue)
@@ -285,7 +285,7 @@ static void llzx80ula_observeVideoRead(void *opaqueMachineState, CSBusState *int
 	}
 }
 
-static void llzx80ula_romAddressShuffle(void *opaquePassthroughNode, CSBusState *internalState, CSBusState externalState, bool conditionIsTrue)
+static void llzx80ula_romAddressShuffle(void *opaquePassthroughNode, CSBusState *internalState, CSBusState externalState, bool conditionIsTrue, CSComponentNanoseconds timeSinceLaunch)
 {
 	CSBusPassthroughNode *node = (CSBusPassthroughNode *)opaquePassthroughNode;
 	LLZX8081MachineState *machineState = (LLZX8081MachineState *)node->context;
@@ -299,7 +299,7 @@ static void llzx80ula_romAddressShuffle(void *opaquePassthroughNode, CSBusState 
 	}
 
 	CSBusComponent *childComponent = node->childComponent;
-	childComponent->handlerFunction(childComponent->context, internalState, externalState, conditionIsTrue);
+	childComponent->handlerFunction(childComponent->context, internalState, externalState, conditionIsTrue, timeSinceLaunch);
 }
 
 static void llzx8081_destroyMachineState(void *opaqueMachineState)

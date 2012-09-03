@@ -75,7 +75,8 @@
 		to the system when the retain count gets to zero.
 
 */
-void *llz80_createOnBus(void *bus);	// the returned object conforms to csObject
+void *llz80_createOnBus(void *bus);	// the returned object conforms to csObject, and
+									// to csBusComponent
 
 /*
 

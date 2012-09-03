@@ -27,7 +27,7 @@ typedef struct
 
 const char *staticMemoryType = "static memory";
 
-static void csStaticMemory_observeMemoryRead(void *opaqueMemory, CSBusState *internalState, CSBusState externalState, bool conditionIsTrue)
+static void csStaticMemory_observeMemoryRead(void *opaqueMemory, CSBusState *internalState, CSBusState externalState, bool conditionIsTrue, CSComponentNanoseconds timeSinceLaunch)
 {
 	if(conditionIsTrue)
 	{
@@ -56,7 +56,7 @@ static void csStaticMemory_observeMemoryRead(void *opaqueMemory, CSBusState *int
 	}
 }
 
-static void csStaticMemory_observeMemoryWrite(void *opaqueMemory, CSBusState *internalState, CSBusState externalState, bool conditionIsTrue)
+static void csStaticMemory_observeMemoryWrite(void *opaqueMemory, CSBusState *internalState, CSBusState externalState, bool conditionIsTrue, CSComponentNanoseconds timeSinceLaunch)
 {
 	if(!conditionIsTrue)
 	{

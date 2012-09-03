@@ -159,7 +159,7 @@ static void csBusNode_binaryPrint(uint64_t value)
 	}
 }*/
 
-static void csFlatBus_message(void *opaqueBusNode, CSBusState *internalState, CSBusState externalState, bool conditionIsTrue)
+static void csFlatBus_message(void *opaqueBusNode, CSBusState *internalState, CSBusState externalState, bool conditionIsTrue, CSComponentNanoseconds timeSinceLaunch)
 {
 	CSFlatBus *flatBus = (CSFlatBus *)opaqueBusNode;
 	CSBusState totalState;
@@ -196,7 +196,8 @@ static void csFlatBus_message(void *opaqueBusNode, CSBusState *internalState, CS
 					component->context,
 					&component->currentInternalState,
 					totalState,
-					true);
+					true,
+					timeSinceLaunch);
 			}
 		}
 	}
@@ -239,7 +240,8 @@ static void csFlatBus_message(void *opaqueBusNode, CSBusState *internalState, CS
 					component->context,
 					&component->currentInternalState,
 					totalState,
-					newEvaluation);
+					newEvaluation,
+					timeSinceLaunch);
 				component->lastResult = newEvaluation;
 			}
 
@@ -269,7 +271,8 @@ static void csFlatBus_message(void *opaqueBusNode, CSBusState *internalState, CS
 							component->context,
 							&component->currentInternalState,
 							totalState,
-							newEvaluation);
+							newEvaluation,
+							timeSinceLaunch);
 						component->lastResult = newEvaluation;
 					}
 
@@ -304,7 +307,8 @@ static void csFlatBus_message(void *opaqueBusNode, CSBusState *internalState, CS
 					component->context,
 					&component->currentInternalState,
 					totalState,
-					newResult);
+					newResult,
+					timeSinceLaunch);
 
 			flatBus->clockedComponents.state.lineValues &= component->currentInternalState.lineValues;
 		}

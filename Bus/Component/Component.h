@@ -11,6 +11,8 @@
 
 #include "BusState.h"
 
+typedef uint64_t CSComponentNanoseconds;
+
 // this is the standard form of a 'component' — anything
 // that can receive a change record and overall status,
 // describing activity everywhere else on the bus, and
@@ -21,7 +23,18 @@
 //
 //		- the response has a valid initial state
 //
-typedef void (* csComponent_handlerFunction)(void *context, CSBusState *internalState, CSBusState externalState, bool conditionIsTrue);
+typedef void (* csComponent_handlerFunction)(
+	void *context,						// the context is whatever you supplied to csComponent_create; it will have been retained
+	CSBusState *internalState,			// the internal state is your component's internal bus state
+	CSBusState externalState,			// the external state is the state of the bus externally
+	bool conditionIsTrue,				// this flag indicates whether the condition supplied to csComponent_create has just become true;
+										// if not then logically it has just become false. You can specify whether you want to receive the
+										// falses when creating the condition
+	CSComponentNanoseconds timeSinceLaunch);
+										// timeSinceLaunch is a count of the number of nanoseconds since the bus started working.
+										// Components should generally track time by observing the clock line. However for those
+										// components that also have time-dependant characteristics (such as dynamic RAM), it can
+										// be helpful to be able to track real time rather than clock time
 
 void *csComponent_create(csComponent_handlerFunction function, CSBusCondition necessaryCondition, uint64_t outputLines, void *context);
 void csComponent_addToBus(void *bus, csComponent_handlerFunction function, CSBusCondition necessaryCondition, uint64_t outputLines, void *context);
