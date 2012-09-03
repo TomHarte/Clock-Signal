@@ -739,9 +739,9 @@ static void ZX80DocumentCRTBreakIn(
 	llzx8081_provideROM(ULA, [contentsOfROM bytes], (unsigned int)[contentsOfROM length]);
 
 	// quick test
-	void *object = csZ80Disassembler_createDisassembly((uint8_t *)[contentsOfROM bytes], 0, [contentsOfROM length]);
-	csObject_printDescription(object, stdout);
-	csObject_release(object);
+//	void *object = csZ80Disassembler_createDisassembly((uint8_t *)[contentsOfROM bytes], 0, [contentsOfROM length]);
+//	csObject_printDescription(object, stdout);
+//	csObject_release(object);
 
 	// do some tidying up and set our outputter as the
 	// end-of-field delegate for the CRT
