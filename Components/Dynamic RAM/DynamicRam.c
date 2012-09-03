@@ -6,6 +6,20 @@
 //  Copyright (c) 2012 acrossair. All rights reserved.
 //
 
+/*
+
+	Logic for dynamic RAM is:
+
+		falling RAS edge => load the new row address and refresh the row
+		falling CAS edge => load the new column and do the read or write
+		falling write edge => do the write
+
+		data out is in high impedance whenever CAS is high
+
+	and that's all subject to chip enable, naturally
+
+*/
+
 #include "DynamicRAM.h"
 #include "ReferenceCountedObject.h"
 #include <stdlib.h>
@@ -23,6 +37,9 @@ typedef struct
 	uint64_t casMask, casShift;
 	uint16_t address;
 
+	CSComponentNanoseconds *lastRefreshTimes;
+	CSComponentNanoseconds refreshPeriod;
+
 } CSDynamicRAM;
 
 const char *dynamicRAMType = "dynamic RAM";
@@ -32,6 +49,7 @@ static void csDynamicRAM_dealloc(void *opaqueMemory)
 	CSDynamicRAM *memory = (CSDynamicRAM *)opaqueMemory;
 
 	if(memory->contents) free(memory->contents);
+	if(memory->lastRefreshTimes) free(memory->lastRefreshTimes);
 }
 
 static void csDynamicRAM_observeStrobes(void *opaqueMemory, CSBusState *internalState, CSBusState externalState, bool conditionIsTrue, CSComponentNanoseconds timeSinceLaunch)
@@ -84,15 +102,42 @@ void *csDynamicRAM_createOnBus(void *bus, CSDynamicRAMType type)
 		memory->referenceCountedObject.type = dynamicRAMType;
 
 		int activeLines = 0;
+		int bitsPerAddress = 0;
 		switch(type)
 		{
 			case CSDynamicRAMType4116:
-				// a 4116 holds 2kb of memory and supplies seven
-				// address lines
-				memory->contents = (uint8_t *)malloc(2048);
+				// a 4116 supplies seven address lines, stores 1 bit at each address and has a 2 ms refresh period
 				activeLines = 7;
+				bitsPerAddress = 1;
+				memory->refreshPeriod = 2000;
 			break;
+
+			case CSDynamicRAMType4164:
+				// a 4164 supplies eight address lines, stores 1 bit at each address and has a 4 ms refresh period
+				activeLines = 8;
+				bitsPerAddress = 1;
+				memory->refreshPeriod = 4000;
+			break;
+
+			case CSDynamicRAMType2164:
+				// a 4164 supplies eight address lines, stores 1 bit at each address and has a 2 ms refresh period
+				activeLines = 8;
+				bitsPerAddress = 1;
+				memory->refreshPeriod = 2000;
+			break;
+
+			case CSDynamicRAMType41464:
+				// a 4164 supplies eight address lines, stores 4 bits at each address and has a 4 ms refresh period
+				activeLines = 8;
+				bitsPerAddress = 4;
+				memory->refreshPeriod = 4000;
+			break;
+
+			default: break;
 		}
+
+		// allocate the memory we'll need for storage
+		memory->contents = (uint8_t *)malloc(((1 << (activeLines + activeLines)) * bitsPerAddress) >> 3);
 
 		// we'll use CAS to set the low bits of our internal address
 		// latch and RAS to set the high bits
@@ -101,6 +146,10 @@ void *csDynamicRAM_createOnBus(void *bus, CSDynamicRAMType type)
 
 		memory->rasMask = memory->casMask << activeLines;
 		memory->rasShift = activeLines;
+
+		// this is dynamic memory, so we'll keep track of refresh times and
+		// corrupt cells that aren't properly updated
+		memory->lastRefreshTimes = (CSComponentNanoseconds *)calloc(memory->casMask, sizeof(CSComponentNanoseconds));
 
 		// component to handle the strobes
 		void *component = 

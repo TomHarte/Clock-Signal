@@ -11,7 +11,10 @@
 
 typedef enum
 {
-	CSDynamicRAMType4116
+	CSDynamicRAMType4116,		// ie, 16,384 x 1; 128 refresh cycles, 2ms refresh period
+	CSDynamicRAMType4164,		// ie, 65,536 x 1; 256 refresh cycles, 4ms refresh period
+	CSDynamicRAMType2164,		// ie, 65,536 x 1; 128 refresh cycles, 2ms refresh period
+	CSDynamicRAMType41464		// ie, 65,536 x 4; 256 refresh cycles, 4ms refresh period
 } CSDynamicRAMType;
 
 void *csDynamicRAM_createOnBus(void *bus, CSDynamicRAMType type);
@@ -19,8 +22,7 @@ void *csDynamicRAM_createOnBus(void *bus, CSDynamicRAMType type);
 /*
 
 	Depending on which type of RAM chip you create,
-	the following lines may be honoured. At the minute
-	I'm emulating 1-bit RAM chips only.
+	the following lines may be honoured.
 
 */
 
@@ -43,9 +45,13 @@ void *csDynamicRAM_createOnBus(void *bus, CSDynamicRAMType type);
 #define CSComponentDynamicRAMSignalRAS			0x40000
 #define CSComponentDynamicRAMSignalCAS			0x80000
 
-// and data input and output (which are very commonly
-// wired together)
+// data input and output (which are very commonly
+// wired together) for 1bit RAMs
 #define CSComponentDynamicRAMSignalDataInput	0x100
 #define CSComponentDynamicRAMSignalDataOutput	0x200
+
+// data lines for 4bit RAMs
+#define CSComponentDynamicRAMDataMask			0x0f00
+#define CSComponentDynamicRAMDataShift			8
 
 #endif
