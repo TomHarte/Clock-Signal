@@ -44,11 +44,11 @@ typedef struct
 	the sample rate as and when necessary.
 
 */
-#define kCSZ80TapeFrontPadding			40000
-#define kCSZ80TapeBackPadding			20000
-#define kCSZ80TapePulseLength			3
-#define kCSZ80TapePauseLength			26
-#define kCSZ80TapeInternalSampleRate	20000
+#define kCSZ80TapeFrontPadding			40000u
+#define kCSZ80TapeBackPadding			20000u
+#define kCSZ80TapePulseLength			3u
+#define kCSZ80TapePauseLength			26u
+#define kCSZ80TapeInternalSampleRate	20000u
 
 #define kCSZ80TapeInternalTimeToSampleTime(v)	\
 	(((v) * tape->sampleRate) / 20000)
@@ -83,7 +83,7 @@ static uint64_t cszx80tape_getLength(void *opaqueTape)
 	totalLength += kCSZ80TapeFrontPadding;
 
 	// output the bytes, one at a time
-	for(int byteIndex = 0; byteIndex < tape->length; byteIndex++)
+	for(unsigned int byteIndex = 0; byteIndex < tape->length; byteIndex++)
 	{
 		// get the byte and consider the bits
 		uint8_t byte = tape->data[byteIndex];
@@ -144,11 +144,11 @@ static void cszx80tape_setToTime(CSZX80Tape *tape, uint64_t tapeTime)
 	{
 		// get current bit, work out how many pulses it has
 		int bit = kCSZ80TapeCurrentBit();
-		int pulsesInBit = bit ? 9 : 4;
+		unsigned int pulsesInBit = bit ? 9 : 4;
 
 		// hence work out its length and check whether the requested time
 		// falls within this bit
-		int lengthOfBit = (pulsesInBit * 2 * kCSZ80TapePulseLength) + kCSZ80TapePauseLength;
+		unsigned int lengthOfBit = (pulsesInBit * 2 * kCSZ80TapePulseLength) + kCSZ80TapePauseLength;
 		if(lengthOfBit > tapeTime - tape->startTimeOfLastReadBit) return;
 
 		// if not then advance a bit
@@ -177,10 +177,10 @@ static CSTapeLevel cszx80tape_getLevelAtTime(void *opaqueTape, uint64_t sampleTi
 	// otherwise we're in the middle of a bit; find out what
 	// sort of bit it is and how many pulses it has
 	int bit = kCSZ80TapeCurrentBit();
-	int pulsesInBit = bit ? 9 : 4;
+	unsigned int pulsesInBit = bit ? 9 : 4;
 
 	// find out how far we are into this bit
-	int timeIntoBit = (int)(tapeTime - tape->startTimeOfLastReadBit);
+	unsigned int timeIntoBit = (unsigned int)(tapeTime - tape->startTimeOfLastReadBit);
 
 	// if we're still in the pulse period then output a suitable
 	// bit of pulse
@@ -222,16 +222,16 @@ static void cszx80tape_getLevelPeriodAroundTime(void *opaqueTape, uint64_t sampl
 	// otherwise we're in the middle of a bit; find out what
 	// sort of bit it is and jemce how many pulses it has
 	int bit = kCSZ80TapeCurrentBit();
-	int pulsesInBit = bit ? 9 : 4;
+	unsigned int pulsesInBit = bit ? 9 : 4;
 
 	// find out how far we are into this bit
-	int timeIntoBit = (int)(tapeTime - tape->startTimeOfLastReadBit);
+	unsigned int timeIntoBit = (unsigned int)(tapeTime - tape->startTimeOfLastReadBit);
 
 	// if we're still in the pulse period then output a suitable
 	// window
 	if(timeIntoBit < pulsesInBit*2*kCSZ80TapePulseLength)
 	{
-		int pulseNumber = (timeIntoBit / kCSZ80TapePulseLength);
+		unsigned int pulseNumber = (timeIntoBit / kCSZ80TapePulseLength);
 		*startOfPeriod = kCSZ80TapeInternalTimeToSampleTime(kCSZ80TapeFrontPadding + tape->startTimeOfLastReadBit + pulseNumber*kCSZ80TapePulseLength);
 		*endOfPeriod = kCSZ80TapeInternalTimeToSampleTime(kCSZ80TapeFrontPadding + tape->startTimeOfLastReadBit + pulseNumber*kCSZ80TapePulseLength + kCSZ80TapePulseLength);
 		return;
@@ -276,7 +276,7 @@ void *cszx80tape_createFromFile(const char *filename)
 		}
 
 		// get length of file
-		tape->length = fseek(inputStream, 0, SEEK_END);
+		tape->length = (unsigned)fseek(inputStream, 0, SEEK_END);
 		fseek(inputStream, 0, SEEK_SET);
 
 		tape->data = (uint8_t *)malloc(tape->length);
