@@ -46,7 +46,7 @@ static void csStaticMemory_observeMemoryRead(void *opaqueMemory, CSBusState *int
 //			printf("f %04x\n", address);
 
 		// and load the data lines
-		internalState->lineValues &= (memory->contents[address] << CSBusStandardDataShift) | ~CSBusStandardDataMask;
+		internalState->lineValues &= ((uint64_t)memory->contents[address] << CSBusStandardDataShift) | ~CSBusStandardDataMask;
 	}
 	else
 	{
@@ -70,7 +70,7 @@ static void csStaticMemory_observeMemoryWrite(void *opaqueMemory, CSBusState *in
 		address &= (memory->size - 1);
 
 		// and load the data lines
-		memory->contents[address] = externalState.lineValues >> CSBusStandardDataShift;
+		memory->contents[address] = (uint8_t)(externalState.lineValues >> CSBusStandardDataShift);
 	}
 }
 
@@ -81,7 +81,7 @@ static void csStaticMemory_dealloc(void *opaqueMemory)
 	if(memory->contents) free(memory->contents);
 }
 
-void csStaticMemory_setContents(void *opaqueMemory, unsigned int dest, const uint8_t *source, unsigned int length)
+void csStaticMemory_setContents(void *opaqueMemory, unsigned int dest, const uint8_t *source, size_t length)
 {
 	CSStaticMemory *memory = (CSStaticMemory *)opaqueMemory;
 
@@ -93,7 +93,7 @@ void csStaticMemory_setContents(void *opaqueMemory, unsigned int dest, const uin
 	memcpy(&memory->contents[dest], source, length);
 }
 
-void csStaticMemory_getContents(void *opaqueMemory, uint8_t *dest, unsigned int source, unsigned int length)
+void csStaticMemory_getContents(void *opaqueMemory, uint8_t *dest, unsigned int source, size_t length)
 {
 	CSStaticMemory *memory = (CSStaticMemory *)opaqueMemory;
 

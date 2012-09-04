@@ -11,6 +11,7 @@
 
 #include "stdbool.h"
 #include "stdint.h"
+#include "stddef.h"
 #include "../../Bus/BusState.h"
 
 extern const char *staticMemoryType;
@@ -26,7 +27,7 @@ extern const char *staticMemoryType;
 
 */
 void *csStaticMemory_createOnBus(void *bus, unsigned int size, CSBusCondition readCondition, CSBusCondition writeCondition);
-void csStaticMemory_setContents(void *memory, unsigned int dest, const uint8_t *source, unsigned int length);
-void csStaticMemory_getContents(void *memory, uint8_t *dest, unsigned int source, unsigned int length);
+void csStaticMemory_setContents(void *memory, unsigned int dest, const uint8_t *source, size_t length);
+void csStaticMemory_getContents(void *memory, uint8_t *dest, unsigned int source, size_t length);
 
 #endif
