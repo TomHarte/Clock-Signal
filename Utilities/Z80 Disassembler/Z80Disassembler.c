@@ -172,7 +172,7 @@ static char *rTable(CSZ80DisassemblerState *state, int index)
 	if(rTable[index]) return rTable[index];
 	if(state->addOffset)
 	{
-		return indexPlusOffset(state, csZ80Disassembler_getByte(state));
+		return indexPlusOffset(state, (int8_t)csZ80Disassembler_getByte(state));
 	}
 	else
 		return "(HL)";
@@ -194,7 +194,7 @@ static char *rp2Table(CSZ80DisassemblerState *state, int index)
 static void csZ80Disassembler_disassembleCBPage(CSZ80DisassemblerState *state)
 {
 	int8_t displacement = 0;
-	if(state->addOffset) displacement = csZ80Disassembler_getByte(state);
+	if(state->addOffset) displacement = (int8_t)csZ80Disassembler_getByte(state);
 	uint8_t opcode = csZ80Disassembler_getByte(state);
 	int x = opcode >> 6;
 	int y = (opcode >> 3)&7;
