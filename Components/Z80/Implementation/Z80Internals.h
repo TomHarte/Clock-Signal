@@ -152,7 +152,7 @@ typedef struct LLZ80ProcessorState
 	LLZ80RegisterPair pcRegister;
 
 	bool iff1, iff2;
-	int interruptMode;
+	unsigned int interruptMode;
 	uint8_t rRegister;
 	uint8_t iRegister;
 

@@ -390,7 +390,7 @@ unsigned int llz80_monitor_getInternalValue(void *opaqueZ80, LLZ80MonitorValue k
 		case LLZ80MonitorValueHDashRegister:	return z80->hlDashRegister.bytes.high;
 		case LLZ80MonitorValueLDashRegister:	return z80->hlDashRegister.bytes.low;
 
-		case LLZ80MonitorValueAFDashRegister:	return (z80->aDashRegister << 8) | z80->fDashRegister;
+		case LLZ80MonitorValueAFDashRegister:	return (unsigned)((z80->aDashRegister << 8) | z80->fDashRegister);
 		case LLZ80MonitorValueBCDashRegister:	return z80->bcDashRegister.fullValue;
 		case LLZ80MonitorValueDEDashRegister:	return z80->deDashRegister.fullValue;
 		case LLZ80MonitorValueHLDashRegister:	return z80->hlDashRegister.fullValue;
@@ -398,7 +398,7 @@ unsigned int llz80_monitor_getInternalValue(void *opaqueZ80, LLZ80MonitorValue k
 		case LLZ80MonitorValueAFRegister:
 		{
 			uint8_t flagRegister = llz80_getF(z80);
-			return (z80->aRegister << 8) | flagRegister;
+			return (unsigned)((z80->aRegister << 8) | flagRegister);
 		}
 		case LLZ80MonitorValueBCRegister:		return z80->bcRegister.fullValue;
 		case LLZ80MonitorValueDERegister:		return z80->deRegister.fullValue;
@@ -429,61 +429,61 @@ void llz80_monitor_setInternalValue(void *opaqueZ80, LLZ80MonitorValue key, unsi
 	{
 		default: break;
 
-		case LLZ80MonitorValueARegister: z80->aRegister = value;	break;
+		case LLZ80MonitorValueARegister: z80->aRegister = (uint8_t)value;	break;
 		case LLZ80MonitorValueFRegister:
 		{
-			llz80_setF(z80, value);
+			llz80_setF(z80, (uint8_t)value);
 		}
 		break;
-		case LLZ80MonitorValueBRegister: 		z80->bcRegister.bytes.high = value;		break;
-		case LLZ80MonitorValueCRegister: 		z80->bcRegister.bytes.low = value;		break;
-		case LLZ80MonitorValueDRegister: 		z80->deRegister.bytes.high = value;		break;
-		case LLZ80MonitorValueERegister: 		z80->deRegister.bytes.low = value;		break;
-		case LLZ80MonitorValueHRegister: 		z80->hlRegister.bytes.high = value;		break;
-		case LLZ80MonitorValueLRegister: 		z80->hlRegister.bytes.low = value;		break;
+		case LLZ80MonitorValueBRegister: 		z80->bcRegister.bytes.high = (uint8_t)value;		break;
+		case LLZ80MonitorValueCRegister: 		z80->bcRegister.bytes.low = (uint8_t)value;			break;
+		case LLZ80MonitorValueDRegister: 		z80->deRegister.bytes.high = (uint8_t)value;		break;
+		case LLZ80MonitorValueERegister: 		z80->deRegister.bytes.low = (uint8_t)value;			break;
+		case LLZ80MonitorValueHRegister: 		z80->hlRegister.bytes.high = (uint8_t)value;		break;
+		case LLZ80MonitorValueLRegister: 		z80->hlRegister.bytes.low = (uint8_t)value;			break;
 
-		case LLZ80MonitorValueADashRegister:	z80->aDashRegister = value;				break;
-		case LLZ80MonitorValueFDashRegister:	z80->fDashRegister = value;				break;
-		case LLZ80MonitorValueBDashRegister:	z80->bcDashRegister.bytes.high = value;	break;
-		case LLZ80MonitorValueCDashRegister:	z80->bcDashRegister.bytes.low = value;	break;
-		case LLZ80MonitorValueDDashRegister:	z80->deDashRegister.bytes.high = value;	break;
-		case LLZ80MonitorValueEDashRegister:	z80->deDashRegister.bytes.low = value;	break;
-		case LLZ80MonitorValueHDashRegister:	z80->hlDashRegister.bytes.high = value;	break;
-		case LLZ80MonitorValueLDashRegister:	z80->hlDashRegister.bytes.low = value;	break;
+		case LLZ80MonitorValueADashRegister:	z80->aDashRegister = (uint8_t)value;				break;
+		case LLZ80MonitorValueFDashRegister:	z80->fDashRegister = (uint8_t)value;				break;
+		case LLZ80MonitorValueBDashRegister:	z80->bcDashRegister.bytes.high = (uint8_t)value;	break;
+		case LLZ80MonitorValueCDashRegister:	z80->bcDashRegister.bytes.low = (uint8_t)value;		break;
+		case LLZ80MonitorValueDDashRegister:	z80->deDashRegister.bytes.high = (uint8_t)value;	break;
+		case LLZ80MonitorValueEDashRegister:	z80->deDashRegister.bytes.low = (uint8_t)value;		break;
+		case LLZ80MonitorValueHDashRegister:	z80->hlDashRegister.bytes.high = (uint8_t)value;	break;
+		case LLZ80MonitorValueLDashRegister:	z80->hlDashRegister.bytes.low = (uint8_t)value;		break;
 
 		case LLZ80MonitorValueAFDashRegister:
 		{
-			z80->aDashRegister = value >> 6;
-			z80->fDashRegister = value;
+			z80->aDashRegister = (uint8_t)(value >> 6);
+			z80->fDashRegister = (uint8_t)value;
 		}
 		break;
-		case LLZ80MonitorValueBCDashRegister:	z80->bcDashRegister.fullValue = value;	break;
-		case LLZ80MonitorValueDEDashRegister:	z80->deDashRegister.fullValue = value;	break;
-		case LLZ80MonitorValueHLDashRegister:	z80->hlDashRegister.fullValue = value;	break;
+		case LLZ80MonitorValueBCDashRegister:	z80->bcDashRegister.fullValue = (uint16_t)value;	break;
+		case LLZ80MonitorValueDEDashRegister:	z80->deDashRegister.fullValue = (uint16_t)value;	break;
+		case LLZ80MonitorValueHLDashRegister:	z80->hlDashRegister.fullValue = (uint16_t)value;	break;
 
 		case LLZ80MonitorValueAFRegister:
 		{
-			llz80_setF(z80, value);
-			z80->aRegister = value >> 8;
+			llz80_setF(z80, (uint8_t)value);
+			z80->aRegister = (uint8_t)(value >> 8);
 		}
 		break;
-		case LLZ80MonitorValueBCRegister:		z80->bcRegister.fullValue = value;		break;
-		case LLZ80MonitorValueDERegister:		z80->deRegister.fullValue = value;		break;
-		case LLZ80MonitorValueHLRegister:		z80->hlRegister.fullValue = value;		break;
+		case LLZ80MonitorValueBCRegister:		z80->bcRegister.fullValue = (uint16_t)value;		break;
+		case LLZ80MonitorValueDERegister:		z80->deRegister.fullValue = (uint16_t)value;		break;
+		case LLZ80MonitorValueHLRegister:		z80->hlRegister.fullValue = (uint16_t)value;		break;
 
-		case LLZ80MonitorValueRRegister: 		z80->rRegister = value;					break;
-		case LLZ80MonitorValueIRegister: 		z80->iRegister = value;					break;
+		case LLZ80MonitorValueRRegister: 		z80->rRegister = (uint8_t)value;					break;
+		case LLZ80MonitorValueIRegister: 		z80->iRegister = (uint8_t)value;					break;
 
-		case LLZ80MonitorValueIXRegister: 		z80->ixRegister.fullValue = value;		break;
-		case LLZ80MonitorValueIYRegister: 		z80->iyRegister.fullValue = value;		break;
-		case LLZ80MonitorValueSPRegister: 		z80->spRegister.fullValue = value;		break;
-		case LLZ80MonitorValuePCRegister: 		z80->pcRegister.fullValue = value;		break;
+		case LLZ80MonitorValueIXRegister: 		z80->ixRegister.fullValue = (uint16_t)value;		break;
+		case LLZ80MonitorValueIYRegister: 		z80->iyRegister.fullValue = (uint16_t)value;		break;
+		case LLZ80MonitorValueSPRegister: 		z80->spRegister.fullValue = (uint16_t)value;		break;
+		case LLZ80MonitorValuePCRegister: 		z80->pcRegister.fullValue = (uint16_t)value;		break;
 
-		case LLZ80MonitorValueIFF1Flag:			z80->iff1 = value;						break;
-		case LLZ80MonitorValueIFF2Flag:			z80->iff2 = value;						break;
+		case LLZ80MonitorValueIFF1Flag:			z80->iff1 = value;									break;
+		case LLZ80MonitorValueIFF2Flag:			z80->iff2 = value;									break;
 
-		case LLZ80MonitorValueInterruptMode:	z80->interruptMode = value;				break;
+		case LLZ80MonitorValueInterruptMode:	z80->interruptMode = value;							break;
 
-		case LLZ80MonitorValueHalfCyclesToDate:	z80->internalTime = value;				break;
+		case LLZ80MonitorValueHalfCyclesToDate:	z80->internalTime = value;							break;
 	}
 }
