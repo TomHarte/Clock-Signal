@@ -224,7 +224,7 @@ void llz80_iop_EDPageDecode_imp(LLZ80ProcessorState *z80, LLZ80InternalInstructi
 			int result = 0 - z80->aRegister;
 			int halfResult = 0 - (z80->aRegister&0xf);
 
-			z80->aRegister = result;
+			z80->aRegister = (uint8_t)result;
 			z80->bit5And3Flags = z80->lastSignResult = z80->lastZeroResult = z80->aRegister;
 			z80->generalFlags =
 				(overflow ? LLZ80FlagParityOverflow : 0) |
@@ -343,7 +343,7 @@ void llz80_setLDFlags(LLZ80ProcessorState *z80)
 	z80->generalFlags =
 		(z80->generalFlags&LLZ80FlagCarry) |
 		(z80->bcRegister.fullValue ? LLZ80FlagParityOverflow : 0);
-	z80->bit5And3Flags = (n&0x8) | ((n&0x2) << 4);
+	z80->bit5And3Flags = (uint8_t)((n&0x8) | ((n&0x2) << 4));
 }
 
 void llz80_iop_finishLDI(LLZ80ProcessorState *z80, LLZ80InternalInstruction *instruction)
@@ -410,7 +410,7 @@ void llz80_setCPFlags(LLZ80ProcessorState *z80)
 		(z80->bcRegister.fullValue ? LLZ80FlagParityOverflow : 0) |
 		(halfResult & LLZ80FlagHalfCarry) |
 		LLZ80FlagSubtraction;
-	z80->bit5And3Flags = (result&0x8) | ((result&0x2) << 4);
+	z80->bit5And3Flags = (uint8_t)((result&0x8) | ((result&0x2) << 4));
 	z80->lastSignResult = z80->lastZeroResult = result;
 }
 
@@ -472,7 +472,7 @@ void llz80_setINFlags(LLZ80ProcessorState *z80, int cAdder)
 	if(summation > 0xff) z80->generalFlags |= LLZ80FlagHalfCarry | LLZ80FlagCarry;
 
 	summation = (summation&7) ^ z80->bcRegister.bytes.high;
-	llz80_calculateParity(summation);
+	llz80_calculateParity((uint8_t)summation);
 	z80->generalFlags |= parity;
 }
 
@@ -527,7 +527,7 @@ void llz80_setOUTFlags(LLZ80ProcessorState *z80)
 	if(summation > 0xff) z80->generalFlags |= LLZ80FlagHalfCarry | LLZ80FlagCarry;
 
 	summation = (summation&7) ^ z80->bcRegister.bytes.high;
-	llz80_calculateParity(summation);
+	llz80_calculateParity((uint8_t)summation);
 	z80->generalFlags |= parity;
 }
 
@@ -571,7 +571,7 @@ void llz80_iop_doRRD(LLZ80ProcessorState *z80, LLZ80InternalInstruction *instruc
 {
 	int lowNibble = z80->aRegister&0xf;
 	z80->aRegister = (z80->aRegister&0xf0) | (z80->temporary8bitValue & 0xf);
-	z80->temporary8bitValue = (z80->temporary8bitValue >> 4) | (lowNibble << 4);
+	z80->temporary8bitValue = (uint8_t)((z80->temporary8bitValue >> 4) | (lowNibble << 4));
 
 	llz80_calculateParity(z80->aRegister);
 	z80->generalFlags =
@@ -585,7 +585,7 @@ void llz80_iop_doRLD(LLZ80ProcessorState *z80, LLZ80InternalInstruction *instruc
 {
 	int lowNibble = z80->aRegister&0xf;
 	z80->aRegister = (z80->aRegister&0xf0) | (z80->temporary8bitValue >> 4);
-	z80->temporary8bitValue = (z80->temporary8bitValue << 4) | lowNibble;
+	z80->temporary8bitValue = (uint8_t)((z80->temporary8bitValue << 4) | lowNibble);
 
 	llz80_calculateParity(z80->aRegister);
 	z80->generalFlags =
@@ -606,9 +606,10 @@ void llz80_iop_setInputFlags(LLZ80ProcessorState *z80, LLZ80InternalInstruction 
 	parity ^= parity >> 2;
 	parity ^= parity >> 1;
 
-	z80->generalFlags = 
-		(z80->generalFlags & LLZ80FlagCarry) |
-		((parity&1) << 2);
+	z80->generalFlags =
+		(uint8_t)(
+			(z80->generalFlags & LLZ80FlagCarry) |
+			((parity&1) << 2));
 }
 
 LLZ80InternalInstructionFunction llz80_iop_EDPageDecode = llz80_iop_EDPageDecode_imp;
