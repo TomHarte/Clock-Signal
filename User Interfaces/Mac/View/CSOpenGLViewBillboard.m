@@ -43,7 +43,7 @@
 	glClear(GL_COLOR_BUFFER_BIT);
 	glEnable(GL_TEXTURE_2D);
 	glBindTexture(GL_TEXTURE_2D, textureID);
-	glViewport(0, 0, self.bounds.size.width, self.bounds.size.height);
+	glViewport(0, 0, (GLsizei)self.bounds.size.width, (GLsizei)self.bounds.size.height);
 
 	NSRect outputRect = minimumSourceRect;
 
@@ -53,16 +53,16 @@
 			glColor3f(1.0, 1.0, 1.0);
 
 			glBegin(GL_QUADS);
-				glTexCoord2f(outputRect.origin.x, outputRect.origin.y + outputRect.size.height);
+				glTexCoord2f((GLfloat)outputRect.origin.x, (GLfloat)(outputRect.origin.y + outputRect.size.height));
 				glVertex2f(-4.0f / 3.0f, -1.0);
 
-				glTexCoord2f(outputRect.origin.x, outputRect.origin.y);
+				glTexCoord2f((GLfloat)outputRect.origin.x, (GLfloat)outputRect.origin.y);
 				glVertex2f(-4.0f / 3.0f, 1.0);
 
-				glTexCoord2f(outputRect.origin.x + outputRect.size.width, outputRect.origin.y);
+				glTexCoord2f((GLfloat)(outputRect.origin.x + outputRect.size.width), (GLfloat)outputRect.origin.y);
 				glVertex2f(4.0f / 3.0f, 1.0);
 
-				glTexCoord2f(outputRect.origin.x + outputRect.size.width, outputRect.origin.y + outputRect.size.height);
+				glTexCoord2f((GLfloat)(outputRect.origin.x + outputRect.size.width), (GLfloat)(outputRect.origin.y + outputRect.size.height));
 				glVertex2f(4.0f / 3.0f, -1.0);
 			glEnd();
 		glPopMatrix();

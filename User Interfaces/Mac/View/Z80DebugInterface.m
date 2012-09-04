@@ -115,7 +115,7 @@
 	[scanner scanHexInt:&address];
 	[scanner release];
 
-	[delegate debugInterface:self runUntilAddress:address];
+	[delegate debugInterface:self runUntilAddress:(uint16_t)address];
 }
 
 - (IBAction)run:(id)sender
@@ -193,14 +193,14 @@
 	[busReqLine pushBit:(busState&LLZ80SignalBusRequest) ? 1 : 0];
 	[busAckLine pushBit:(busState&LLZ80SignalBusAcknowledge) ? 1 : 0];
 
-	uint8_t dataValue = (busState >> CSBusStandardDataShift);
+	uint8_t dataValue = (uint8_t)(busState >> CSBusStandardDataShift);
 	for(CSLineGraph *graph in [NSArray arrayWithObjects:d7Line, d6Line, d5Line, d4Line, d3Line, d2Line, d1Line, d0Line, nil])
 	{
 		[graph pushBit:(dataValue & 0x80) ? 1 : 0];
 		dataValue <<= 1;
 	}
 
-	uint16_t addressValue = (busState >> CSBusStandardAddressShift);
+	uint16_t addressValue = (uint16_t)(busState >> CSBusStandardAddressShift);
 	for(CSLineGraph *graph in [NSArray arrayWithObjects:a15Line, a14Line, a13Line, a12Line, a11Line, a10Line, a9Line, a8Line, a7Line, a6Line, a5Line, a4Line, a3Line, a2Line, a1Line, a0Line, nil])
 	{
 		[graph pushBit:(addressValue & 0x8000) ? 1 : 0];
@@ -212,7 +212,7 @@
 {
 	[self set8BitValue:LLZ80MonitorValueARegister toField:aRegisterField];
 
-	uint8_t flagRegister = llz80_monitor_getInternalValue(delegate.z80ForDebugInterface, LLZ80MonitorValueFRegister);
+	uint8_t flagRegister = (uint8_t)llz80_monitor_getInternalValue(delegate.z80ForDebugInterface, LLZ80MonitorValueFRegister);
 	[self setString:
 	 	[NSString stringWithFormat:@"%c%c%c%c%c%c%c%c",
 		(flagRegister&0x80) ? 'S' : '-',
