@@ -84,7 +84,7 @@ static void llzx80ula_observeRefresh(void *opaqueMachineState, CSBusState *inter
 			uint8_t videoByte;
 
 			// if so, would the ROM actually serve this address?
-			videoByte = externalState.lineValues >> CSBusStandardDataShift;
+			videoByte = (uint8_t)(externalState.lineValues >> CSBusStandardDataShift);
 
 			// this byte might be intended to be inverted
 			videoByte ^= machineState->videoByteXorMask;
@@ -104,7 +104,7 @@ static void llzx80ula_observeIORead(void *opaqueMachineState, CSBusState *intern
 	if(conditionIsTrue)
 	{
 		LLZX8081MachineState *machineState = (LLZX8081MachineState *)opaqueMachineState;
-		uint16_t address = externalState.lineValues >> CSBusStandardAddressShift;
+		uint16_t address = (uint16_t)(externalState.lineValues >> CSBusStandardAddressShift);
 
 		switch(address&7)
 		{
@@ -142,7 +142,7 @@ static void llzx80ula_observeIORead(void *opaqueMachineState, CSBusState *intern
 				}
 
 				// and load the result
-				internalState->lineValues &= (result << CSBusStandardDataShift) | ~CSBusStandardDataMask;
+				internalState->lineValues &= ((uint64_t)result << CSBusStandardDataShift) | ~CSBusStandardDataMask;
 			}
 			break;
 		}
@@ -159,7 +159,7 @@ static void llzx80ula_observeIOWrite(void *opaqueMachineState, CSBusState *inter
 	{
 		// an IO write request ...
 		LLZX8081MachineState *machineState = (LLZX8081MachineState *)opaqueMachineState;
-		uint16_t address = externalState.lineValues >> CSBusStandardAddressShift;
+		uint16_t address = (uint16_t)(externalState.lineValues >> CSBusStandardAddressShift);
 
 		// determine whether activate or deactive the NMI generator;
 		// this is relevant to the ZX81 only, and since NMI enabled
@@ -266,10 +266,10 @@ static void llzx80ula_observeVideoRead(void *opaqueMachineState, CSBusState *int
 	{
 		LLZX8081MachineState *machineState = (LLZX8081MachineState *)opaqueMachineState;
 
-		uint8_t value = (externalState.lineValues >> CSBusStandardDataShift);
+		uint8_t value = (uint8_t)(externalState.lineValues >> CSBusStandardDataShift);
 
 		machineState->videoFetchAddress = 
-			((value&0x3f) << 3) | 
+			(uint16_t)((value&0x3f) << 3) |
 			(machineState->lineCounter&7);	// 9 bits of address, to substitute onto the low 9 address lines
 											// in front of the ROM, for the duration of fetchVideoByte being true
 
@@ -294,8 +294,8 @@ static void llzx80ula_romAddressShuffle(void *opaquePassthroughNode, CSBusState 
 	{
 		// we replace the low 9 bits of the address, so...
 		externalState.lineValues =
-			(externalState.lineValues & ~(511 << CSBusStandardAddressShift)) |
-			(machineState->videoFetchAddress << CSBusStandardAddressShift);
+			(externalState.lineValues & ~(511u << CSBusStandardAddressShift)) |
+			(uint64_t)(machineState->videoFetchAddress << CSBusStandardAddressShift);
 	}
 
 	CSBusComponent *childComponent = node->childComponent;
