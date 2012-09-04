@@ -69,14 +69,14 @@ static void csDynamicRAM_observeStrobes(void *opaqueMemory, CSBusState *internal
 		// TODO: this should refresh this row
 
 		// dump our existing row number and shift in the new value
-		memory->address = (memory->address & memory->casMask) | ((externalState.lineValues << memory->rasShift) & memory->rasMask);
+		memory->address = (uint16_t)((memory->address & memory->casMask) | ((externalState.lineValues << memory->rasShift) & memory->rasMask));
 	}
 
 	// column select, maybe?
 	if(!externalState.lineValues&CSComponentDynamicRAMSignalRAS)
 	{
 		// dump our existing column number and shift in the new value
-		memory->address = (memory->address & memory->rasMask) | ((externalState.lineValues << memory->casShift) & memory->casMask);
+		memory->address = (uint16_t)((memory->address & memory->rasMask) | ((externalState.lineValues << memory->casShift) & memory->casMask));
 
 		// do an input or output
 		if(!externalState.lineValues&CSComponentDynamicRAMSignalWrite)
@@ -101,8 +101,8 @@ void *csDynamicRAM_createOnBus(void *bus, CSDynamicRAMType type)
 		memory->referenceCountedObject.dealloc = csDynamicRAM_dealloc;
 		memory->referenceCountedObject.type = dynamicRAMType;
 
-		int activeLines = 0;
-		int bitsPerAddress = 0;
+		unsigned int activeLines = 0;
+		unsigned int bitsPerAddress = 0;
 		switch(type)
 		{
 			case CSDynamicRAMType4116:
@@ -137,7 +137,7 @@ void *csDynamicRAM_createOnBus(void *bus, CSDynamicRAMType type)
 		}
 
 		// allocate the memory we'll need for storage
-		memory->contents = (uint8_t *)malloc(((1 << (activeLines + activeLines)) * bitsPerAddress) >> 3);
+		memory->contents = (uint8_t *)malloc((size_t)(((1 << (activeLines + activeLines)) * bitsPerAddress) >> 3));
 
 		// we'll use CAS to set the low bits of our internal address
 		// latch and RAS to set the high bits
