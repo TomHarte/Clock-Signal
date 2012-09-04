@@ -101,8 +101,8 @@ static void llz80_iop_CBPageDecode_imp(LLZ80ProcessorState *z80, LLZ80InternalIn
 				llz80_scheduleRead(z80, &z80->temporary8bitValue, &z80->temporaryAddress.fullValue);
 
 				// do the instruction
-				LLZ80InternalInstruction *instruction = llz80_scheduleFunction(z80, functionTable[opcode >> 6]);
-				llz80_metadata_setMaskAndValue(instruction, 
+				LLZ80InternalInstruction *nextInstruction = llz80_scheduleFunction(z80, functionTable[opcode >> 6]);
+				llz80_metadata_setMaskAndValue(nextInstruction,
 						1 << ((opcode >> 3)&7),
 						&z80->temporary8bitValue);
 
@@ -180,8 +180,8 @@ static void llz80_iop_CBPageDecode_imp(LLZ80ProcessorState *z80, LLZ80InternalIn
 					llz80_scheduleRead(z80, &z80->temporary8bitValue, &z80->hlRegister.fullValue);
 
 					llz80_schedulePauseForCycles(z80, 1);
-					LLZ80InternalInstruction *instruction = llz80_scheduleFunction(z80, functionTable[opcode >> 6]);
-					llz80_metadata_setMaskAndValue(instruction, 
+					LLZ80InternalInstruction *nextInstruction = llz80_scheduleFunction(z80, functionTable[opcode >> 6]);
+					llz80_metadata_setMaskAndValue(nextInstruction,
 							1 << ((opcode >> 3)&7),
 							&z80->temporary8bitValue);
 

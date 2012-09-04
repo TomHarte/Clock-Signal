@@ -30,9 +30,9 @@ typedef struct
 
 } CSFlatBus;
 
-static void csFlatBus_addComponentToSet(struct CSFlatBusComponentSet *set, void *component)
+static void csFlatBus_addComponentToSet(struct CSFlatBusComponentSet *set, void *newComponent)
 {
-	csArray_addObject(set->components, component);
+	csArray_addObject(set->components, newComponent);
 
 	set->allObservedSetLines = 0;
 	set->allObservedResetLines = 0;
