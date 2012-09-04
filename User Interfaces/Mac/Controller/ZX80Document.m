@@ -84,7 +84,7 @@
 	}
 }
 
-- (void)enqueueAudioBuffer:(short *)buffer numberOfSamples:(int)lengthInSamples
+- (void)enqueueAudioBuffer:(short *)buffer numberOfSamples:(unsigned int)lengthInSamples
 {
 	@synchronized(self)
 	{
@@ -112,7 +112,7 @@ static void audioOutputCallback(
 
 static void	ZX80DocumentAudioCallout(
 	void *tapePlayer,
-	int numberOfSamples,
+	unsigned int numberOfSamples,
 	short *sampleBuffer,
 	void *context)
 {
@@ -550,8 +550,8 @@ static void ZX80DocumentInstructionObserverBreakIn(void *z80, void *context)
 
 static void ZX80DocumentCRTBreakIn(
 	void *crt,
-	int widthOfBuffer,
-	int heightOfBuffer,
+	unsigned int widthOfBuffer,
+	unsigned int heightOfBuffer,
 	LLCRTDisplayType bufferType,
 	bool isOddField,
 	void *buffer,
@@ -590,8 +590,8 @@ static void ZX80DocumentCRTBreakIn(
 
 	NSDictionary *infoDictionary = 
 		[NSDictionary dictionaryWithObjectsAndKeys:
-			[NSNumber numberWithInt:widthOfBuffer], @"widthOfBuffer",
-			[NSNumber numberWithInt:heightOfBuffer], @"heightOfBuffer",
+			[NSNumber numberWithUnsignedInt:widthOfBuffer], @"widthOfBuffer",
+			[NSNumber numberWithUnsignedInt:heightOfBuffer], @"heightOfBuffer",
 			[NSValue valueWithPointer:bufferCopy], @"buffer",
 			nil];
 

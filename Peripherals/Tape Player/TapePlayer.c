@@ -142,7 +142,7 @@ void cstapePlayer_runToTime(void *opaquePlayer, unsigned int timeStamp)
 						}
 						level |= level << 16;
 
-						int count = (int)(endTime - timeToSample);
+						unsigned int count = (unsigned int)(endTime - timeToSample);
 						if(count > samplesToWrite) count = samplesToWrite;
 
 						memset_pattern4(&player->audioBuffer[player->audioBufferWritePointer], &level, count << 1);

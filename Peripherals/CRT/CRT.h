@@ -74,8 +74,8 @@ void *llcrt_create(unsigned int samplesPerLine, LLCRTInputTiming timingMode, LLC
 */
 typedef void (* llcrt_endOfFieldDelegate)(
 	void *crt,
-	int widthOfBuffer,
-	int heightOfBuffer,
+	unsigned int widthOfBuffer,
+	unsigned int heightOfBuffer,
 	LLCRTDisplayType bufferType,
 	bool isOddField,
 	void *buffer,
