@@ -24,8 +24,8 @@ typedef struct
 	CSBusComponent *component;
 	CSBusState currentBusState;
 
-	CSComponentNanoseconds timeToNow;
-	int64_t accumulatedError, wholeStep, adjustmentUp, adjustmentDown;
+	CSComponentNanoseconds timeToNow, wholeStep;
+	int64_t accumulatedError, adjustmentUp, adjustmentDown;
 
 } CSClockGenerator;
 

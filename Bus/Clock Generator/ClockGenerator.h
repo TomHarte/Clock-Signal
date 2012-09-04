@@ -6,7 +6,7 @@
 //  Copyright 2011 Thomas Harte. All rights reserved.
 //
 
-#import "stdint.h"
+#include "stdint.h"
 
 #ifndef ClockSignal_ClockGenerator_h
 #define ClockSignal_ClockGenerator_h
