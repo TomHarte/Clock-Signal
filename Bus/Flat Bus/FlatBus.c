@@ -40,7 +40,7 @@ static void csFlatBus_addComponentToSet(struct CSFlatBusComponentSet *set, void 
 
 	unsigned int numberOfComponents;
 	void **components = csArray_getCArray(set->components, &numberOfComponents);
-	for(int c = 0; c < numberOfComponents; c++)
+	for(unsigned int c = 0; c < numberOfComponents; c++)
 	{
 		CSBusComponent *component = components[c];
 		uint64_t changedLines = component->condition.changedLines;
@@ -89,7 +89,7 @@ static void csFlatBus_addComponent(void *node, void *opaqueComponent)
 	}
 }
 
-static void csBusNode_binaryPrint(uint64_t value)
+/*static void csBusNode_binaryPrint(uint64_t value)
 {
 	uint64_t mask = 0x8000000000000000;
 	int position = 63;
@@ -115,7 +115,7 @@ static void csBusNode_binaryPrint(uint64_t value)
 		}
 		position--;
 	}
-}
+}*/
 
 /*static void inline csFlatBus_messageList(CSFlatBus *flatBus, void *list, uint64_t listFlags, CSBusState *state, CSBusState *oldExternalState, CSBusState externalState)
 {
@@ -178,7 +178,7 @@ static void csFlatBus_message(void *opaqueBusNode, CSBusState *internalState, CS
 	// is it possible some are now true that weren't a moment ago from the true set?
 	if(flatBus->trueComponents.allObservedSetLines&setLines || flatBus->trueComponents.allObservedResetLines&resetLines)
 	{
-		flatBus->trueComponents.state.lineValues = -1;
+		flatBus->trueComponents.state.lineValues = ~0llu;
 
 		unsigned int numberOfComponents;
 		void **components = csArray_getCArray(flatBus->trueComponents.components, &numberOfComponents);
@@ -218,7 +218,7 @@ static void csFlatBus_message(void *opaqueBusNode, CSBusState *internalState, CS
 		(flatBus->trueFalseComponents.allObservedResetLines&resetLines) ||
 		(flatBus->trueFalseComponents.allObservedChangeLines&changedLines))
 	{
-		flatBus->trueFalseComponents.state.lineValues = -1;
+		flatBus->trueFalseComponents.state.lineValues = ~0llu;
 
 		unsigned int numberOfComponents;
 		void **components = csArray_getCArray(flatBus->trueFalseComponents.components, &numberOfComponents);
@@ -253,7 +253,7 @@ static void csFlatBus_message(void *opaqueBusNode, CSBusState *internalState, CS
 		// nobody has become true or mutated, so check everyone that's currently true to see if they've become false
 		if( (flatBus->trueFalseComponents.allObservedSetLines | flatBus->trueFalseComponents.allObservedResetLines)&changedLines)
 		{
-			flatBus->trueFalseComponents.state.lineValues = -1;
+			flatBus->trueFalseComponents.state.lineValues = ~0llu;
 
 			unsigned int numberOfComponents;
 			void **components = csArray_getCArray(flatBus->trueFalseComponents.components, &numberOfComponents);
@@ -291,7 +291,7 @@ static void csFlatBus_message(void *opaqueBusNode, CSBusState *internalState, CS
 	if(changedLines&CSBusStandardClockLine)
 	{
 		flatBus->clockedComponents.lastExternalState = totalState;
-		flatBus->clockedComponents.state.lineValues = -1;
+		flatBus->clockedComponents.state.lineValues = ~0llu;
 
 		// figure out the total internal state again
 		internalState->lineValues = flatBus->clockedComponents.state.lineValues & flatBus->trueComponents.state.lineValues & flatBus->trueFalseComponents.state.lineValues;
@@ -319,7 +319,7 @@ static void csFlatBus_addChangeFlagsFromSet(struct CSFlatBusComponentSet *set, u
 {
 	unsigned int numberOfComponents;
 	void **components = csArray_getCArray(set->components, &numberOfComponents);
-	for(int c = 0; c < numberOfComponents; c++)
+	for(unsigned int c = 0; c < numberOfComponents; c++)
 	{
 		*outputLines |= ((CSBusComponent *)components[c])->outputLines;
 		*observedLines |= csBusCondition_observedLines(((CSBusComponent *)components[c])->condition);
