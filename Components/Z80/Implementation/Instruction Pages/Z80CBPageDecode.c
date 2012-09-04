@@ -36,7 +36,7 @@ static void llz80_iop_doShiftOp(LLZ80ProcessorState *z80, LLZ80InternalInstructi
 }
 
 #define llz80_metadata_setMaskAndValue(metadata, maskVal, valueVal)	\
-	(metadata)->extraData.bitOp.mask = (maskVal);\
+	(metadata)->extraData.bitOp.mask = (uint8_t)(maskVal);\
 	(metadata)->extraData.bitOp.value = (valueVal);
 
 static void llz80_iop_CBPageDecode_imp(LLZ80ProcessorState *z80, LLZ80InternalInstruction *instruction)
