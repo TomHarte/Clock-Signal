@@ -37,12 +37,12 @@ typedef struct LLZX80ULAState
 	LLZX8081MachineType machineType;
 	LLZX8081RAMSize ramSize;
 	uint8_t ROM[8192];
-	int ROMSize;
+	size_t ROMSize;
 	bool fastLoadingEnabled;
 
 } LLZX80ULAState;
 
-static int llzx80ula_lookAheadForTapeByte(LLZX8081MachineState *machineState)
+static uint8_t llzx80ula_lookAheadForTapeByte(LLZX8081MachineState *machineState)
 {
 	unsigned int currentTime = csClockGenerator_getHalfCyclesToDate(machineState->clockGenerator);
 	uint64_t tapeTime = cstapePlayer_getTapeTime(machineState->tapePlayer, currentTime);
@@ -82,10 +82,10 @@ static int llzx80ula_lookAheadForTapeByte(LLZX8081MachineState *machineState)
 		}
 
 		if(numPulses != 8 && numPulses != 18) break;
-		byte = (byte << 1) | ((numPulses == 8) ? 0 : 1);
+		byte = (uint8_t)((byte << 1) | ((numPulses == 8) ? 0 : 1));
 	}
 	
-	if(bits != -1) return -1;
+	if(bits != -1) return 0xff;
 
 	cstapePlayer_setTapeTime(machineState->tapePlayer, currentTime, tapeTime);
 	return byte;
@@ -95,7 +95,7 @@ static void llzx80ula_observeInstructionForTapeTrap(void *z80, void *context)
 {
 	LLZX80ULAState *ula = (LLZX80ULAState *)context;
 
-	uint16_t programCounter = llz80_monitor_getInternalValue(z80, LLZ80MonitorValuePCRegister);
+	uint16_t programCounter = (uint16_t)llz80_monitor_getInternalValue(z80, LLZ80MonitorValuePCRegister);
 
 	// if the program counter is in the appropriate place for the ZX81
 	// ROM and this looks like the ZX81 ROM, read a byte, deposit it
@@ -112,7 +112,7 @@ static void llzx80ula_observeInstructionForTapeTrap(void *z80, void *context)
 
 		// CPU is about to call in-byte to load another byte;
 		// decode next byte for ourselves and set PC to 0x380
-		int nextByte = llzx80ula_lookAheadForTapeByte(ula->machineState);
+		uint8_t nextByte = llzx80ula_lookAheadForTapeByte(ula->machineState);
 
 		// if we collected 8 bits without error then
 		// write the thing out to HL and skip forward;
@@ -120,8 +120,8 @@ static void llzx80ula_observeInstructionForTapeTrap(void *z80, void *context)
 		// leave the ROM to it
 		if(nextByte != -1)
 		{
-			uint16_t hlRegister = llz80_monitor_getInternalValue(z80, LLZ80MonitorValueHLRegister);
-			
+			uint16_t hlRegister = (uint16_t)llz80_monitor_getInternalValue(z80, LLZ80MonitorValueHLRegister);
+
 			uint8_t byteOnly = nextByte;
 			csStaticMemory_setContents(ula->machineState->RAM, hlRegister - 16384, &byteOnly, 1);
 
@@ -143,7 +143,7 @@ static void llzx80ula_observeInstructionForTapeTrap(void *z80, void *context)
 
 		// CPU is about to call in-byte to load another byte;
 		// decode next byte for ourselves and set PC to 0x380
-		int nextByte = llzx80ula_lookAheadForTapeByte(ula->machineState);
+		uint8_t nextByte = llzx80ula_lookAheadForTapeByte(ula->machineState);
 
 		// if we collected 8 bits without error then
 		// write the thing out to HL and skip forward;
@@ -151,7 +151,7 @@ static void llzx80ula_observeInstructionForTapeTrap(void *z80, void *context)
 		// leave the ROM to it
 		if(nextByte != -1)
 		{
-			uint16_t hlRegister = llz80_monitor_getInternalValue(z80, LLZ80MonitorValueHLRegister);
+			uint16_t hlRegister = (uint16_t)llz80_monitor_getInternalValue(z80, LLZ80MonitorValueHLRegister);
 
 			uint8_t byteOnly = nextByte;
 			csStaticMemory_setContents(ula->machineState->RAM, hlRegister - 16384, &byteOnly, 1);
