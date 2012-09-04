@@ -38,7 +38,7 @@ static void csArray_destroy(void *opaqueArray)
 	CSRetainedArray *array = (CSRetainedArray *)opaqueArray;
 
 	// release all objects, then deallocate the storage
-	for(int c = 0; c < array->numberOfObjects; c++)
+	for(unsigned int c = 0; c < array->numberOfObjects; c++)
 	{
 		array->release(array->objects[c]);
 	}
@@ -62,16 +62,16 @@ static char *csArray_description(void *opaqueArray)
 	// for them where they report it
 	unsigned int numberOfObjects;
 	void **objects = csArray_getCArray(opaqueArray, &numberOfObjects);
-	for(int c = 0; c < numberOfObjects; c++)
+	for(unsigned int c = 0; c < numberOfObjects; c++)
 	{
 		char *newDescription = csObject_copyDescription(objects[c]);
-		
-		while((outputPointer - returnString) + strlen(newDescription) + 5 > returnStringLength)
+
+		while((size_t)(outputPointer - returnString) + strlen(newDescription) + 5 > returnStringLength)
 		{
 			// output pointer is possibly about to end up
 			// pointing off into space, so we'll need to
 			// be able to fix that
-			size_t outputOffset = outputPointer - returnString;
+			size_t outputOffset = (size_t)(outputPointer - returnString);
 
 			// ask for a double sized buffer
 			size_t newLength = returnStringLength + 256;
@@ -155,7 +155,7 @@ bool csArray_removeObject(void *opaqueArray, void *object)
 	bool foundObject = false;
 
 	// do a linear search for the object
-	for(int locationOfObject = 0; locationOfObject < array->numberOfObjects; locationOfObject++)
+	for(unsigned int locationOfObject = 0; locationOfObject < array->numberOfObjects; locationOfObject++)
 	{
 		if(array->objects[locationOfObject] == object)
 		{
@@ -163,7 +163,7 @@ bool csArray_removeObject(void *opaqueArray, void *object)
 			array->release(object);
 			array->numberOfObjects--;
 
-			memmove(&array->objects[locationOfObject], &array->objects[locationOfObject+1], (array->numberOfObjects - locationOfObject)*sizeof(void *));
+			memmove(&array->objects[locationOfObject], &array->objects[locationOfObject+1], (size_t)(array->numberOfObjects - locationOfObject)*sizeof(void *));
 		}
 	}
 
@@ -175,7 +175,7 @@ void csArray_removeAllObjects(void *opaqueArray)
 {
 	CSRetainedArray *array = (CSRetainedArray *)opaqueArray;
 
-	for(int locationOfObject = 0; locationOfObject < array->numberOfObjects; locationOfObject++)
+	for(unsigned int locationOfObject = 0; locationOfObject < array->numberOfObjects; locationOfObject++)
 		array->release(array->objects[locationOfObject]);
 
 	array->numberOfObjects = 0;
