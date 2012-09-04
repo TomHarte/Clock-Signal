@@ -47,11 +47,11 @@ struct CSLinearFilter
 #define kCSKaiserBesselFilterFixedShift			14
 
 /* ino evaluates the 0th order Bessel function at a */
-static double csfilter_ino(double a)
+static float csfilter_ino(float a)
 {
-	double d = 0.0;
-	double ds = 1.0;
-	double s = 1.0;
+	float d = 0.0;
+	float ds = 1.0;
+	float s = 1.0;
 
 	do
 	{
@@ -83,25 +83,25 @@ static void csfilter_setIdealisedFilterResponse(short *filterCoefficients, float
 
 	/* work out the right hand side of the filter coefficients */
 	unsigned int Np = (numberOfTaps - 1) / 2;
-	double I0 = csfilter_ino(a);
-	for(int i = 0; i <= Np; i++)
+	float I0 = csfilter_ino(a);
+	for(unsigned int i = 0; i <= Np; i++)
 	{
 		filterCoefficientsFloat[Np + i] = 
 				A[i] * 
-				csfilter_ino(a * sqrt(1.0 - ((double)(i * i) / (double)(Np * Np)) )) /
+				csfilter_ino(a * sqrtf(1.0f - ((float)(i * i) / (float)(Np * Np)) )) /
 				I0;
 	}
 
 	/* coefficients are symmetrical, so copy from right hand side to left side */
-	for(int i = 0; i < Np; i++)
+	for(unsigned int i = 0; i < Np; i++)
 	{
 		filterCoefficientsFloat[i] = filterCoefficientsFloat[numberOfTaps - 1 - i];
 	}
 
 	/* we'll also need integer versions, potentially */
-	for(int i = 0; i < numberOfTaps; i++)
+	for(unsigned int i = 0; i < numberOfTaps; i++)
 	{
-		filterCoefficients[i] = (int)(filterCoefficientsFloat[i] * kCSKaiserBesselFilterFixedMultiplier);
+		filterCoefficients[i] = (short)(filterCoefficientsFloat[i] * kCSKaiserBesselFilterFixedMultiplier);
 	}
 
 	free(filterCoefficientsFloat);
@@ -135,14 +135,14 @@ void *csfilter_createBandPass(unsigned int numberOfTaps, unsigned int sampleRate
 		unsigned int Np = (numberOfTaps - 1) / 2;
 
 		float *A = (float *)malloc(sizeof(float)*(Np+1));
-		A[0] = 2.0 * (highFrequency - lowFrequency) / (double)sampleRate;
-		for(int i = 1; i <= Np; i++)
+		A[0] = 2.0f * (highFrequency - lowFrequency) / (float)sampleRate;
+		for(unsigned int i = 1; i <= Np; i++)
 		{
 			A[i] = 
 				(
-					sinf(2.0 * (double)i * M_PI * highFrequency / (double)sampleRate) -
-					sinf(2.0 * (double)i * M_PI * lowFrequency / (double)sampleRate)
-				) / ((double)i * M_PI);
+					sinf(2.0f * (float)i * (float)M_PI * highFrequency / (float)sampleRate) -
+					sinf(2.0f * (float)i * (float)M_PI * lowFrequency / (float)sampleRate)
+				) / ((float)i * (float)M_PI);
 		}
 
 		csfilter_setIdealisedFilterResponse(filter->filterCoefficients, A, attenuation, numberOfTaps);
@@ -188,13 +188,13 @@ short csfilter_getFilteredShort(void *opaqueFilter)
 	struct CSLinearFilter *filter = (struct CSLinearFilter *)opaqueFilter;
 
 	int result = 0;
-	int c = filter->numberOfTaps;
+	unsigned int c = filter->numberOfTaps;
 	while(c--)
 	{
 		result += filter->filterCoefficients[c] * filter->valueQueue[ (c + filter->writePosition) % filter->numberOfTaps ];
 	}
 
-	return result >> kCSKaiserBesselFilterFixedShift;
+	return (short)(result >> kCSKaiserBesselFilterFixedShift);
 }
 
 unsigned int csfilter_applyToBuffer(void *opaqueFilter, short *targetBuffer, const short *sourceBuffer, float sourceSamplesPerTargetSample, unsigned int numberOfOutputSamples)
@@ -202,17 +202,17 @@ unsigned int csfilter_applyToBuffer(void *opaqueFilter, short *targetBuffer, con
 	struct CSLinearFilter *filter = (struct CSLinearFilter *)opaqueFilter;
 	unsigned int fixedAdder = (unsigned int)(sourceSamplesPerTargetSample * 256.0f);
 	unsigned int readPosition = 0;
-	for(int sampleToWrite = 0; sampleToWrite < numberOfOutputSamples; sampleToWrite++)
+	for(unsigned int sampleToWrite = 0; sampleToWrite < numberOfOutputSamples; sampleToWrite++)
 	{
 		unsigned int shortReadPosition = readPosition >> 8;
 
 		int outputValue = 0;
-		for(int c = 0; c < filter->numberOfTaps; c++)
+		for(unsigned int c = 0; c < filter->numberOfTaps; c++)
 		{
 			outputValue += filter->filterCoefficients[c] * sourceBuffer[shortReadPosition + c];
 		}
 
-		targetBuffer[sampleToWrite] = outputValue >> kCSKaiserBesselFilterFixedShift;
+		targetBuffer[sampleToWrite] = (short)(outputValue >> kCSKaiserBesselFilterFixedShift);
 		readPosition += fixedAdder;
 	}
 	return readPosition >> 8;
