@@ -22,7 +22,7 @@ typedef struct
 	unsigned int cyclesPerLine;
 	unsigned int visibleCyclesPerLine;
 	unsigned int visibleLinesPerField;
-	unsigned int linesPerField;	// rounded up to the nearest whole integer
+	unsigned int linesPerField;	// rounded up to the next whole integer
 
 	LLCRTDisplayType displayType;
 	uint8_t *displayBuffer;
