@@ -93,7 +93,7 @@ void cstape_getLevelPeriodAroundTime(void *opaqueTape, uint64_t sampleTime, uint
 	uint64_t throwawayValue;
 	if(!startOfPeriod) startOfPeriod = &throwawayValue;
 	if(!endOfPeriod) endOfPeriod = &throwawayValue;
-	if(tape->getLevelPeriodAroundTime) return tape->getLevelPeriodAroundTime(tape->tape, sampleTime, startOfPeriod, endOfPeriod);
+	if(tape->getLevelPeriodAroundTime) tape->getLevelPeriodAroundTime(tape->tape, sampleTime, startOfPeriod, endOfPeriod);
 }
 
 void *cstape_copy(void *opaqueTape)
