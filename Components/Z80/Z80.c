@@ -102,8 +102,8 @@ static void llz80_iop_setupForInterruptMode1(LLZ80ProcessorState *z80, LLZ80Inte
 
 static void llz80_iop_setupForInterruptMode2(LLZ80ProcessorState *z80, LLZ80InternalInstruction *instruction)
 {
-	z80->temporaryAddress.highByte = z80->iRegister;
-	z80->temporaryAddress.lowByte = z80->temporary8bitValue;
+	z80->temporaryAddress.bytes.high = z80->iRegister;
+	z80->temporaryAddress.bytes.low = z80->temporary8bitValue;
 
 	// it's unclear what order the following things happen in; this is a guess
 	// based on the fact that the Z80 doesn't use two temporary 16bit values
@@ -118,15 +118,15 @@ static void llz80_iop_setupForInterruptMode2(LLZ80ProcessorState *z80, LLZ80Inte
 	llz80_beginNewHalfCycle(z80);
 
 	// store out the old program counter
-	llz80_scheduleWrite(z80, &z80->pcRegister.highByte, &z80->spRegister.fullValue);
+	llz80_scheduleWrite(z80, &z80->pcRegister.bytes.high, &z80->spRegister.fullValue);
 	llz80_scheduleFunction(z80, llz80_iop_decrementStackPointer);
 
-	llz80_scheduleWrite(z80, &z80->pcRegister.lowByte, &z80->spRegister.fullValue);
+	llz80_scheduleWrite(z80, &z80->pcRegister.bytes.low, &z80->spRegister.fullValue);
 
 	// read new program counter
-	llz80_scheduleRead(z80, &z80->pcRegister.lowByte, &z80->temporaryAddress.fullValue);
+	llz80_scheduleRead(z80, &z80->pcRegister.bytes.low, &z80->temporaryAddress.fullValue);
 	llz80_scheduleFunction(z80, llz80_iop_incrementTemporaryAddress);
-	llz80_scheduleRead(z80, &z80->pcRegister.highByte, &z80->temporaryAddress.fullValue);
+	llz80_scheduleRead(z80, &z80->pcRegister.bytes.high, &z80->temporaryAddress.fullValue);
 }
 
 LLZ80InternalInstructionFunction llz80_iop_advanceHalfCycleCounter = llz80_iop_advanceHalfCycleCounter_imp;
@@ -264,10 +264,10 @@ static void llz80_observeClock(void *opaqueZ80, CSBusState *internalState, CSBus
 					z80->temporaryAddress.fullValue = 0x66;
 
 					// store out the old program counter, then adjust it
-					llz80_scheduleWrite(z80, &z80->pcRegister.highByte, &z80->spRegister.fullValue);
+					llz80_scheduleWrite(z80, &z80->pcRegister.bytes.high, &z80->spRegister.fullValue);
 					llz80_scheduleFunction(z80, llz80_iop_decrementStackPointer);
 
-					llz80_scheduleWrite(z80, &z80->pcRegister.lowByte, &z80->spRegister.fullValue);
+					llz80_scheduleWrite(z80, &z80->pcRegister.bytes.low, &z80->spRegister.fullValue);
 					llz80_scheduleFunction(z80, llz80_iop_setPCToTemporaryAddress);
 				}
 				break;
@@ -374,21 +374,21 @@ unsigned int llz80_monitor_getInternalValue(void *opaqueZ80, LLZ80MonitorValue k
 			uint8_t flagRegister = llz80_getF(z80);
 			return flagRegister;
 		}
-		case LLZ80MonitorValueBRegister: 		return z80->bcRegister.highByte;
-		case LLZ80MonitorValueCRegister: 		return z80->bcRegister.lowByte;
-		case LLZ80MonitorValueDRegister: 		return z80->deRegister.highByte;
-		case LLZ80MonitorValueERegister: 		return z80->deRegister.lowByte;
-		case LLZ80MonitorValueHRegister: 		return z80->hlRegister.highByte;
-		case LLZ80MonitorValueLRegister: 		return z80->hlRegister.lowByte;
+		case LLZ80MonitorValueBRegister: 		return z80->bcRegister.bytes.high;
+		case LLZ80MonitorValueCRegister: 		return z80->bcRegister.bytes.low;
+		case LLZ80MonitorValueDRegister: 		return z80->deRegister.bytes.high;
+		case LLZ80MonitorValueERegister: 		return z80->deRegister.bytes.low;
+		case LLZ80MonitorValueHRegister: 		return z80->hlRegister.bytes.high;
+		case LLZ80MonitorValueLRegister: 		return z80->hlRegister.bytes.low;
 
 		case LLZ80MonitorValueADashRegister:	return z80->aDashRegister;
 		case LLZ80MonitorValueFDashRegister:	return z80->fDashRegister;
-		case LLZ80MonitorValueBDashRegister:	return z80->bcDashRegister.highByte;
-		case LLZ80MonitorValueCDashRegister:	return z80->bcDashRegister.lowByte;
-		case LLZ80MonitorValueDDashRegister:	return z80->deDashRegister.highByte;
-		case LLZ80MonitorValueEDashRegister:	return z80->deDashRegister.lowByte;
-		case LLZ80MonitorValueHDashRegister:	return z80->hlDashRegister.highByte;
-		case LLZ80MonitorValueLDashRegister:	return z80->hlDashRegister.lowByte;
+		case LLZ80MonitorValueBDashRegister:	return z80->bcDashRegister.bytes.high;
+		case LLZ80MonitorValueCDashRegister:	return z80->bcDashRegister.bytes.low;
+		case LLZ80MonitorValueDDashRegister:	return z80->deDashRegister.bytes.high;
+		case LLZ80MonitorValueEDashRegister:	return z80->deDashRegister.bytes.low;
+		case LLZ80MonitorValueHDashRegister:	return z80->hlDashRegister.bytes.high;
+		case LLZ80MonitorValueLDashRegister:	return z80->hlDashRegister.bytes.low;
 
 		case LLZ80MonitorValueAFDashRegister:	return (z80->aDashRegister << 8) | z80->fDashRegister;
 		case LLZ80MonitorValueBCDashRegister:	return z80->bcDashRegister.fullValue;
@@ -435,21 +435,21 @@ void llz80_monitor_setInternalValue(void *opaqueZ80, LLZ80MonitorValue key, unsi
 			llz80_setF(z80, value);
 		}
 		break;
-		case LLZ80MonitorValueBRegister: 		z80->bcRegister.highByte = value;		break;
-		case LLZ80MonitorValueCRegister: 		z80->bcRegister.lowByte = value;		break;
-		case LLZ80MonitorValueDRegister: 		z80->deRegister.highByte = value;		break;
-		case LLZ80MonitorValueERegister: 		z80->deRegister.lowByte = value;		break;
-		case LLZ80MonitorValueHRegister: 		z80->hlRegister.highByte = value;		break;
-		case LLZ80MonitorValueLRegister: 		z80->hlRegister.lowByte = value;		break;
+		case LLZ80MonitorValueBRegister: 		z80->bcRegister.bytes.high = value;		break;
+		case LLZ80MonitorValueCRegister: 		z80->bcRegister.bytes.low = value;		break;
+		case LLZ80MonitorValueDRegister: 		z80->deRegister.bytes.high = value;		break;
+		case LLZ80MonitorValueERegister: 		z80->deRegister.bytes.low = value;		break;
+		case LLZ80MonitorValueHRegister: 		z80->hlRegister.bytes.high = value;		break;
+		case LLZ80MonitorValueLRegister: 		z80->hlRegister.bytes.low = value;		break;
 
 		case LLZ80MonitorValueADashRegister:	z80->aDashRegister = value;				break;
 		case LLZ80MonitorValueFDashRegister:	z80->fDashRegister = value;				break;
-		case LLZ80MonitorValueBDashRegister:	z80->bcDashRegister.highByte = value;	break;
-		case LLZ80MonitorValueCDashRegister:	z80->bcDashRegister.lowByte = value;	break;
-		case LLZ80MonitorValueDDashRegister:	z80->deDashRegister.highByte = value;	break;
-		case LLZ80MonitorValueEDashRegister:	z80->deDashRegister.lowByte = value;	break;
-		case LLZ80MonitorValueHDashRegister:	z80->hlDashRegister.highByte = value;	break;
-		case LLZ80MonitorValueLDashRegister:	z80->hlDashRegister.lowByte = value;	break;
+		case LLZ80MonitorValueBDashRegister:	z80->bcDashRegister.bytes.high = value;	break;
+		case LLZ80MonitorValueCDashRegister:	z80->bcDashRegister.bytes.low = value;	break;
+		case LLZ80MonitorValueDDashRegister:	z80->deDashRegister.bytes.high = value;	break;
+		case LLZ80MonitorValueEDashRegister:	z80->deDashRegister.bytes.low = value;	break;
+		case LLZ80MonitorValueHDashRegister:	z80->hlDashRegister.bytes.high = value;	break;
+		case LLZ80MonitorValueLDashRegister:	z80->hlDashRegister.bytes.low = value;	break;
 
 		case LLZ80MonitorValueAFDashRegister:
 		{

@@ -19,8 +19,8 @@ typedef union
 	uint16_t fullValue;
 	struct
 	{
-		uint8_t lowByte, highByte;
-	};
+		uint8_t low, high;
+	} bytes;
 } LLZ80RegisterPair;
 
 typedef enum

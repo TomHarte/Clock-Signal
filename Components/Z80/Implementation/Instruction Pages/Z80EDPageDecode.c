@@ -80,12 +80,12 @@ void llz80_iop_EDPageDecode_imp(LLZ80ProcessorState *z80, LLZ80InternalInstructi
 
 	unsigned char *rTable[] =
 	{
-		&z80->bcRegister.highByte,
-		&z80->bcRegister.lowByte,
-		&z80->deRegister.highByte,
-		&z80->deRegister.lowByte,
-		&z80->hlRegister.highByte,
-		&z80->hlRegister.lowByte,
+		&z80->bcRegister.bytes.high,
+		&z80->bcRegister.bytes.low,
+		&z80->deRegister.bytes.high,
+		&z80->deRegister.bytes.low,
+		&z80->hlRegister.bytes.high,
+		&z80->hlRegister.bytes.low,
 		NULL,
 		&z80->aRegister
 	};
@@ -181,18 +181,18 @@ void llz80_iop_EDPageDecode_imp(LLZ80ProcessorState *z80, LLZ80InternalInstructi
 		case 0x63:	case 0x73:
 		{
 			// load target address
-			llz80_scheduleRead(z80, &z80->temporaryAddress.lowByte, &z80->pcRegister.fullValue);
+			llz80_scheduleRead(z80, &z80->temporaryAddress.bytes.low, &z80->pcRegister.fullValue);
 			llz80_scheduleFunction(z80, llz80_iop_incrementProgramCounter);
 
-			llz80_scheduleRead(z80, &z80->temporaryAddress.highByte, &z80->pcRegister.fullValue);
+			llz80_scheduleRead(z80, &z80->temporaryAddress.bytes.high, &z80->pcRegister.fullValue);
 			llz80_scheduleFunction(z80, llz80_iop_incrementProgramCounter);
 
 			// store register
 			LLZ80RegisterPair *source = rpTable[(opcode >> 4)&3];
-			llz80_scheduleWrite(z80, &source->lowByte, &z80->temporaryAddress.fullValue);
+			llz80_scheduleWrite(z80, &source->bytes.low, &z80->temporaryAddress.fullValue);
 			llz80_scheduleFunction(z80, llz80_iop_incrementTemporaryAddress);
 
-			llz80_scheduleWrite(z80, &source->highByte, &z80->temporaryAddress.fullValue);
+			llz80_scheduleWrite(z80, &source->bytes.high, &z80->temporaryAddress.fullValue);
 		}
 		break;
 
@@ -200,18 +200,18 @@ void llz80_iop_EDPageDecode_imp(LLZ80ProcessorState *z80, LLZ80InternalInstructi
 		case 0x6b:	case 0x7b:
 		{
 			// load target address
-			llz80_scheduleRead(z80, &z80->temporaryAddress.lowByte, &z80->pcRegister.fullValue);
+			llz80_scheduleRead(z80, &z80->temporaryAddress.bytes.low, &z80->pcRegister.fullValue);
 			llz80_scheduleFunction(z80, llz80_iop_incrementProgramCounter);
 
-			llz80_scheduleRead(z80, &z80->temporaryAddress.highByte, &z80->pcRegister.fullValue);
+			llz80_scheduleRead(z80, &z80->temporaryAddress.bytes.high, &z80->pcRegister.fullValue);
 			llz80_scheduleFunction(z80, llz80_iop_incrementProgramCounter);
 
 			// load register
 			LLZ80RegisterPair *source = rpTable[(opcode >> 4)&3];
-			llz80_scheduleRead(z80, &source->lowByte, &z80->temporaryAddress.fullValue);
+			llz80_scheduleRead(z80, &source->bytes.low, &z80->temporaryAddress.fullValue);
 			llz80_scheduleFunction(z80, llz80_iop_incrementTemporaryAddress);
 
-			llz80_scheduleRead(z80, &source->highByte, &z80->temporaryAddress.fullValue);
+			llz80_scheduleRead(z80, &source->bytes.high, &z80->temporaryAddress.fullValue);
 		}
 		break;
 
@@ -244,10 +244,10 @@ void llz80_iop_EDPageDecode_imp(LLZ80ProcessorState *z80, LLZ80InternalInstructi
 		case 0x45:
 			z80->iff1 = z80->iff2;
 
-			llz80_scheduleRead(z80, &z80->pcRegister.lowByte, &z80->spRegister.fullValue);
+			llz80_scheduleRead(z80, &z80->pcRegister.bytes.low, &z80->spRegister.fullValue);
 			llz80_scheduleFunction(z80, llz80_iop_incrementStackPointer);
 
-			llz80_scheduleRead(z80, &z80->pcRegister.highByte, &z80->spRegister.fullValue);
+			llz80_scheduleRead(z80, &z80->pcRegister.bytes.high, &z80->spRegister.fullValue);
 			llz80_scheduleFunction(z80, llz80_iop_incrementStackPointer);
 		break;
 
@@ -461,17 +461,17 @@ void llz80_setINFlags(LLZ80ProcessorState *z80, int cAdder);
 
 void llz80_setINFlags(LLZ80ProcessorState *z80, int cAdder)
 {
-	z80->bcRegister.highByte--;
+	z80->bcRegister.bytes.high--;
 	
 	// sign, zero, 5 and 3 are set per the result of the decrement of B
-	z80->lastSignResult = z80->lastZeroResult = z80->bit5And3Flags = z80->bcRegister.highByte;
+	z80->lastSignResult = z80->lastZeroResult = z80->bit5And3Flags = z80->bcRegister.bytes.high;
 	
 	z80->generalFlags = ((z80->temporary8bitValue&0x80) >> 6);		// subtract flag is copied from bit 8 of the incoming value
 
-	int summation = z80->temporary8bitValue + ((cAdder + z80->bcRegister.lowByte)&0xff);
+	int summation = z80->temporary8bitValue + ((cAdder + z80->bcRegister.bytes.low)&0xff);
 	if(summation > 0xff) z80->generalFlags |= LLZ80FlagHalfCarry | LLZ80FlagCarry;
 
-	summation = (summation&7) ^ z80->bcRegister.highByte;
+	summation = (summation&7) ^ z80->bcRegister.bytes.high;
 	llz80_calculateParity(summation);
 	z80->generalFlags |= parity;
 }
@@ -487,7 +487,7 @@ void llz80_iop_finishINIR(LLZ80ProcessorState *z80, LLZ80InternalInstruction *in
 	z80->hlRegister.fullValue++;
 	llz80_setINFlags(z80, 1);
 
-	if(z80->bcRegister.highByte)
+	if(z80->bcRegister.bytes.high)
 	{
 		z80->pcRegister.fullValue -= 2;
 		llz80_schedulePauseForCycles(z80, 5);
@@ -505,7 +505,7 @@ void llz80_iop_finishINDR(LLZ80ProcessorState *z80, LLZ80InternalInstruction *in
 	z80->hlRegister.fullValue--;
 	llz80_setINFlags(z80, -1);
 
-	if(z80->bcRegister.highByte)
+	if(z80->bcRegister.bytes.high)
 	{
 		z80->pcRegister.fullValue -= 2;
 		llz80_schedulePauseForCycles(z80, 5);
@@ -516,17 +516,17 @@ void llz80_setOUTFlags(LLZ80ProcessorState *z80);
 
 void llz80_setOUTFlags(LLZ80ProcessorState *z80)
 {
-	z80->bcRegister.highByte--;
+	z80->bcRegister.bytes.high--;
 	
 	// sign, zero, 5 and 3 are set per the result of the decrement of B
-	z80->lastSignResult = z80->lastZeroResult = z80->bit5And3Flags = z80->bcRegister.highByte;
+	z80->lastSignResult = z80->lastZeroResult = z80->bit5And3Flags = z80->bcRegister.bytes.high;
 	
 	z80->generalFlags = ((z80->temporary8bitValue&0x80) >> 6);		// subtract flag is copied from bit 8 of the incoming value
 
-	int summation = z80->temporary8bitValue + z80->hlRegister.lowByte;
+	int summation = z80->temporary8bitValue + z80->hlRegister.bytes.low;
 	if(summation > 0xff) z80->generalFlags |= LLZ80FlagHalfCarry | LLZ80FlagCarry;
 
-	summation = (summation&7) ^ z80->bcRegister.highByte;
+	summation = (summation&7) ^ z80->bcRegister.bytes.high;
 	llz80_calculateParity(summation);
 	z80->generalFlags |= parity;
 }
@@ -542,7 +542,7 @@ void llz80_iop_finishOUTIR(LLZ80ProcessorState *z80, LLZ80InternalInstruction *i
 	z80->hlRegister.fullValue++;
 	llz80_setOUTFlags(z80);
 
-	if(z80->bcRegister.highByte)
+	if(z80->bcRegister.bytes.high)
 	{
 		z80->pcRegister.fullValue -= 2;
 		llz80_schedulePauseForCycles(z80, 5);
@@ -560,7 +560,7 @@ void llz80_iop_finishOUTDR(LLZ80ProcessorState *z80, LLZ80InternalInstruction *i
 	z80->hlRegister.fullValue--;
 	llz80_setOUTFlags(z80);
 
-	if(z80->bcRegister.highByte)
+	if(z80->bcRegister.bytes.high)
 	{
 		z80->pcRegister.fullValue -= 2;
 		llz80_schedulePauseForCycles(z80, 5);

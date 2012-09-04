@@ -44,10 +44,10 @@ void llz80_schedule16BitReadFromTemporaryAddress(LLZ80ProcessorState *z80, LLZ80
 
 void llz80_schedulePop(LLZ80ProcessorState *z80, LLZ80RegisterPair *registerPair)
 {
-	llz80_scheduleRead(z80, &registerPair->lowByte, &z80->spRegister.fullValue);
+	llz80_scheduleRead(z80, &registerPair->bytes.low, &z80->spRegister.fullValue);
 	llz80_scheduleFunction(z80, llz80_iop_incrementStackPointer);
 
-	llz80_scheduleRead(z80, &registerPair->highByte, &z80->spRegister.fullValue);
+	llz80_scheduleRead(z80, &registerPair->bytes.high, &z80->spRegister.fullValue);
 	llz80_scheduleFunction(z80, llz80_iop_incrementStackPointer);
 }
 
@@ -58,10 +58,10 @@ void llz80_schedulePush(LLZ80ProcessorState *z80, LLZ80RegisterPair *registerPai
 	llz80_beginNewHalfCycle(z80);
 
 	// store out the old program counter, then adjust it
-	llz80_scheduleWrite(z80, &registerPair->highByte, &z80->spRegister.fullValue);
+	llz80_scheduleWrite(z80, &registerPair->bytes.high, &z80->spRegister.fullValue);
 	llz80_scheduleFunction(z80, llz80_iop_decrementStackPointer);
 
-	llz80_scheduleWrite(z80, &registerPair->lowByte, &z80->spRegister.fullValue);
+	llz80_scheduleWrite(z80, &registerPair->bytes.low, &z80->spRegister.fullValue);
 }
 
 void llz80_scheduleCallToTemporaryAddress(LLZ80ProcessorState *z80)
@@ -78,16 +78,16 @@ void llz80_schedule8BitReadFromPC(LLZ80ProcessorState *z80, uint8_t *targetRegis
 
 void llz80_schedule16BitReadFromPC(LLZ80ProcessorState *z80, LLZ80RegisterPair *targetRegister)
 {
-	llz80_schedule8BitReadFromPC(z80, &targetRegister->lowByte);
-	llz80_schedule8BitReadFromPC(z80, &targetRegister->highByte);
+	llz80_schedule8BitReadFromPC(z80, &targetRegister->bytes.low);
+	llz80_schedule8BitReadFromPC(z80, &targetRegister->bytes.high);
 }
 
 void llz80_schedule16BitReadFromTemporaryAddress(LLZ80ProcessorState *z80, LLZ80RegisterPair *targetRegister)
 {
-	llz80_scheduleRead(z80, &targetRegister->lowByte, &z80->temporaryAddress.fullValue);
+	llz80_scheduleRead(z80, &targetRegister->bytes.low, &z80->temporaryAddress.fullValue);
 	llz80_scheduleFunction(z80, llz80_iop_incrementTemporaryAddress);
 
-	llz80_scheduleRead(z80, &targetRegister->highByte, &z80->temporaryAddress.fullValue);
+	llz80_scheduleRead(z80, &targetRegister->bytes.high, &z80->temporaryAddress.fullValue);
 }
 
 void llz80_iop_standardPageDecode_imp(LLZ80ProcessorState *z80, LLZ80InternalInstruction *instruction)
@@ -97,12 +97,12 @@ void llz80_iop_standardPageDecode_imp(LLZ80ProcessorState *z80, LLZ80InternalIns
 
 	unsigned char *rTable[] =
 	{
-		&z80->bcRegister.highByte,
-		&z80->bcRegister.lowByte,
-		&z80->deRegister.highByte,
-		&z80->deRegister.lowByte,
-		&indexRegister->highByte,
-		&indexRegister->lowByte,
+		&z80->bcRegister.bytes.high,
+		&z80->bcRegister.bytes.low,
+		&z80->deRegister.bytes.high,
+		&z80->deRegister.bytes.low,
+		&indexRegister->bytes.high,
+		&indexRegister->bytes.low,
 		NULL,
 		&z80->aRegister
 	};
@@ -278,10 +278,10 @@ void llz80_iop_standardPageDecode_imp(LLZ80ProcessorState *z80, LLZ80InternalIns
 			llz80_schedule16BitReadFromPC(z80, &z80->temporaryAddress);
 
 			// load the index register from the target address
-			llz80_scheduleRead(z80, &indexRegister->lowByte, &z80->temporaryAddress.fullValue);
+			llz80_scheduleRead(z80, &indexRegister->bytes.low, &z80->temporaryAddress.fullValue);
 			llz80_scheduleFunction(z80, llz80_iop_incrementTemporaryAddress);
 
-			llz80_scheduleRead(z80, &indexRegister->highByte, &z80->temporaryAddress.fullValue);
+			llz80_scheduleRead(z80, &indexRegister->bytes.high, &z80->temporaryAddress.fullValue);
 		}
 		break;
 
@@ -291,10 +291,10 @@ void llz80_iop_standardPageDecode_imp(LLZ80ProcessorState *z80, LLZ80InternalIns
 			llz80_schedule16BitReadFromPC(z80, &z80->temporaryAddress);
 
 			// store the index register from the target address
-			llz80_scheduleWrite(z80, &indexRegister->lowByte, &z80->temporaryAddress.fullValue);
+			llz80_scheduleWrite(z80, &indexRegister->bytes.low, &z80->temporaryAddress.fullValue);
 			llz80_scheduleFunction(z80, llz80_iop_incrementTemporaryAddress);
 
-			llz80_scheduleWrite(z80, &indexRegister->highByte, &z80->temporaryAddress.fullValue);
+			llz80_scheduleWrite(z80, &indexRegister->bytes.high, &z80->temporaryAddress.fullValue);
 		}
 		break;
 
@@ -676,12 +676,12 @@ void llz80_iop_standardPageDecode_imp(LLZ80ProcessorState *z80, LLZ80InternalIns
 			// half of one of the index registers
 			unsigned char *rHLTable[] =
 			{
-				&z80->bcRegister.highByte,
-				&z80->bcRegister.lowByte,
-				&z80->deRegister.highByte,
-				&z80->deRegister.lowByte,
-				&z80->hlRegister.highByte,
-				&z80->hlRegister.lowByte,
+				&z80->bcRegister.bytes.high,
+				&z80->bcRegister.bytes.low,
+				&z80->deRegister.bytes.high,
+				&z80->deRegister.bytes.low,
+				&z80->hlRegister.bytes.high,
+				&z80->hlRegister.bytes.low,
 				NULL,
 				&z80->aRegister
 			};
@@ -752,8 +752,8 @@ void llz80_iop_standardPageDecode_imp(LLZ80ProcessorState *z80, LLZ80InternalIns
 
 		case 0xd3:	// out (n), a
 		{
-			z80->temporaryAddress.highByte = z80->aRegister;
-			llz80_schedule8BitReadFromPC(z80, &z80->temporaryAddress.lowByte);
+			z80->temporaryAddress.bytes.high = z80->aRegister;
+			llz80_schedule8BitReadFromPC(z80, &z80->temporaryAddress.bytes.low);
 
 			llz80_scheduleOutput(z80, &z80->aRegister, &z80->temporaryAddress.fullValue);
 		}
@@ -763,8 +763,8 @@ void llz80_iop_standardPageDecode_imp(LLZ80ProcessorState *z80, LLZ80InternalIns
 		{
 			// this doesn't set any flags, in contrast to
 			// the various ins on the ed page
-			z80->temporaryAddress.highByte = z80->aRegister;
-			llz80_schedule8BitReadFromPC(z80, &z80->temporaryAddress.lowByte);
+			z80->temporaryAddress.bytes.high = z80->aRegister;
+			llz80_schedule8BitReadFromPC(z80, &z80->temporaryAddress.bytes.low);
 
 			llz80_scheduleInput(z80, &z80->aRegister, &z80->temporaryAddress.fullValue);
 		}
@@ -855,9 +855,9 @@ void llz80_scheduleCalculationOfSourceAddress(LLZ80ProcessorState *z80, LLZ80Reg
 void llz80_djnz(struct LLZ80ProcessorState *z80, LLZ80InternalInstruction *instruction)
 {
 	z80->pcRegister.fullValue++;
-	z80->bcRegister.highByte--;
+	z80->bcRegister.bytes.high--;
 
-	if(z80->bcRegister.highByte)
+	if(z80->bcRegister.bytes.high)
 	{
 		llz80_schedulePauseForCycles(z80, 5);
 		z80->pcRegister.fullValue += (char)z80->temporary8bitValue;

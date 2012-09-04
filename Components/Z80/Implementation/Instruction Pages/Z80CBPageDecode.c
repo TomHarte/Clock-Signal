@@ -46,12 +46,12 @@ static void llz80_iop_CBPageDecode_imp(LLZ80ProcessorState *z80, LLZ80InternalIn
 
 	uint8_t *rTable[] =
 	{
-		&z80->bcRegister.highByte,
-		&z80->bcRegister.lowByte,
-		&z80->deRegister.highByte,
-		&z80->deRegister.lowByte,
-		&z80->hlRegister.highByte,
-		&z80->hlRegister.lowByte,
+		&z80->bcRegister.bytes.high,
+		&z80->bcRegister.bytes.low,
+		&z80->deRegister.bytes.high,
+		&z80->deRegister.bytes.low,
+		&z80->hlRegister.bytes.high,
+		&z80->hlRegister.bytes.low,
 		NULL,
 		&z80->aRegister
 	};
