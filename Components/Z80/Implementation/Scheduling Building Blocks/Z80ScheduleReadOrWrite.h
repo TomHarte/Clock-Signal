@@ -9,7 +9,7 @@
 #ifndef LLZ80_ScheduleReadOrWrite_h
 #define LLZ80_ScheduleReadOrWrite_h
 
-#import "../Z80Internals.h"
+#include "../Z80Internals.h"
 
 LLZ80InternalInstruction *llz80_scheduleRead(
 	LLZ80ProcessorState *z80,
