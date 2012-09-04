@@ -16,7 +16,8 @@
 
 	if(self)
 	{
-		graphValue = -1;
+		// start with a history of fully set values
+		graphValue = ~(NSUInteger)0;
 	}
 
 	return self;
