@@ -149,7 +149,7 @@ void *csDynamicRAM_createOnBus(void *bus, CSDynamicRAMType type)
 
 		// this is dynamic memory, so we'll keep track of refresh times and
 		// corrupt cells that aren't properly updated
-		memory->lastRefreshTimes = (CSComponentNanoseconds *)calloc(memory->casMask, sizeof(CSComponentNanoseconds));
+		memory->lastRefreshTimes = (CSComponentNanoseconds *)calloc((size_t)memory->casMask, sizeof(CSComponentNanoseconds));
 
 		// component to handle the strobes
 		void *component = 
