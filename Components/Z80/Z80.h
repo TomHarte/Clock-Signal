@@ -85,21 +85,21 @@ void *llz80_createOnBus(void *bus);	// the returned object conforms to csObject,
 */
 
 // signals the Z80 will produce
-#define	LLZ80SignalInputOutputRequest			0x10000000000
-#define	LLZ80SignalMachineCycleOne				0x20000000000
-#define	LLZ80SignalRead							0x40000000000
-#define	LLZ80SignalWrite						0x80000000000
-#define	LLZ80SignalMemoryRequest				0x100000000000
-#define	LLZ80SignalRefresh						0x200000000000
-#define	LLZ80SignalBusAcknowledge				0x400000000000
-#define	LLZ80SignalHalt							0x800000000000
+#define	LLZ80SignalInputOutputRequest			0x10000000000llu
+#define	LLZ80SignalMachineCycleOne				0x20000000000llu
+#define	LLZ80SignalRead							0x40000000000llu
+#define	LLZ80SignalWrite						0x80000000000llu
+#define	LLZ80SignalMemoryRequest				0x100000000000llu
+#define	LLZ80SignalRefresh						0x200000000000llu
+#define	LLZ80SignalBusAcknowledge				0x400000000000llu
+#define	LLZ80SignalHalt							0x800000000000llu
 
 // signals the Z80 will react to
-#define	LLZ80SignalInterruptRequest				0x1000000000000
-#define	LLZ80SignalNonMaskableInterruptRequest	0x2000000000000
-#define	LLZ80SignalReset						0x4000000000000
-#define	LLZ80SignalWait							0x8000000000000
-#define	LLZ80SignalBusRequest					0x10000000000000
+#define	LLZ80SignalInterruptRequest				0x1000000000000llu
+#define	LLZ80SignalNonMaskableInterruptRequest	0x2000000000000llu
+#define	LLZ80SignalReset						0x4000000000000llu
+#define	LLZ80SignalWait							0x8000000000000llu
+#define	LLZ80SignalBusRequest					0x10000000000000llu
 
 // the z80 will also respond to the bus clock signal;
 // 8 data + 16 address + the 13 listed + the clock signal
