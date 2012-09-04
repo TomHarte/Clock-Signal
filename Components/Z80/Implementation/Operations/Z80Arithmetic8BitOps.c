@@ -18,7 +18,7 @@ void llz80_compare(LLZ80ProcessorState *z80, uint8_t value)
 	int overflow = (value^z80->aRegister) & (result^z80->aRegister);
 
 	z80->lastSignResult =			// set sign and zero
-	z80->lastZeroResult = result;
+	z80->lastZeroResult = (uint8_t)result;
 	z80->bit5And3Flags = value;		// set the 5 and 3 flags, which come
 									// from the operand atypically
 	z80->generalFlags =
@@ -37,10 +37,10 @@ void llz80_subtract_8bit(LLZ80ProcessorState *z80, uint8_t value)
 	// different and the result is different again
 	int overflow = (value^z80->aRegister) & (result^z80->aRegister);
 
-	z80->aRegister = result;
+	z80->aRegister = (uint8_t)result;
 
 	z80->lastSignResult = z80->lastZeroResult =
-	z80->bit5And3Flags = result;			// set sign, zero and 5 and 3
+	z80->bit5And3Flags = (uint8_t)result;			// set sign, zero and 5 and 3
 	z80->generalFlags =
 		((result >> 8) & LLZ80FlagCarry)	|		// carry flag
 		(halfResult & LLZ80FlagHalfCarry)	|		// half carry flag
@@ -57,10 +57,10 @@ void llz80_subtractWithCarry_8bit(LLZ80ProcessorState *z80, uint8_t value)
 	// different and the result is different again
 	int overflow = (value^z80->aRegister) & (result^z80->aRegister);
 
-	z80->aRegister = result;
+	z80->aRegister = (uint8_t)result;
 
 	z80->lastSignResult = z80->lastZeroResult =
-	z80->bit5And3Flags = result;			// set sign, zero and 5 and 3
+	z80->bit5And3Flags = (uint8_t)result;			// set sign, zero and 5 and 3
 	z80->generalFlags =
 		((result >> 8) & LLZ80FlagCarry)	|		// carry flag
 		(halfResult & LLZ80FlagHalfCarry)	|		// half carry flag
@@ -77,10 +77,10 @@ void llz80_add_8bit(LLZ80ProcessorState *z80, uint8_t value)
 	// the same and the result is different
 	int overflow = ~(value^z80->aRegister) & (result^z80->aRegister);
 
-	z80->aRegister = result;
+	z80->aRegister = (uint8_t)result;
 
 	z80->lastSignResult = z80->lastZeroResult =
-	z80->bit5And3Flags = result;			// set sign, zero and 5 and 3
+	z80->bit5And3Flags = (uint8_t)result;			// set sign, zero and 5 and 3
 	z80->generalFlags =
 		((result >> 8) & LLZ80FlagCarry)	|		// carry flag
 		(halfResult & LLZ80FlagHalfCarry)	|		// half carry flag
@@ -97,10 +97,10 @@ void llz80_addWithCarry_8bit(LLZ80ProcessorState *z80, uint8_t value)
 	// the same and the result is different
 	int overflow = ~(value^z80->aRegister) & (result^z80->aRegister);
 
-	z80->aRegister = result;
+	z80->aRegister = (uint8_t)result;
 
 	z80->lastSignResult = z80->lastZeroResult =
-	z80->bit5And3Flags = result;			// set sign, zero and 5 and 3
+	z80->bit5And3Flags = (uint8_t)result;			// set sign, zero and 5 and 3
 	z80->generalFlags =
 		((result >> 8) & LLZ80FlagCarry)	|		// carry flag
 		(halfResult & LLZ80FlagHalfCarry)	|		// half carry flag
@@ -117,10 +117,10 @@ void llz80_increment_8bit(LLZ80ProcessorState *z80, uint8_t *value)
 	int overflow = (*value ^ result) & ~(*value);
 	int halfResult = (*value&0xf) + 1;
 
-	*value = result;
+	*value = (uint8_t)result;
 
 	// sign, zero and 5 & 3 are set directly from the result
-	z80->bit5And3Flags = z80->lastSignResult = z80->lastZeroResult = result;
+	z80->bit5And3Flags = z80->lastSignResult = z80->lastZeroResult = (uint8_t)result;
 	z80->generalFlags =
 		(z80->generalFlags & LLZ80FlagCarry) |		// carry isn't affected
 		(halfResult&LLZ80FlagHalfCarry) |			// half carry
@@ -137,10 +137,10 @@ void llz80_decrement_8bit(LLZ80ProcessorState *z80, uint8_t *value)
 	int overflow = (*value ^ result) & (*value);
 	int halfResult = (*value&0xf) - 1;
 
-	*value = result;
+	*value = (uint8_t)result;
 
 	// sign, zero and 5 & 3 are set directly from the result
-	z80->bit5And3Flags = z80->lastZeroResult = z80->lastSignResult = result;
+	z80->bit5And3Flags = z80->lastZeroResult = z80->lastSignResult = (uint8_t)result;
 	z80->generalFlags =
 		(z80->generalFlags & LLZ80FlagCarry) |		// carry isn't affected
 		(halfResult&LLZ80FlagHalfCarry) |			// half carry
