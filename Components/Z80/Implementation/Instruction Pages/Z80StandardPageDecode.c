@@ -95,7 +95,7 @@ void llz80_iop_standardPageDecode_imp(LLZ80ProcessorState *z80, LLZ80InternalIns
 	LLZ80RegisterPair *indexRegister = instruction->extraData.opcodeDecode.indexRegister;
 	bool addOffset = instruction->extraData.opcodeDecode.addOffset;
 
-	unsigned char *rTable[] =
+	uint8_t *rTable[] =
 	{
 		&z80->bcRegister.bytes.high,
 		&z80->bcRegister.bytes.low,
@@ -115,7 +115,7 @@ void llz80_iop_standardPageDecode_imp(LLZ80ProcessorState *z80, LLZ80InternalIns
 		&z80->spRegister
 	};
 
-	unsigned char opcode = z80->temporary8bitValue;
+	uint8_t opcode = z80->temporary8bitValue;
 	switch(opcode)
 	{
 		default: break;
@@ -454,7 +454,7 @@ void llz80_iop_standardPageDecode_imp(LLZ80ProcessorState *z80, LLZ80InternalIns
 		case 0x36:
 		case 0x3e:	// ld r, n
 		{
-			unsigned char *destination = rTable[opcode >> 3];
+			uint8_t *destination = rTable[opcode >> 3];
 
 			if(destination)
 			{
@@ -501,7 +501,7 @@ void llz80_iop_standardPageDecode_imp(LLZ80ProcessorState *z80, LLZ80InternalIns
 
 		case 0x08:		// ex af, af'
 		{
-			unsigned char temporaryStore;
+			uint8_t temporaryStore;
 
 			temporaryStore = z80->aRegister;
 			z80->aRegister = z80->aDashRegister;
@@ -618,7 +618,7 @@ void llz80_iop_standardPageDecode_imp(LLZ80ProcessorState *z80, LLZ80InternalIns
 		case 0x34: case 0x35:
 		case 0x3c: case 0x3d:	// inc r and dec r
 		{
-			unsigned char *source = rTable[opcode >> 3];
+			uint8_t *source = rTable[opcode >> 3];
 
 			if(source)
 			{
@@ -655,8 +655,8 @@ void llz80_iop_standardPageDecode_imp(LLZ80ProcessorState *z80, LLZ80InternalIns
 		case 0x70: case 0x71: case 0x72: case 0x73: case 0x74: case 0x75: case 0x76: case 0x77:
 		case 0x78: case 0x79: case 0x7a: case 0x7b: case 0x7c: case 0x7d: case 0x7e: case 0x7f:
 		{
-			unsigned char *source = rTable[opcode&7];
-			unsigned char *destination = rTable[(opcode >> 3)&7];
+			uint8_t *source = rTable[opcode&7];
+			uint8_t *destination = rTable[(opcode >> 3)&7];
 
 			// if source and destination are registers, just do
 			// the copy
@@ -684,7 +684,7 @@ void llz80_iop_standardPageDecode_imp(LLZ80ProcessorState *z80, LLZ80InternalIns
 			// NB: if an offset and a memory read/write is involved,
 			// the named register is always one of H or L, not
 			// half of one of the index registers
-			unsigned char *rHLTable[] =
+			uint8_t *rHLTable[] =
 			{
 				&z80->bcRegister.bytes.high,
 				&z80->bcRegister.bytes.low,
@@ -740,7 +740,7 @@ void llz80_iop_standardPageDecode_imp(LLZ80ProcessorState *z80, LLZ80InternalIns
 		case 0xb0: case 0xb1: case 0xb2: case 0xb3: case 0xb4: case 0xb5: case 0xb6: case 0xb7:
 		case 0xb8: case 0xb9: case 0xba: case 0xbb: case 0xbc: case 0xbd: case 0xbe: case 0xbf:
 		{
-			unsigned char *source = rTable[opcode&7];
+			uint8_t *source = rTable[opcode&7];
 			int operation = (opcode >> 3)&7;
 
 			if(source)

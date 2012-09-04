@@ -78,7 +78,7 @@ void llz80_iop_EDPageDecode_imp(LLZ80ProcessorState *z80, LLZ80InternalInstructi
 	// the ed page isn't affected by an fd or dd prefix,
 	// so this is all always HL
 
-	unsigned char *rTable[] =
+	uint8_t *rTable[] =
 	{
 		&z80->bcRegister.bytes.high,
 		&z80->bcRegister.bytes.low,
@@ -98,7 +98,7 @@ void llz80_iop_EDPageDecode_imp(LLZ80ProcessorState *z80, LLZ80InternalInstructi
 		&z80->spRegister
 	};
 
-	unsigned char opcode = z80->temporary8bitValue;
+	uint8_t opcode = z80->temporary8bitValue;
 	switch(opcode)
 	{
 		default:
@@ -114,7 +114,7 @@ void llz80_iop_EDPageDecode_imp(LLZ80ProcessorState *z80, LLZ80InternalInstructi
 		case 0x40:	case 0x48:	case 0x50:	case 0x58:	// in r, (c)
 		case 0x60:	case 0x68:	case 0x70:	case 0x78:
 		{
-			unsigned char *destination = rTable[(opcode >> 3)&7];
+			uint8_t *destination = rTable[(opcode >> 3)&7];
 			if(!destination) destination = &z80->temporary8bitValue;
 
 			llz80_scheduleInput(z80, destination, &z80->bcRegister.fullValue);
@@ -125,7 +125,7 @@ void llz80_iop_EDPageDecode_imp(LLZ80ProcessorState *z80, LLZ80InternalInstructi
 		case 0x41:	case 0x49:	case 0x51:	case 0x59:	// out (c), r
 		case 0x61:	case 0x69:	case 0x71:	case 0x79:
 		{
-			unsigned char *source = rTable[(opcode >> 3)&7];
+			uint8_t *source = rTable[(opcode >> 3)&7];
 			if(!source)
 			{
 				// what would otherwise be out (c), (hl) is
