@@ -26,14 +26,14 @@ typedef struct
 
 	LLCRTDisplayType displayType;
 	uint8_t *displayBuffer;
-	int displayWidth;
-	int displayHeight;
+	unsigned int displayWidth;
+	unsigned int displayHeight;
 
 	llcrt_endOfFieldDelegate delegate;
 	void *delegateContext;
 
-	int currentPositionInLine;
-	int currentLine;
+	unsigned int currentPositionInLine;
+	unsigned int currentLine;
 	unsigned int currentTimeStamp;
 
 	uint8_t currentLevel;
@@ -46,14 +46,14 @@ typedef struct
 
 } LLCRTState;
 
-static unsigned int llcrt_nextPowerOfTwoAfter(unsigned int input)
+/*static unsigned int llcrt_nextPowerOfTwoAfter(unsigned int input)
 {
 	unsigned int result = 1;
 
 	while(result < input) result <<= 1;
 
 	return result;
-}
+}*/
 
 static void llcrt_destroy(void *opaqueCrt)
 {
@@ -244,7 +244,7 @@ static void llcrt_runToTimeInternal(LLCRTState *crt, unsigned int timeStamp)
 	// and move to the relevant position in the current line
 	if(crt->currentLine < crt->displayHeight && crt->currentPositionInLine < crt->displayWidth)
 	{
-		int width = timeToRunFor;
+		unsigned int width = timeToRunFor;
 		if(width > crt->displayWidth - crt->currentPositionInLine)
 			width = crt->displayWidth - crt->currentPositionInLine;
 
