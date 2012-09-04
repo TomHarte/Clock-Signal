@@ -18,11 +18,11 @@
 #define ClockSignal_StandardBusLines_h
 
 // we'll use the lowest 8 bits for the data lines
-#define CSBusStandardDataMask		0xff
+#define CSBusStandardDataMask		0xffllu
 #define CSBusStandardDataShift		0
 
 // the next 16 bits are then used for the address lines
-#define CSBusStandardAddressMask	0xffff00
+#define CSBusStandardAddressMask	0xffff00llu
 #define CSBusStandardAddressShift	8
 
 // we'll then use the most significant bit for the
