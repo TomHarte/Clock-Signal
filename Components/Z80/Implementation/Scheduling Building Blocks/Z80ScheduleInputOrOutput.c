@@ -14,17 +14,17 @@
 	Input
 
 */
-static void llz80_iop_inputOrOutputHalfCycle1(LLZ80ProcessorState *z80, LLZ80InternalInstruction *instruction)
+static void llz80_iop_inputOrOutputHalfCycle1(LLZ80ProcessorState *const z80, const LLZ80InternalInstruction *const instruction)
 {
 	llz80_setAddress(z80, *instruction->extraData.readOrWriteAddress.address);
 }
 
-static void llz80_iop_inputHalfCycle3(LLZ80ProcessorState *z80, LLZ80InternalInstruction *instruction)
+static void llz80_iop_inputHalfCycle3(LLZ80ProcessorState *const z80, const LLZ80InternalInstruction *const instruction)
 {
 	llz80_setLinesActive(z80, LLZ80SignalRead | LLZ80SignalInputOutputRequest);
 }
 
-static void llz80_iop_inputHalfCycle8(LLZ80ProcessorState *z80, LLZ80InternalInstruction *instruction)
+static void llz80_iop_inputHalfCycle8(LLZ80ProcessorState *const z80, const LLZ80InternalInstruction *const instruction)
 {
 	*instruction->extraData.readOrWriteValue.value = llz80_getDataInput(z80);
 	llz80_setLinesInactive(z80, LLZ80SignalRead | LLZ80SignalInputOutputRequest);
@@ -60,17 +60,17 @@ LLZ80InternalInstruction *llz80_scheduleInput(
 	Output
 
 */
-static void llz80_iop_outputHalfCycle2(LLZ80ProcessorState *z80, LLZ80InternalInstruction *instruction)
+static void llz80_iop_outputHalfCycle2(LLZ80ProcessorState *const z80, const LLZ80InternalInstruction *const instruction)
 {
 	llz80_setDataOutput(z80, *instruction->extraData.readOrWriteValue.value);
 }
 
-static void llz80_iop_outputHalfCycle3(LLZ80ProcessorState *z80, LLZ80InternalInstruction *instruction)
+static void llz80_iop_outputHalfCycle3(LLZ80ProcessorState *const z80, const LLZ80InternalInstruction *const instruction)
 {
 	llz80_setLinesActive(z80, LLZ80SignalInputOutputRequest | LLZ80SignalWrite);
 }
 
-static void llz80_iop_outputHalfCycle7(LLZ80ProcessorState *z80, LLZ80InternalInstruction *instruction)
+static void llz80_iop_outputHalfCycle7(LLZ80ProcessorState *const z80, const LLZ80InternalInstruction *const instruction)
 {
 	llz80_setLinesInactive(z80, LLZ80SignalInputOutputRequest | LLZ80SignalWrite);
 }

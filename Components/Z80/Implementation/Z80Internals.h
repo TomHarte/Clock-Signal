@@ -47,7 +47,7 @@ typedef enum
 struct LLZ80ProcessorState;
 struct LLZ80InternalInstruction;
 
-typedef void (* LLZ80InternalInstructionFunction)(struct LLZ80ProcessorState *z80, struct LLZ80InternalInstruction *metadata);
+typedef void (* LLZ80InternalInstructionFunction)(struct LLZ80ProcessorState *const z80, const struct LLZ80InternalInstruction *const metadata);
 extern LLZ80InternalInstructionFunction llz80_iop_advanceHalfCycleCounter;
 
 typedef struct LLZ80InternalInstruction

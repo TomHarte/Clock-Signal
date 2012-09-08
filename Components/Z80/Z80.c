@@ -72,7 +72,7 @@ static void llz80_destroy(void *opaqueZ80)
 	llz80_destroyGenericList((struct LLZ80GenericLinkedListRecord *)z80->instructionObservers);
 }
 
-static void llz80_iop_advanceHalfCycleCounter_imp(LLZ80ProcessorState *z80, LLZ80InternalInstruction *metadata)
+static void llz80_iop_advanceHalfCycleCounter_imp(LLZ80ProcessorState *const z80, const LLZ80InternalInstruction *const metadata)
 {
 	// set flag changed mask back to 0, ready for the next
 	// half cycle, and decrement the relevant counter
@@ -95,12 +95,12 @@ static void llz80_iop_advanceHalfCycleCounter_imp(LLZ80ProcessorState *z80, LLZ8
 		z80->isWaiting = llz80_linesAreActive(z80, LLZ80SignalWait);
 }
 
-static void llz80_iop_setupForInterruptMode1(LLZ80ProcessorState *z80, LLZ80InternalInstruction *instruction)
+static void llz80_iop_setupForInterruptMode1(LLZ80ProcessorState *const z80, const LLZ80InternalInstruction *const instruction)
 {
 	z80->temporary8bitValue = 0xff;
 }
 
-static void llz80_iop_setupForInterruptMode2(LLZ80ProcessorState *z80, LLZ80InternalInstruction *instruction)
+static void llz80_iop_setupForInterruptMode2(LLZ80ProcessorState *const z80, const LLZ80InternalInstruction *const instruction)
 {
 	z80->temporaryAddress.bytes.high = z80->iRegister;
 	z80->temporaryAddress.bytes.low = z80->temporary8bitValue;

@@ -15,13 +15,13 @@
 	Reading
 
 */
-static void llz80_iop_readOrWriteHalfCycle1(LLZ80ProcessorState *z80, LLZ80InternalInstruction *instruction)
+static void llz80_iop_readOrWriteHalfCycle1(LLZ80ProcessorState *const z80, const LLZ80InternalInstruction *const instruction)
 {
 	llz80_setAddress(z80, *instruction->extraData.readOrWriteAddress.address);
 	llz80_setDataExpectingInput(z80);
 }
 
-static void llz80_iop_readHalfCycle6(LLZ80ProcessorState *z80, LLZ80InternalInstruction *instruction)
+static void llz80_iop_readHalfCycle6(LLZ80ProcessorState *const z80, const LLZ80InternalInstruction *const instruction)
 {
 	*instruction->extraData.readOrWriteValue.value = llz80_getDataInput(z80);
 	llz80_setLinesInactive(z80, LLZ80SignalRead | LLZ80SignalMemoryRequest);
@@ -52,18 +52,18 @@ LLZ80InternalInstruction *llz80_scheduleRead(
 	Writing
 
 */
-static void llz80_iop_writeHalfCycle2(LLZ80ProcessorState *z80, LLZ80InternalInstruction *instruction)
+static void llz80_iop_writeHalfCycle2(LLZ80ProcessorState *const z80, const LLZ80InternalInstruction *const instruction)
 {
 	llz80_setDataOutput(z80, *instruction->extraData.readOrWriteValue.value);
 	llz80_setLinesActive(z80, LLZ80SignalMemoryRequest);
 }
 
-static void llz80_iop_writeHalfCycle4(LLZ80ProcessorState *z80, LLZ80InternalInstruction *instruction)
+static void llz80_iop_writeHalfCycle4(LLZ80ProcessorState *z80, const LLZ80InternalInstruction *const instruction)
 {
 	llz80_setLinesActive(z80, LLZ80SignalWrite);
 }
 
-static void llz80_iop_writeHalfCycle6(LLZ80ProcessorState *z80, LLZ80InternalInstruction *instruction)
+static void llz80_iop_writeHalfCycle6(LLZ80ProcessorState *z80, const LLZ80InternalInstruction *const instruction)
 {
 	llz80_setLinesInactive(z80, LLZ80SignalWrite | LLZ80SignalMemoryRequest);
 }

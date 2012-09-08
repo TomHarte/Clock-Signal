@@ -22,27 +22,21 @@
 #include "Z80EDPageDecode.h"
 #include "Z80CBPageDecode.h"
 
-void llz80_iop_standardPageDecode_imp	(LLZ80ProcessorState *z80, LLZ80InternalInstruction *instruction);
+void llz80_iop_standardPageDecode_imp	(LLZ80ProcessorState *const z80, const LLZ80InternalInstruction *const instruction);
 LLZ80InternalInstructionFunction llz80_iop_standardPageDecode = llz80_iop_standardPageDecode_imp;
 
-void llz80_djnz							(LLZ80ProcessorState *z80, LLZ80InternalInstruction *instruction);
-void llz80_addOffsetToIndexRegister		(LLZ80ProcessorState *z80, LLZ80InternalInstruction *instruction);
-void llz80_jrConditional				(LLZ80ProcessorState *z80, LLZ80InternalInstruction *instruction);
-void llz80_incrementTemporary8BitValue	(LLZ80ProcessorState *z80, LLZ80InternalInstruction *instruction);
-void llz80_decrementTemporary8BitValue	(LLZ80ProcessorState *z80, LLZ80InternalInstruction *instruction);
-void llz80_scheduleCalculationOfSourceAddress(LLZ80ProcessorState *z80, LLZ80RegisterPair *indexRegister, bool addOffset);
-void llz80_doALUOp						(LLZ80ProcessorState *z80, LLZ80InternalInstruction *instruction);
+void llz80_djnz							(LLZ80ProcessorState *const z80, const LLZ80InternalInstruction *const instruction);
+void llz80_addOffsetToIndexRegister		(LLZ80ProcessorState *const z80, const LLZ80InternalInstruction *const instruction);
+void llz80_jrConditional				(LLZ80ProcessorState *const z80, const LLZ80InternalInstruction *const instruction);
+void llz80_incrementTemporary8BitValue	(LLZ80ProcessorState *const z80, const LLZ80InternalInstruction *const instruction);
+void llz80_decrementTemporary8BitValue	(LLZ80ProcessorState *const z80, const LLZ80InternalInstruction *const instruction);
+void llz80_scheduleCalculationOfSourceAddress(LLZ80ProcessorState *const z80, LLZ80RegisterPair *const indexRegister, bool addOffset);
+void llz80_doALUOp						(LLZ80ProcessorState *const z80, const LLZ80InternalInstruction *const instruction);
 void llz80_copyTemporaryAddressToRegister
-										(LLZ80ProcessorState *z80, LLZ80InternalInstruction *instruction);
-void llz80_iop_finishPopAF				(LLZ80ProcessorState *z80, LLZ80InternalInstruction *instruction);
-void llz80_schedulePop					(LLZ80ProcessorState *z80, LLZ80RegisterPair *registerPair);
-void llz80_schedulePush					(LLZ80ProcessorState *z80, LLZ80RegisterPair *registerPair);
-void llz80_scheduleCallToTemporaryAddress(LLZ80ProcessorState *z80);
-void llz80_schedule8BitReadFromPC		(LLZ80ProcessorState *z80, uint8_t *targetRegister);
-void llz80_schedule16BitReadFromPC		(LLZ80ProcessorState *z80, LLZ80RegisterPair *targetRegister);
-void llz80_schedule16BitReadFromTemporaryAddress(LLZ80ProcessorState *z80, LLZ80RegisterPair *targetRegister);
+										(LLZ80ProcessorState *const z80, const LLZ80InternalInstruction *const instruction);
+void llz80_iop_finishPopAF				(LLZ80ProcessorState *const z80, const LLZ80InternalInstruction *const instruction);
 
-void llz80_schedulePop(LLZ80ProcessorState *z80, LLZ80RegisterPair *registerPair)
+static void llz80_schedulePop(LLZ80ProcessorState *const z80, LLZ80RegisterPair *const registerPair)
 {
 	llz80_scheduleRead(z80, &registerPair->bytes.low, &z80->spRegister.fullValue);
 	llz80_scheduleFunction(z80, llz80_iop_incrementStackPointer);
@@ -51,7 +45,7 @@ void llz80_schedulePop(LLZ80ProcessorState *z80, LLZ80RegisterPair *registerPair
 	llz80_scheduleFunction(z80, llz80_iop_incrementStackPointer);
 }
 
-void llz80_schedulePush(LLZ80ProcessorState *z80, LLZ80RegisterPair *registerPair)
+static void llz80_schedulePush(LLZ80ProcessorState *const z80, LLZ80RegisterPair *const registerPair)
 {
 	// predecrement the stack pointer
 	llz80_scheduleHalfCycleForFunction(z80, llz80_iop_decrementStackPointer);
@@ -64,33 +58,33 @@ void llz80_schedulePush(LLZ80ProcessorState *z80, LLZ80RegisterPair *registerPai
 	llz80_scheduleWrite(z80, &registerPair->bytes.low, &z80->spRegister.fullValue);
 }
 
-void llz80_scheduleCallToTemporaryAddress(LLZ80ProcessorState *z80)
+static void llz80_scheduleCallToTemporaryAddress(LLZ80ProcessorState *const z80)
 {
 	llz80_schedulePush(z80, &z80->pcRegister);
 	llz80_scheduleFunction(z80, llz80_iop_setPCToTemporaryAddress);
 }
 
-void llz80_schedule8BitReadFromPC(LLZ80ProcessorState *z80, uint8_t *targetRegister)
+static void llz80_schedule8BitReadFromPC(LLZ80ProcessorState *const z80, uint8_t *const targetRegister)
 {
 	llz80_scheduleRead(z80, targetRegister, &z80->pcRegister.fullValue);
 	llz80_scheduleFunction(z80, llz80_iop_incrementProgramCounter);
 }
 
-void llz80_schedule16BitReadFromPC(LLZ80ProcessorState *z80, LLZ80RegisterPair *targetRegister)
+static void llz80_schedule16BitReadFromPC(LLZ80ProcessorState *const z80, LLZ80RegisterPair *const targetRegister)
 {
 	llz80_schedule8BitReadFromPC(z80, &targetRegister->bytes.low);
 	llz80_schedule8BitReadFromPC(z80, &targetRegister->bytes.high);
 }
 
-void llz80_schedule16BitReadFromTemporaryAddress(LLZ80ProcessorState *z80, LLZ80RegisterPair *targetRegister)
-{
-	llz80_scheduleRead(z80, &targetRegister->bytes.low, &z80->temporaryAddress.fullValue);
-	llz80_scheduleFunction(z80, llz80_iop_incrementTemporaryAddress);
+//static void llz80_schedule16BitReadFromTemporaryAddress(LLZ80ProcessorState *const z80, LLZ80RegisterPair *const targetRegister)
+//{
+//	llz80_scheduleRead(z80, &targetRegister->bytes.low, &z80->temporaryAddress.fullValue);
+//	llz80_scheduleFunction(z80, llz80_iop_incrementTemporaryAddress);
+//
+//	llz80_scheduleRead(z80, &targetRegister->bytes.high, &z80->temporaryAddress.fullValue);
+//}
 
-	llz80_scheduleRead(z80, &targetRegister->bytes.high, &z80->temporaryAddress.fullValue);
-}
-
-void llz80_iop_standardPageDecode_imp(LLZ80ProcessorState *z80, LLZ80InternalInstruction *instruction)
+void llz80_iop_standardPageDecode_imp(LLZ80ProcessorState *const z80, const LLZ80InternalInstruction *const instruction)
 {
 	LLZ80RegisterPair *indexRegister = instruction->extraData.opcodeDecode.indexRegister;
 	bool addOffset = instruction->extraData.opcodeDecode.addOffset;
@@ -797,18 +791,18 @@ void llz80_iop_standardPageDecode_imp(LLZ80ProcessorState *z80, LLZ80InternalIns
 	}
 }
 
-void llz80_iop_finishPopAF(LLZ80ProcessorState *z80, LLZ80InternalInstruction *instruction)
+void llz80_iop_finishPopAF(LLZ80ProcessorState *const z80, const LLZ80InternalInstruction *const instruction)
 {
 	llz80_setF(z80, z80->temporary8bitValue);
 	z80->spRegister.fullValue++;
 }
 
-void llz80_copyTemporaryAddressToRegister(struct LLZ80ProcessorState *z80, LLZ80InternalInstruction *instruction)
+void llz80_copyTemporaryAddressToRegister(LLZ80ProcessorState *const z80, const LLZ80InternalInstruction *const instruction)
 {
 	*instruction->extraData.referenceToIndexRegister.indexRegister = z80->temporaryAddress;
 }
 
-void llz80_doALUOp(struct LLZ80ProcessorState *z80, LLZ80InternalInstruction *instruction)
+void llz80_doALUOp(LLZ80ProcessorState *const z80, const LLZ80InternalInstruction *const instruction)
 {
 	switch(instruction->extraData.ALUOrShiftOp.operation)
 	{
@@ -824,17 +818,17 @@ void llz80_doALUOp(struct LLZ80ProcessorState *z80, LLZ80InternalInstruction *in
 	}
 }
 
-void llz80_incrementTemporary8BitValue(struct LLZ80ProcessorState *z80, LLZ80InternalInstruction *instruction)
+void llz80_incrementTemporary8BitValue(LLZ80ProcessorState *const z80, const LLZ80InternalInstruction *const instruction)
 {
 	llz80_increment_8bit(z80, &z80->temporary8bitValue);
 }
 
-void llz80_decrementTemporary8BitValue(struct LLZ80ProcessorState *z80, LLZ80InternalInstruction *instruction)
+void llz80_decrementTemporary8BitValue(LLZ80ProcessorState *const z80, const LLZ80InternalInstruction *const instruction)
 {
 	llz80_decrement_8bit(z80, &z80->temporary8bitValue);
 }
 
-void llz80_jrConditional(struct LLZ80ProcessorState *z80, LLZ80InternalInstruction *instruction)
+void llz80_jrConditional(LLZ80ProcessorState *const z80, const LLZ80InternalInstruction *const instruction)
 {
 	z80->pcRegister.fullValue++;
 
@@ -845,13 +839,13 @@ void llz80_jrConditional(struct LLZ80ProcessorState *z80, LLZ80InternalInstructi
 	}
 }
 
-void llz80_addOffsetToIndexRegister(struct LLZ80ProcessorState *z80, LLZ80InternalInstruction *instruction)
+void llz80_addOffsetToIndexRegister(LLZ80ProcessorState *const z80, const LLZ80InternalInstruction *const instruction)
 {
 	z80->temporaryAddress.fullValue = 
 		instruction->extraData.referenceToIndexRegister.indexRegister->fullValue + z80->temporaryOffset;
 }
 
-void llz80_scheduleCalculationOfSourceAddress(LLZ80ProcessorState *z80, LLZ80RegisterPair *indexRegister, bool addOffset)
+void llz80_scheduleCalculationOfSourceAddress(LLZ80ProcessorState *const z80, LLZ80RegisterPair *const indexRegister, bool addOffset)
 {
 	if(addOffset)
 	{
@@ -870,7 +864,7 @@ void llz80_scheduleCalculationOfSourceAddress(LLZ80ProcessorState *z80, LLZ80Reg
 		z80->temporaryAddress = *indexRegister;
 }
 
-void llz80_djnz(struct LLZ80ProcessorState *z80, LLZ80InternalInstruction *instruction)
+void llz80_djnz(struct LLZ80ProcessorState *const z80, const LLZ80InternalInstruction *const instruction)
 {
 	z80->pcRegister.fullValue++;
 	z80->bcRegister.bytes.high--;

@@ -8,42 +8,42 @@
 
 #include "Z80StandardSchedulingComponents.h"
 
-static void llz80_iop_setReadAndMemoryRequest_imp(LLZ80ProcessorState *z80, LLZ80InternalInstruction *instruction)
+static void llz80_iop_setReadAndMemoryRequest_imp(LLZ80ProcessorState *const z80, const LLZ80InternalInstruction *const instruction)
 {
 	llz80_setLinesActive(z80, LLZ80SignalRead | LLZ80SignalMemoryRequest);
 }
 
-static void llz80_iop_setMemoryRequest_imp(LLZ80ProcessorState *z80, LLZ80InternalInstruction *instruction)
+static void llz80_iop_setMemoryRequest_imp(LLZ80ProcessorState *const z80, const LLZ80InternalInstruction *const instruction)
 {
 	llz80_setLinesActive(z80, LLZ80SignalMemoryRequest);
 }
 
-static void llz80_iop_incrementProgramCounter_imp(LLZ80ProcessorState *z80, LLZ80InternalInstruction *instruction)
+static void llz80_iop_incrementProgramCounter_imp(LLZ80ProcessorState *const z80, const LLZ80InternalInstruction *const instruction)
 {
 	z80->pcRegister.fullValue++;
 }
 
-static void llz80_iop_incrementTemporaryAddress_imp(LLZ80ProcessorState *z80, LLZ80InternalInstruction *instruction)
+static void llz80_iop_incrementTemporaryAddress_imp(LLZ80ProcessorState *const z80, const LLZ80InternalInstruction *const instruction)
 {
 	z80->temporaryAddress.fullValue++;
 }
 
-static void llz80_iop_incrementStackPointer_imp(LLZ80ProcessorState *z80, LLZ80InternalInstruction *instruction)
+static void llz80_iop_incrementStackPointer_imp(LLZ80ProcessorState *const z80, const LLZ80InternalInstruction *const instruction)
 {
 	z80->spRegister.fullValue++;
 }
 
-static void llz80_iop_decrementStackPointer_imp(LLZ80ProcessorState *z80, LLZ80InternalInstruction *instruction)
+static void llz80_iop_decrementStackPointer_imp(LLZ80ProcessorState *const z80, const LLZ80InternalInstruction *const instruction)
 {
 	z80->spRegister.fullValue--;
 }
 
-static void llz80_iop_setPCToTemporaryAddress_imp(LLZ80ProcessorState *z80, LLZ80InternalInstruction *instruction)
+static void llz80_iop_setPCToTemporaryAddress_imp(LLZ80ProcessorState *const z80, const LLZ80InternalInstruction *const instruction)
 {
 	z80->pcRegister.fullValue = z80->temporaryAddress.fullValue;
 }
 
-void llz80_schedulePauseForCycles(LLZ80ProcessorState *z80, unsigned int numberOfCycles)
+void llz80_schedulePauseForCycles(LLZ80ProcessorState *const z80, unsigned int numberOfCycles)
 {
 	while(numberOfCycles--)
 	{

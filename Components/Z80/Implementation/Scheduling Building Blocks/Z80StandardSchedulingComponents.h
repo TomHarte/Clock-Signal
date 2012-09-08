@@ -21,6 +21,6 @@ extern LLZ80InternalInstructionFunction llz80_iop_decrementStackPointer;
 
 extern LLZ80InternalInstructionFunction llz80_iop_setPCToTemporaryAddress;
 
-void llz80_schedulePauseForCycles(LLZ80ProcessorState *z80, unsigned int numberOfCycles);
+void llz80_schedulePauseForCycles(LLZ80ProcessorState *const z80, unsigned int numberOfCycles);
 
 #endif

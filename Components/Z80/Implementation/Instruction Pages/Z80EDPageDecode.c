@@ -15,31 +15,31 @@
 
 #include "../Operations/Z80Arithmetic16BitOps.h"
 
-void llz80_iop_EDPageDecode_imp	(LLZ80ProcessorState *z80, LLZ80InternalInstruction *instruction);
+void llz80_iop_EDPageDecode_imp	(LLZ80ProcessorState *const z80, const LLZ80InternalInstruction *const instruction);
 
-void llz80_iop_setInputFlags	(LLZ80ProcessorState *z80, LLZ80InternalInstruction *instruction);
-void llz80_iop_doRRD			(LLZ80ProcessorState *z80, LLZ80InternalInstruction *instruction);
-void llz80_iop_doRLD			(LLZ80ProcessorState *z80, LLZ80InternalInstruction *instruction);
+void llz80_iop_setInputFlags	(LLZ80ProcessorState *const z80, const LLZ80InternalInstruction *const instruction);
+void llz80_iop_doRRD			(LLZ80ProcessorState *const z80, const LLZ80InternalInstruction *const instruction);
+void llz80_iop_doRLD			(LLZ80ProcessorState *const z80, const LLZ80InternalInstruction *const instruction);
 
-void llz80_iop_finishLDI		(LLZ80ProcessorState *z80, LLZ80InternalInstruction *instruction);
-void llz80_iop_finishLDIR		(LLZ80ProcessorState *z80, LLZ80InternalInstruction *instruction);
-void llz80_iop_finishLDD		(LLZ80ProcessorState *z80, LLZ80InternalInstruction *instruction);
-void llz80_iop_finishLDDR		(LLZ80ProcessorState *z80, LLZ80InternalInstruction *instruction);
+void llz80_iop_finishLDI		(LLZ80ProcessorState *const z80, const LLZ80InternalInstruction *const instruction);
+void llz80_iop_finishLDIR		(LLZ80ProcessorState *const z80, const LLZ80InternalInstruction *const instruction);
+void llz80_iop_finishLDD		(LLZ80ProcessorState *const z80, const LLZ80InternalInstruction *const instruction);
+void llz80_iop_finishLDDR		(LLZ80ProcessorState *const z80, const LLZ80InternalInstruction *const instruction);
 
-void llz80_iop_finishCPI		(LLZ80ProcessorState *z80, LLZ80InternalInstruction *instruction);
-void llz80_iop_finishCPIR		(LLZ80ProcessorState *z80, LLZ80InternalInstruction *instruction);
-void llz80_iop_finishCPD		(LLZ80ProcessorState *z80, LLZ80InternalInstruction *instruction);
-void llz80_iop_finishCPDR		(LLZ80ProcessorState *z80, LLZ80InternalInstruction *instruction);
+void llz80_iop_finishCPI		(LLZ80ProcessorState *const z80, const LLZ80InternalInstruction *const instruction);
+void llz80_iop_finishCPIR		(LLZ80ProcessorState *const z80, const LLZ80InternalInstruction *const instruction);
+void llz80_iop_finishCPD		(LLZ80ProcessorState *const z80, const LLZ80InternalInstruction *const instruction);
+void llz80_iop_finishCPDR		(LLZ80ProcessorState *const z80, const LLZ80InternalInstruction *const instruction);
 
-void llz80_iop_finishINI		(LLZ80ProcessorState *z80, LLZ80InternalInstruction *instruction);
-void llz80_iop_finishINIR		(LLZ80ProcessorState *z80, LLZ80InternalInstruction *instruction);
-void llz80_iop_finishIND		(LLZ80ProcessorState *z80, LLZ80InternalInstruction *instruction);
-void llz80_iop_finishINDR		(LLZ80ProcessorState *z80, LLZ80InternalInstruction *instruction);
+void llz80_iop_finishINI		(LLZ80ProcessorState *const z80, const LLZ80InternalInstruction *const instruction);
+void llz80_iop_finishINIR		(LLZ80ProcessorState *const z80, const LLZ80InternalInstruction *const instruction);
+void llz80_iop_finishIND		(LLZ80ProcessorState *const z80, const LLZ80InternalInstruction *const instruction);
+void llz80_iop_finishINDR		(LLZ80ProcessorState *const z80, const LLZ80InternalInstruction *const instruction);
 
-void llz80_iop_finishOUTI		(LLZ80ProcessorState *z80, LLZ80InternalInstruction *instruction);
-void llz80_iop_finishOUTIR		(LLZ80ProcessorState *z80, LLZ80InternalInstruction *instruction);
-void llz80_iop_finishOUTD		(LLZ80ProcessorState *z80, LLZ80InternalInstruction *instruction);
-void llz80_iop_finishOUTDR		(LLZ80ProcessorState *z80, LLZ80InternalInstruction *instruction);
+void llz80_iop_finishOUTI		(LLZ80ProcessorState *const z80, const LLZ80InternalInstruction *const instruction);
+void llz80_iop_finishOUTIR		(LLZ80ProcessorState *const z80, const LLZ80InternalInstruction *const instruction);
+void llz80_iop_finishOUTD		(LLZ80ProcessorState *const z80, const LLZ80InternalInstruction *const instruction);
+void llz80_iop_finishOUTDR		(LLZ80ProcessorState *const z80, const LLZ80InternalInstruction *const instruction);
 
 static LLZ80InternalInstructionFunction ldInstructions[4] =
 {
@@ -73,7 +73,7 @@ static LLZ80InternalInstructionFunction outInstructions[4] =
 	llz80_iop_finishOUTDR
 };
 
-void llz80_iop_EDPageDecode_imp(LLZ80ProcessorState *z80, LLZ80InternalInstruction *instruction)
+void llz80_iop_EDPageDecode_imp(LLZ80ProcessorState *const z80, const LLZ80InternalInstruction *const instruction)
 {
 	// the ed page isn't affected by an fd or dd prefix,
 	// so this is all always HL
@@ -334,9 +334,7 @@ void llz80_iop_EDPageDecode_imp(LLZ80ProcessorState *z80, LLZ80InternalInstructi
 	}
 }
 
-void llz80_setLDFlags(LLZ80ProcessorState *z80);
-
-void llz80_setLDFlags(LLZ80ProcessorState *z80)
+static void llz80_setLDFlags(LLZ80ProcessorState *const z80)
 {
 	uint8_t n = z80->aRegister + z80->temporary8bitValue;
 	
@@ -346,7 +344,7 @@ void llz80_setLDFlags(LLZ80ProcessorState *z80)
 	z80->bit5And3Flags = (uint8_t)((n&0x8) | ((n&0x2) << 4));
 }
 
-void llz80_iop_finishLDI(LLZ80ProcessorState *z80, LLZ80InternalInstruction *instruction)
+void llz80_iop_finishLDI(LLZ80ProcessorState *const z80, const LLZ80InternalInstruction *const instruction)
 {
 	z80->bcRegister.fullValue--;
 	z80->deRegister.fullValue++;
@@ -355,7 +353,7 @@ void llz80_iop_finishLDI(LLZ80ProcessorState *z80, LLZ80InternalInstruction *ins
 	llz80_setLDFlags(z80);
 }
 
-void llz80_iop_finishLDIR(LLZ80ProcessorState *z80, LLZ80InternalInstruction *instruction)
+void llz80_iop_finishLDIR(LLZ80ProcessorState *const z80, const LLZ80InternalInstruction *const instruction)
 {
 	z80->bcRegister.fullValue--;
 	z80->deRegister.fullValue++;
@@ -370,7 +368,7 @@ void llz80_iop_finishLDIR(LLZ80ProcessorState *z80, LLZ80InternalInstruction *in
 	}
 }
 
-void llz80_iop_finishLDD(LLZ80ProcessorState *z80, LLZ80InternalInstruction *instruction)
+void llz80_iop_finishLDD(LLZ80ProcessorState *const z80, const LLZ80InternalInstruction *const instruction)
 {
 	z80->bcRegister.fullValue--;
 	z80->deRegister.fullValue--;
@@ -379,7 +377,7 @@ void llz80_iop_finishLDD(LLZ80ProcessorState *z80, LLZ80InternalInstruction *ins
 	llz80_setLDFlags(z80);
 }
 
-void llz80_iop_finishLDDR(LLZ80ProcessorState *z80, LLZ80InternalInstruction *instruction)
+void llz80_iop_finishLDDR(LLZ80ProcessorState *const z80, const LLZ80InternalInstruction *const instruction)
 {
 	z80->bcRegister.fullValue--;
 	z80->deRegister.fullValue--;
@@ -393,9 +391,7 @@ void llz80_iop_finishLDDR(LLZ80ProcessorState *z80, LLZ80InternalInstruction *in
 	}
 }
 
-void llz80_setCPFlags(LLZ80ProcessorState *z80);
-
-void llz80_setCPFlags(LLZ80ProcessorState *z80)
+static void llz80_setCPFlags(LLZ80ProcessorState *const z80)
 {
 	uint8_t result = z80->aRegister - z80->temporary8bitValue;
 	uint8_t halfResult = (z80->aRegister&0xf) - (z80->temporary8bitValue&0xf);
@@ -414,7 +410,7 @@ void llz80_setCPFlags(LLZ80ProcessorState *z80)
 	z80->lastSignResult = z80->lastZeroResult = result;
 }
 
-void llz80_iop_finishCPI(LLZ80ProcessorState *z80, LLZ80InternalInstruction *instruction)
+void llz80_iop_finishCPI(LLZ80ProcessorState *const z80, const LLZ80InternalInstruction *const instruction)
 {
 	z80->bcRegister.fullValue--;
 	z80->hlRegister.fullValue++;
@@ -422,7 +418,7 @@ void llz80_iop_finishCPI(LLZ80ProcessorState *z80, LLZ80InternalInstruction *ins
 	llz80_setCPFlags(z80);
 }
 
-void llz80_iop_finishCPIR(LLZ80ProcessorState *z80, LLZ80InternalInstruction *instruction)
+void llz80_iop_finishCPIR(LLZ80ProcessorState *const z80, const LLZ80InternalInstruction *const instruction)
 {
 	z80->bcRegister.fullValue--;
 	z80->hlRegister.fullValue++;
@@ -436,7 +432,7 @@ void llz80_iop_finishCPIR(LLZ80ProcessorState *z80, LLZ80InternalInstruction *in
 	}
 }
 
-void llz80_iop_finishCPD(LLZ80ProcessorState *z80, LLZ80InternalInstruction *instruction)
+void llz80_iop_finishCPD(LLZ80ProcessorState *const z80, const LLZ80InternalInstruction *const instruction)
 {
 	z80->bcRegister.fullValue--;
 	z80->hlRegister.fullValue--;
@@ -444,7 +440,7 @@ void llz80_iop_finishCPD(LLZ80ProcessorState *z80, LLZ80InternalInstruction *ins
 	llz80_setCPFlags(z80);
 }
 
-void llz80_iop_finishCPDR(LLZ80ProcessorState *z80, LLZ80InternalInstruction *instruction)
+void llz80_iop_finishCPDR(LLZ80ProcessorState *const z80, const LLZ80InternalInstruction *const instruction)
 {
 	z80->bcRegister.fullValue--;
 	z80->hlRegister.fullValue--;
@@ -457,9 +453,7 @@ void llz80_iop_finishCPDR(LLZ80ProcessorState *z80, LLZ80InternalInstruction *in
 	}
 }
 
-void llz80_setINFlags(LLZ80ProcessorState *z80, int cAdder);
-
-void llz80_setINFlags(LLZ80ProcessorState *z80, int cAdder)
+static void llz80_setINFlags(LLZ80ProcessorState *const z80, int cAdder)
 {
 	z80->bcRegister.bytes.high--;
 	
@@ -476,13 +470,13 @@ void llz80_setINFlags(LLZ80ProcessorState *z80, int cAdder)
 	z80->generalFlags |= parity;
 }
 
-void llz80_iop_finishINI(LLZ80ProcessorState *z80, LLZ80InternalInstruction *instruction)
+void llz80_iop_finishINI(LLZ80ProcessorState *const z80, const LLZ80InternalInstruction *const instruction)
 {
 	z80->hlRegister.fullValue++;
 	llz80_setINFlags(z80, 1);
 }
 
-void llz80_iop_finishINIR(LLZ80ProcessorState *z80, LLZ80InternalInstruction *instruction)
+void llz80_iop_finishINIR(LLZ80ProcessorState *const z80, const LLZ80InternalInstruction *const instruction)
 {
 	z80->hlRegister.fullValue++;
 	llz80_setINFlags(z80, 1);
@@ -494,13 +488,13 @@ void llz80_iop_finishINIR(LLZ80ProcessorState *z80, LLZ80InternalInstruction *in
 	}
 }
 
-void llz80_iop_finishIND(LLZ80ProcessorState *z80, LLZ80InternalInstruction *instruction)
+void llz80_iop_finishIND(LLZ80ProcessorState *const z80, const LLZ80InternalInstruction *const instruction)
 {
 	z80->hlRegister.fullValue--;
 	llz80_setINFlags(z80, -1);
 }
 
-void llz80_iop_finishINDR(LLZ80ProcessorState *z80, LLZ80InternalInstruction *instruction)
+void llz80_iop_finishINDR(LLZ80ProcessorState *const z80, const LLZ80InternalInstruction *const instruction)
 {
 	z80->hlRegister.fullValue--;
 	llz80_setINFlags(z80, -1);
@@ -512,9 +506,7 @@ void llz80_iop_finishINDR(LLZ80ProcessorState *z80, LLZ80InternalInstruction *in
 	}
 }
 
-void llz80_setOUTFlags(LLZ80ProcessorState *z80);
-
-void llz80_setOUTFlags(LLZ80ProcessorState *z80)
+static void llz80_setOUTFlags(LLZ80ProcessorState *const z80)
 {
 	z80->bcRegister.bytes.high--;
 	
@@ -531,13 +523,13 @@ void llz80_setOUTFlags(LLZ80ProcessorState *z80)
 	z80->generalFlags |= parity;
 }
 
-void llz80_iop_finishOUTI(LLZ80ProcessorState *z80, LLZ80InternalInstruction *instruction)
+void llz80_iop_finishOUTI(LLZ80ProcessorState *const z80, const LLZ80InternalInstruction *const instruction)
 {
 	z80->hlRegister.fullValue++;
 	llz80_setOUTFlags(z80);
 }
 
-void llz80_iop_finishOUTIR(LLZ80ProcessorState *z80, LLZ80InternalInstruction *instruction)
+void llz80_iop_finishOUTIR(LLZ80ProcessorState *const z80, const LLZ80InternalInstruction *const instruction)
 {
 	z80->hlRegister.fullValue++;
 	llz80_setOUTFlags(z80);
@@ -549,13 +541,13 @@ void llz80_iop_finishOUTIR(LLZ80ProcessorState *z80, LLZ80InternalInstruction *i
 	}
 }
 
-void llz80_iop_finishOUTD(LLZ80ProcessorState *z80, LLZ80InternalInstruction *instruction)
+void llz80_iop_finishOUTD(LLZ80ProcessorState *const z80, const LLZ80InternalInstruction *const instruction)
 {
 	z80->hlRegister.fullValue--;
 	llz80_setOUTFlags(z80);
 }
 
-void llz80_iop_finishOUTDR(LLZ80ProcessorState *z80, LLZ80InternalInstruction *instruction)
+void llz80_iop_finishOUTDR(LLZ80ProcessorState *const z80, const LLZ80InternalInstruction *const instruction)
 {
 	z80->hlRegister.fullValue--;
 	llz80_setOUTFlags(z80);
@@ -567,7 +559,7 @@ void llz80_iop_finishOUTDR(LLZ80ProcessorState *z80, LLZ80InternalInstruction *i
 	}
 }
 
-void llz80_iop_doRRD(LLZ80ProcessorState *z80, LLZ80InternalInstruction *instruction)
+void llz80_iop_doRRD(LLZ80ProcessorState *const z80, const LLZ80InternalInstruction *const instruction)
 {
 	int lowNibble = z80->aRegister&0xf;
 	z80->aRegister = (z80->aRegister&0xf0) | (z80->temporary8bitValue & 0xf);
@@ -581,7 +573,7 @@ void llz80_iop_doRRD(LLZ80ProcessorState *z80, LLZ80InternalInstruction *instruc
 	z80->bit5And3Flags = z80->aRegister;
 }
 
-void llz80_iop_doRLD(LLZ80ProcessorState *z80, LLZ80InternalInstruction *instruction)
+void llz80_iop_doRLD(LLZ80ProcessorState *const z80, const LLZ80InternalInstruction *const instruction)
 {
 	int lowNibble = z80->aRegister&0xf;
 	z80->aRegister = (z80->aRegister&0xf0) | (z80->temporary8bitValue >> 4);
@@ -595,7 +587,7 @@ void llz80_iop_doRLD(LLZ80ProcessorState *z80, LLZ80InternalInstruction *instruc
 	z80->bit5And3Flags = z80->aRegister;
 }
 
-void llz80_iop_setInputFlags(LLZ80ProcessorState *z80, LLZ80InternalInstruction *instruction)
+void llz80_iop_setInputFlags(LLZ80ProcessorState *const z80, const LLZ80InternalInstruction *const instruction)
 {
 	// the input will still be on the data lines, so...
 	z80->lastSignResult = z80->lastZeroResult =

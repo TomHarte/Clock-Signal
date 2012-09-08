@@ -8,7 +8,7 @@
 
 #include "Z80SetResetTestOps.h"
 
-static void llz80_iop_bit_imp(LLZ80ProcessorState *z80, LLZ80InternalInstruction *instruction)
+static void llz80_iop_bit_imp(LLZ80ProcessorState *const z80, const LLZ80InternalInstruction *const instruction)
 {
 	uint8_t result = instruction->extraData.bitOp.mask & *instruction->extraData.bitOp.value;
 
@@ -20,12 +20,12 @@ static void llz80_iop_bit_imp(LLZ80ProcessorState *z80, LLZ80InternalInstruction
 		(result ? 0 : LLZ80FlagParityOverflow);
 }
 
-static void llz80_iop_set_imp(LLZ80ProcessorState *z80, LLZ80InternalInstruction *instruction)
+static void llz80_iop_set_imp(LLZ80ProcessorState *const z80, const LLZ80InternalInstruction *const instruction)
 {
 	*instruction->extraData.bitOp.value |= instruction->extraData.bitOp.mask;
 }
 
-static void llz80_iop_res_imp(LLZ80ProcessorState *z80, LLZ80InternalInstruction *instruction)
+static void llz80_iop_res_imp(LLZ80ProcessorState *const z80, const LLZ80InternalInstruction *const instruction)
 {
 	*instruction->extraData.bitOp.value &= ~instruction->extraData.bitOp.mask;
 }

@@ -9,7 +9,7 @@
 #include "Z80StandardSchedulingComponents.h"
 #include "Z80ScheduleInstructionFetch.h"
 
-static void llz80_iop_instructionfetchHalfCycle1(LLZ80ProcessorState *z80, LLZ80InternalInstruction *instruction)
+static void llz80_iop_instructionfetchHalfCycle1(LLZ80ProcessorState *const z80, const LLZ80InternalInstruction *const instruction)
 {
 	// load the program counter to the address line;
 	// set m1, increment the refresh register
@@ -22,7 +22,7 @@ static void llz80_iop_instructionfetchHalfCycle1(LLZ80ProcessorState *z80, LLZ80
 	z80->pcRegister.fullValue++;
 }
 
-static void llz80_iop_instructionfetchHalfCycle1_noIncrement(LLZ80ProcessorState *z80, LLZ80InternalInstruction *instruction)
+static void llz80_iop_instructionfetchHalfCycle1_noIncrement(LLZ80ProcessorState *const z80, const LLZ80InternalInstruction *const instruction)
 {
 	// load the program counter to the address line;
 	// set m1, increment the refresh register
@@ -30,7 +30,7 @@ static void llz80_iop_instructionfetchHalfCycle1_noIncrement(LLZ80ProcessorState
 	llz80_setLinesActive(z80, LLZ80SignalMachineCycleOne);
 }
 
-static void llz80_iop_instructionfetchHalfCycle5(LLZ80ProcessorState *z80, LLZ80InternalInstruction *instruction)
+static void llz80_iop_instructionfetchHalfCycle5(LLZ80ProcessorState *const z80, const LLZ80InternalInstruction *const instruction)
 {
 	// store the current value of the data line away
 	// for safe keeping
@@ -43,18 +43,18 @@ static void llz80_iop_instructionfetchHalfCycle5(LLZ80ProcessorState *z80, LLZ80
 	z80->rRegister = (z80->rRegister&0x80) | ((z80->rRegister+1)&0x7f);
 }
 
-static void llz80_iop_irqAcknowledgeHalfCycle6(LLZ80ProcessorState *z80, LLZ80InternalInstruction *instruction)
+static void llz80_iop_irqAcknowledgeHalfCycle6(LLZ80ProcessorState *const z80, const LLZ80InternalInstruction *const instruction)
 {
 	llz80_setLinesActive(z80, LLZ80SignalInputOutputRequest);
 }
 
-static void llz80_iop_instructionfetchHalfCycle8(LLZ80ProcessorState *z80, LLZ80InternalInstruction *instruction)
+static void llz80_iop_instructionfetchHalfCycle8(LLZ80ProcessorState *const z80, const LLZ80InternalInstruction *const instruction)
 {
 	// end the refresh cycle
 	llz80_setLinesInactive(z80, LLZ80SignalMemoryRequest | LLZ80SignalRefresh);
 }
 
-static void llz80_iop_irqAcknowledgeHalfCycle9(LLZ80ProcessorState *z80, LLZ80InternalInstruction *instruction)
+static void llz80_iop_irqAcknowledgeHalfCycle9(LLZ80ProcessorState *const z80, const LLZ80InternalInstruction *const instruction)
 {
 	z80->temporary8bitValue = llz80_getDataInput(z80);
 	llz80_setLinesInactive(z80, LLZ80SignalMachineCycleOne | LLZ80SignalInputOutputRequest);

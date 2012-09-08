@@ -15,12 +15,12 @@
 #include "../Operations/Z80SetResetTestOps.h"
 #include "../Operations/Z80RotateAndShiftOps.h"
 
-static void llz80_iop_copyTemporary8BitValueToRegister(LLZ80ProcessorState *z80, LLZ80InternalInstruction *instruction)
+static void llz80_iop_copyTemporary8BitValueToRegister(LLZ80ProcessorState *const z80, const LLZ80InternalInstruction *const instruction)
 {
 	*instruction->extraData.referenceToRegister.registerReference = z80->temporary8bitValue;
 }
 
-static void llz80_iop_doShiftOp(LLZ80ProcessorState *z80, LLZ80InternalInstruction *instruction)
+static void llz80_iop_doShiftOp(LLZ80ProcessorState *const z80, const LLZ80InternalInstruction *const instruction)
 {
 	switch(instruction->extraData.ALUOrShiftOp.operation)
 	{
@@ -39,7 +39,7 @@ static void llz80_iop_doShiftOp(LLZ80ProcessorState *z80, LLZ80InternalInstructi
 	(metadata)->extraData.bitOp.mask = (uint8_t)(maskVal);\
 	(metadata)->extraData.bitOp.value = (valueVal);
 
-static void llz80_iop_CBPageDecode_imp(LLZ80ProcessorState *z80, LLZ80InternalInstruction *instruction)
+static void llz80_iop_CBPageDecode_imp(LLZ80ProcessorState *const z80, const LLZ80InternalInstruction *const instruction)
 {
 	uint8_t opcode = z80->temporary8bitValue;
 	bool addOffset = instruction->extraData.opcodeDecode.addOffset;
