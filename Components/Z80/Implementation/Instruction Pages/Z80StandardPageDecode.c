@@ -86,7 +86,7 @@ static void llz80_schedule16BitReadFromPC(LLZ80ProcessorState *const z80, LLZ80R
 
 void llz80_iop_standardPageDecode_imp(LLZ80ProcessorState *const z80, const LLZ80InternalInstruction *const instruction)
 {
-	LLZ80RegisterPair *indexRegister = instruction->extraData.opcodeDecode.indexRegister;
+	LLZ80RegisterPair *const indexRegister = instruction->extraData.opcodeDecode.indexRegister;
 	bool addOffset = instruction->extraData.opcodeDecode.addOffset;
 
 	uint8_t *rTable[] =
