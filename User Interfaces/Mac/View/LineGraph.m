@@ -62,7 +62,7 @@
 
 	// figure out the scale
 	CGFloat lowY = 2.0;
-	CGFloat highY = bounds.size.height - 2.0;
+	CGFloat highY = bounds.size.height - (CGFloat)2.0;
 	currentX = bounds.size.width;
 
 	// draw a digital value, thusly...
