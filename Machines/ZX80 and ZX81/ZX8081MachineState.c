@@ -54,7 +54,7 @@ static void llzx80ula_considerSync(LLZX8081MachineState *machineState)
       8K-64K   Area occupied by 64K RAM pack.
 
 */
-static void llzx80ula_observeRefresh(void *opaqueMachineState, CSBusState *internalState, CSBusState externalState, bool conditionIsTrue, CSComponentNanoseconds timeSinceLaunch)
+static void llzx80ula_observeRefresh(void *const opaqueMachineState, CSBusState *const internalState, const CSBusState externalState, const bool conditionIsTrue, const CSComponentNanoseconds timeSinceLaunch)
 {
 	// if this is a memory refresh cycle then make a note
 	// of the address and echo bit 6 to the INT line,
@@ -75,7 +75,7 @@ static void llzx80ula_observeRefresh(void *opaqueMachineState, CSBusState *inter
 		// interrupt is held only during the refresh cycle
 		internalState->lineValues |= LLZ80SignalInterruptRequest;
 
-		LLZX8081MachineState *machineState = (LLZX8081MachineState *)opaqueMachineState;
+		LLZX8081MachineState *const machineState = (LLZX8081MachineState *const)opaqueMachineState;
 
 		// grab a video byte if we've decided to output video this refresh cycle
 		if(machineState->fetchVideoByte)
@@ -98,12 +98,12 @@ static void llzx80ula_observeRefresh(void *opaqueMachineState, CSBusState *inter
 	}
 }
 
-static void llzx80ula_observeIORead(void *opaqueMachineState, CSBusState *internalState, CSBusState externalState, bool conditionIsTrue, CSComponentNanoseconds timeSinceLaunch)
+static void llzx80ula_observeIORead(void *const opaqueMachineState, CSBusState *const internalState, const CSBusState externalState, const bool conditionIsTrue, const CSComponentNanoseconds timeSinceLaunch)
 {
 	// an IO read request
 	if(conditionIsTrue)
 	{
-		LLZX8081MachineState *machineState = (LLZX8081MachineState *)opaqueMachineState;
+		LLZX8081MachineState *const machineState = (LLZX8081MachineState * const)opaqueMachineState;
 		uint16_t address = (uint16_t)(externalState.lineValues >> CSBusStandardAddressShift);
 
 		switch(address&7)
@@ -153,12 +153,12 @@ static void llzx80ula_observeIORead(void *opaqueMachineState, CSBusState *intern
 	}
 }
 
-static void llzx80ula_observeIOWrite(void *opaqueMachineState, CSBusState *internalState, CSBusState externalState, bool conditionIsTrue, CSComponentNanoseconds timeSinceLaunch)
+static void llzx80ula_observeIOWrite(void *const opaqueMachineState, CSBusState *const internalState, const CSBusState externalState, const bool conditionIsTrue, const CSComponentNanoseconds timeSinceLaunch)
 {
 	if(conditionIsTrue)
 	{
 		// an IO write request ...
-		LLZX8081MachineState *machineState = (LLZX8081MachineState *)opaqueMachineState;
+		LLZX8081MachineState *const machineState = (LLZX8081MachineState *const)opaqueMachineState;
 		uint16_t address = (uint16_t)(externalState.lineValues >> CSBusStandardAddressShift);
 
 		// determine whether activate or deactive the NMI generator;
@@ -191,7 +191,7 @@ static void llzx80ula_observeIOWrite(void *opaqueMachineState, CSBusState *inter
 	}
 }
 
-static void llzx80ula_observeIntAck(void *opaqueMachineState, CSBusState *internalState, CSBusState externalState, bool conditionIsTrue, CSComponentNanoseconds timeSinceLaunch)
+static void llzx80ula_observeIntAck(void *const opaqueMachineState, CSBusState *const internalState, const CSBusState externalState, const bool conditionIsTrue, const CSComponentNanoseconds timeSinceLaunch)
 {
 	if(!conditionIsTrue) return;
 
@@ -204,13 +204,13 @@ static void llzx80ula_observeIntAck(void *opaqueMachineState, CSBusState *intern
 
 
 // This one is hooked up for the ZX80 only
-static void llzx80ula_observeMachineCycleOne(void *opaqueMachineState, CSBusState *internalState, CSBusState externalState, bool conditionIsTrue, CSComponentNanoseconds timeSinceLaunch)
+static void llzx80ula_observeMachineCycleOne(void *const opaqueMachineState, CSBusState *const internalState, CSBusState externalState, const bool conditionIsTrue, const CSComponentNanoseconds timeSinceLaunch)
 {
 	if(!conditionIsTrue) return;
 
 	// M1 cycles clock the horizontal sync generator, but
 	// only when we're in an hsync cycle
-	LLZX8081MachineState *machineState = (LLZX8081MachineState *)opaqueMachineState;
+	LLZX8081MachineState *machineState = (LLZX8081MachineState * const)opaqueMachineState;
 	if(machineState->hsyncCounter < 4)
 	{
 		if(machineState->hsyncCounter == 1)
@@ -230,11 +230,11 @@ static void llzx80ula_observeMachineCycleOne(void *opaqueMachineState, CSBusStat
 }
 
 // This one is hooked up for the ZX81 only
-static void llzx80ula_observeClock(void *opaqueMachineState, CSBusState *internalState, CSBusState externalState, bool conditionIsTrue, CSComponentNanoseconds timeSinceLaunch)
+static void llzx80ula_observeClock(void *const opaqueMachineState, CSBusState *const internalState, const CSBusState externalState, const bool conditionIsTrue, const CSComponentNanoseconds timeSinceLaunch)
 {
 	if(!conditionIsTrue) return;
 
-	LLZX8081MachineState *machineState = (LLZX8081MachineState *)opaqueMachineState;
+	LLZX8081MachineState *machineState = (LLZX8081MachineState * const)opaqueMachineState;
 
 	// increment the hsync counter, check whether sync output is
 	// currently active as a result
@@ -261,12 +261,12 @@ static void llzx80ula_observeClock(void *opaqueMachineState, CSBusState *interna
 	llzx80ula_considerSync(machineState);
 }
 
-static void llzx80ula_observeVideoRead(void *opaqueMachineState, CSBusState *internalState, CSBusState externalState, bool conditionIsTrue, CSComponentNanoseconds timeSinceLaunch)
+static void llzx80ula_observeVideoRead(void *const opaqueMachineState, CSBusState *const internalState, const CSBusState externalState, const bool conditionIsTrue, const CSComponentNanoseconds timeSinceLaunch)
 {
 	// condition: data&0x40 is low, m1 is low, address&0x8000 is high
 	if(conditionIsTrue)
 	{
-		LLZX8081MachineState *machineState = (LLZX8081MachineState *)opaqueMachineState;
+		LLZX8081MachineState *const machineState = (LLZX8081MachineState *const)opaqueMachineState;
 
 		uint8_t value = (uint8_t)(externalState.lineValues >> CSBusStandardDataShift);
 
@@ -287,26 +287,27 @@ static void llzx80ula_observeVideoRead(void *opaqueMachineState, CSBusState *int
 	}
 }
 
-static void llzx80ula_romAddressShuffle(void *opaquePassthroughNode, CSBusState *internalState, CSBusState externalState, bool conditionIsTrue, CSComponentNanoseconds timeSinceLaunch)
+static void llzx80ula_romAddressShuffle(void *const opaquePassthroughNode, CSBusState *const internalState, const CSBusState externalState, const bool conditionIsTrue, const CSComponentNanoseconds timeSinceLaunch)
 {
-	CSBusPassthroughNode *node = (CSBusPassthroughNode *)opaquePassthroughNode;
-	LLZX8081MachineState *machineState = (LLZX8081MachineState *)node->context;
+	const CSBusPassthroughNode *node = (CSBusPassthroughNode *)opaquePassthroughNode;
+	const LLZX8081MachineState *const machineState = (LLZX8081MachineState *const)node->context;
 
+	CSBusState startToPassOn = externalState;
 	if(machineState->fetchVideoByte)
 	{
 		// we replace the low 9 bits of the address, so...
-		externalState.lineValues =
+		startToPassOn.lineValues =
 			(externalState.lineValues & ~(511u << CSBusStandardAddressShift)) |
 			(uint64_t)(machineState->videoFetchAddress << CSBusStandardAddressShift);
 	}
 
 	CSBusComponent *childComponent = node->childComponent;
-	childComponent->handlerFunction(childComponent->context, internalState, externalState, conditionIsTrue, timeSinceLaunch);
+	childComponent->handlerFunction(childComponent->context, internalState, startToPassOn, conditionIsTrue, timeSinceLaunch);
 }
 
 static void llzx8081_destroyMachineState(void *opaqueMachineState)
 {
-	LLZX8081MachineState *machineState = (LLZX8081MachineState *)opaqueMachineState;
+	LLZX8081MachineState *const machineState = (LLZX8081MachineState *const )opaqueMachineState;
 	csObject_release(machineState->tapePlayer);
 	csObject_release(machineState->CRT);
 }

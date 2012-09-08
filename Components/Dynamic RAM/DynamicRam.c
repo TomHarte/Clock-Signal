@@ -52,9 +52,9 @@ static void csDynamicRAM_dealloc(void *opaqueMemory)
 	if(memory->lastRefreshTimes) free(memory->lastRefreshTimes);
 }
 
-static void csDynamicRAM_observeStrobes(void *opaqueMemory, CSBusState *internalState, CSBusState externalState, bool conditionIsTrue, CSComponentNanoseconds timeSinceLaunch)
+static void csDynamicRAM_observeStrobes(void *const opaqueMemory, CSBusState *const internalState, const CSBusState externalState, const bool conditionIsTrue, const CSComponentNanoseconds timeSinceLaunch)
 {
-	CSDynamicRAM *memory = (CSDynamicRAM *)opaqueMemory;
+	CSDynamicRAM *const memory = (CSDynamicRAM *const )opaqueMemory;
 
 	// is this chip even enabled?
 	if(externalState.lineValues&CSComponentDynamicRAMSignalChipEnable)

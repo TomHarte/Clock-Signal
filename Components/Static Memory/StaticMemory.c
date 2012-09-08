@@ -27,7 +27,7 @@ typedef struct
 
 const char *staticMemoryType = "static memory";
 
-static void csStaticMemory_observeMemoryRead(void *opaqueMemory, CSBusState *internalState, CSBusState externalState, bool conditionIsTrue, CSComponentNanoseconds timeSinceLaunch)
+static void csStaticMemory_observeMemoryRead(void *const opaqueMemory, CSBusState *const internalState, CSBusState externalState, const bool conditionIsTrue, const CSComponentNanoseconds timeSinceLaunch)
 {
 	if(conditionIsTrue)
 	{
@@ -56,7 +56,7 @@ static void csStaticMemory_observeMemoryRead(void *opaqueMemory, CSBusState *int
 	}
 }
 
-static void csStaticMemory_observeMemoryWrite(void *opaqueMemory, CSBusState *internalState, CSBusState externalState, bool conditionIsTrue, CSComponentNanoseconds timeSinceLaunch)
+static void csStaticMemory_observeMemoryWrite(void *const opaqueMemory, CSBusState *const internalState, const CSBusState externalState, const bool conditionIsTrue, const CSComponentNanoseconds timeSinceLaunch)
 {
 	if(!conditionIsTrue)
 	{
@@ -66,7 +66,7 @@ static void csStaticMemory_observeMemoryWrite(void *opaqueMemory, CSBusState *in
 		unsigned int address = (externalState.lineValues&CSBusStandardAddressMask) >> CSBusStandardAddressShift;
 
 		// reduce that down to an address in our range
-		CSStaticMemory *memory = (CSStaticMemory *)opaqueMemory;
+		const CSStaticMemory *const memory = (const CSStaticMemory *const)opaqueMemory;
 		address &= (memory->size - 1);
 
 		// and load the data lines

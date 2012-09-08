@@ -163,9 +163,9 @@ static void csFlatBus_addComponent(void *node, void *opaqueComponent)
 	}
 }*/
 
-static void csFlatBus_message(void *opaqueBusNode, CSBusState *internalState, CSBusState externalState, bool conditionIsTrue, CSComponentNanoseconds timeSinceLaunch)
+static void csFlatBus_message(void *const opaqueBusNode, CSBusState *const internalState, const CSBusState externalState, const bool conditionIsTrue, const CSComponentNanoseconds timeSinceLaunch)
 {
-	CSFlatBus *flatBus = (CSFlatBus *)opaqueBusNode;
+	CSFlatBus *const flatBus = (CSFlatBus *const)opaqueBusNode;
 	CSBusState totalState;
 	uint64_t changedLines, setLines, resetLines;
 
