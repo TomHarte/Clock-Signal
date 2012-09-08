@@ -16,6 +16,10 @@
 #include "BusState.h"
 #include "StandardBusLines.h"
 
+#ifdef __BLOCKS__
+#include <dispatch/dispatch.h>
+#endif
+
 typedef struct
 {
 	CSBusNode busNode;
@@ -222,6 +226,41 @@ static void csFlatBus_message(void *opaqueBusNode, CSBusState *internalState, CS
 
 		unsigned int numberOfComponents;
 		void **components = csArray_getCArray(flatBus->trueFalseComponents.components, &numberOfComponents);
+		
+/*#ifdef __BLOCKS__
+		dispatch_apply(
+			numberOfComponents,
+			dispatch_get_global_queue(0, 0),
+			^(size_t index)
+			{
+				CSBusComponent *component = (CSBusComponent *)components[index];
+
+				// so, logic is:
+				//
+				//	if
+				//			mask condition has changed, or
+				//			mask condition is true and one of the other monitored lines has changed
+				bool newEvaluation = component->condition.lineValues == (component->condition.lineMask&totalState.lineValues);
+
+				if(
+					(newEvaluation != component->lastResult) || (newEvaluation && component->condition.changedLines&changedLines))
+				{
+					component->handlerFunction(
+						component->context,
+						&component->currentInternalState,
+						totalState,
+						newEvaluation,
+						timeSinceLaunch);
+					component->lastResult = newEvaluation;
+				}
+			});
+
+		while(numberOfComponents--)
+		{
+			CSBusComponent *component = (CSBusComponent *)components[numberOfComponents];
+			flatBus->trueFalseComponents.state.lineValues &= component->currentInternalState.lineValues;
+		}
+#else*/
 		while(numberOfComponents--)
 		{
 			CSBusComponent *component = (CSBusComponent *)components[numberOfComponents];
@@ -247,6 +286,7 @@ static void csFlatBus_message(void *opaqueBusNode, CSBusState *internalState, CS
 
 			flatBus->trueFalseComponents.state.lineValues &= component->currentInternalState.lineValues;
 		}
+//#endif
 	}
 	else
 	{
