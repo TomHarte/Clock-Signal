@@ -183,9 +183,32 @@ typedef struct LLZ80ProcessorState
 
 } LLZ80ProcessorState;
 
-LLZ80InternalInstruction *llz80_beginNewHalfCycle(LLZ80ProcessorState *z80);
-LLZ80InternalInstruction *llz80_scheduleFunction(LLZ80ProcessorState *z80, LLZ80InternalInstructionFunction function);
-LLZ80InternalInstruction *llz80_scheduleHalfCycleForFunction(LLZ80ProcessorState *z80, LLZ80InternalInstructionFunction function);
+/*
+
+	static inline methods; glorified macros essentially
+
+*/
+static inline LLZ80InternalInstruction *llz80_scheduleFunction(LLZ80ProcessorState *z80, LLZ80InternalInstructionFunction function)
+{
+	LLZ80InternalInstruction *instruction = &z80->scheduledInstructions[z80->instructionWritePointer];
+	z80->instructionWritePointer = (z80->instructionWritePointer + 1)%kLLZ80HalfCycleQueueLength;
+	instruction->function = function;
+
+	return instruction;
+}
+
+static inline LLZ80InternalInstruction *llz80_beginNewHalfCycle(LLZ80ProcessorState *z80)
+{
+	LLZ80InternalInstruction *instruction = llz80_scheduleFunction(z80, llz80_iop_advanceHalfCycleCounter);
+	instruction->extraData.advance.isWaitCycle = false;
+	return instruction;
+}
+
+static inline LLZ80InternalInstruction *llz80_scheduleHalfCycleForFunction(LLZ80ProcessorState *z80, LLZ80InternalInstructionFunction function)
+{
+	llz80_beginNewHalfCycle(z80);
+	return llz80_scheduleFunction(z80, function);
+}
 
 bool llz80_conditionIsTrue(struct LLZ80ProcessorState *z80, LLZ80Condition condition);
 uint8_t llz80_getF(struct LLZ80ProcessorState *z80);
