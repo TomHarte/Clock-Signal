@@ -55,7 +55,6 @@
 		int instructionRunningCount;
 		BOOL atBreakpoint;
 		uint16_t targetAddress;
-		uint16_t lastPC;
 }
 
 @property (nonatomic, retain) IBOutlet CSOpenGLViewBillboard *openGLView;

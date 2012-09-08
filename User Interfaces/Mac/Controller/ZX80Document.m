@@ -585,14 +585,11 @@ static void ZX80DocumentCRTBreakIn(
 			[NSValue valueWithPointer:fatBuffer], @"buffer",
 			nil];*/
 
-	uint8_t *bufferCopy = (uint8_t *)malloc(widthOfBuffer*heightOfBuffer);
-	memcpy(bufferCopy, buffer, widthOfBuffer*heightOfBuffer);
-
 	NSDictionary *infoDictionary = 
 		[NSDictionary dictionaryWithObjectsAndKeys:
 			[NSNumber numberWithUnsignedInt:widthOfBuffer], @"widthOfBuffer",
 			[NSNumber numberWithUnsignedInt:heightOfBuffer], @"heightOfBuffer",
-			[NSValue valueWithPointer:bufferCopy], @"buffer",
+			[NSData dataWithBytes:buffer length:widthOfBuffer*heightOfBuffer], @"buffer",
 			nil];
 
 	[document
@@ -636,7 +633,7 @@ static void ZX80DocumentCRTBreakIn(
 	else
 		glBindTexture(GL_TEXTURE_2D, self.textureID);
 
-	void *buffer = [[details objectForKey:@"buffer"] pointerValue];
+	const void *buffer = [[details objectForKey:@"buffer"] bytes];
 	glTexImage2D(
 		GL_TEXTURE_2D,
 		0,
@@ -645,8 +642,6 @@ static void ZX80DocumentCRTBreakIn(
 		0,
 		GL_LUMINANCE, GL_UNSIGNED_BYTE,
 		buffer);
-
-	free(buffer);
 
 	glGenerateMipmap(GL_TEXTURE_2D);
 
