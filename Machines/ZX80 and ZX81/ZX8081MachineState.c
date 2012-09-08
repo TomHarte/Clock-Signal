@@ -238,7 +238,9 @@ static void llzx80ula_observeClock(void *opaqueMachineState, CSBusState *interna
 
 	// increment the hsync counter, check whether sync output is
 	// currently active as a result
-	machineState->hsyncCounter = (machineState->hsyncCounter+1)%207;
+	machineState->hsyncCounter++;
+	if(machineState->hsyncCounter == 207) machineState->hsyncCounter = 0;
+
 	machineState->hsyncIsActive = (machineState->hsyncCounter >= 16) && (machineState->hsyncCounter < 32);
 
 	if(machineState->nmiIsEnabled && machineState->hsyncIsActive)
