@@ -840,7 +840,7 @@ void llz80_jrConditional(struct LLZ80ProcessorState *z80, LLZ80InternalInstructi
 
 	if(llz80_conditionIsTrue(z80, instruction->extraData.conditional.condition))
 	{
-		z80->pcRegister.fullValue += (char)z80->temporary8bitValue;
+		z80->pcRegister.fullValue += (int8_t)z80->temporary8bitValue;
 		llz80_schedulePauseForCycles(z80, 5);
 	}
 }
@@ -878,6 +878,6 @@ void llz80_djnz(struct LLZ80ProcessorState *z80, LLZ80InternalInstruction *instr
 	if(z80->bcRegister.bytes.high)
 	{
 		llz80_schedulePauseForCycles(z80, 5);
-		z80->pcRegister.fullValue += (char)z80->temporary8bitValue;
+		z80->pcRegister.fullValue += (int8_t)z80->temporary8bitValue;
 	}
 }
