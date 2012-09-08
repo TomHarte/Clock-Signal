@@ -65,7 +65,7 @@ static void llz80_removeItemFromGenericList(struct LLZ80GenericLinkedListRecord 
 
 static void llz80_destroy(void *opaqueZ80)
 {
-	struct LLZ80ProcessorState *z80 = opaqueZ80;
+	LLZ80ProcessorState *z80 = opaqueZ80;
 
 	// release all existing refereces to listeners
 	free(z80->signalObservers);
@@ -134,7 +134,7 @@ static LLZ80InternalInstruction waitCycles[2];
 
 static void llz80_observeClock(void *const opaqueZ80, CSBusState *const internalState, const CSBusState externalState, const bool conditionIsTrue, const CSComponentNanoseconds timeSinceLaunch)
 {
-	struct LLZ80ProcessorState *const z80 = (LLZ80ProcessorState *const)opaqueZ80;
+	LLZ80ProcessorState *const z80 = (LLZ80ProcessorState *const)opaqueZ80;
 
 	z80->halfCyclesToRunFor = 1;
 	z80->externalBusState = externalState;

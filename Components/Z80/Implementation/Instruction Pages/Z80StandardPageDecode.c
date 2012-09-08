@@ -864,7 +864,7 @@ void llz80_scheduleCalculationOfSourceAddress(LLZ80ProcessorState *const z80, LL
 		z80->temporaryAddress = *indexRegister;
 }
 
-void llz80_djnz(struct LLZ80ProcessorState *const z80, const LLZ80InternalInstruction *const instruction)
+void llz80_djnz(LLZ80ProcessorState *const z80, const LLZ80InternalInstruction *const instruction)
 {
 	z80->pcRegister.fullValue++;
 	z80->bcRegister.bytes.high--;
