@@ -132,9 +132,9 @@ static void llz80_iop_setupForInterruptMode2(LLZ80ProcessorState *const z80, con
 LLZ80InternalInstructionFunction llz80_iop_advanceHalfCycleCounter = llz80_iop_advanceHalfCycleCounter_imp;
 static LLZ80InternalInstruction waitCycles[2];
 
-static void llz80_observeClock(void *const opaqueZ80, CSBusState *const internalState, const CSBusState externalState, const bool conditionIsTrue, const CSComponentNanoseconds timeSinceLaunch)
+csComponent_observer(llz80_observeClock)
 {
-	LLZ80ProcessorState *const z80 = (LLZ80ProcessorState *const)opaqueZ80;
+	LLZ80ProcessorState *const z80 = (LLZ80ProcessorState *const)context;
 
 	z80->halfCyclesToRunFor = 1;
 	z80->externalBusState = externalState;

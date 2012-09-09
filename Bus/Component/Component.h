@@ -39,4 +39,6 @@ typedef void (* csComponent_handlerFunction)(
 void *csComponent_create(csComponent_handlerFunction function, CSBusCondition necessaryCondition, uint64_t outputLines, void *context);
 void csComponent_addToBus(void *bus, csComponent_handlerFunction function, CSBusCondition necessaryCondition, uint64_t outputLines, void *context);
 
+#define csComponent_observer(x)	static void x (void *const context, CSBusState *const internalState, const CSBusState externalState, const bool conditionIsTrue, const CSComponentNanoseconds timeSinceLaunch)
+
 #endif
