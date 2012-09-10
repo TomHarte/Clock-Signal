@@ -253,7 +253,12 @@ static void csZ80Disassembler_disassembleEDPage(CSZ80DisassemblerState *state)
 	{
 		case 0:
 		case 3:	csZ80Disassembler_setOutput(state, "NOP");					break;
-		case 2:	csZ80Disassembler_setOutput(state, "%s", bliTable(y, z));	break;
+		case 2:
+			if(y >= 4)
+				csZ80Disassembler_setOutput(state, "%s", bliTable(y, z));
+			else
+				csZ80Disassembler_setOutput(state, "NOP");
+		break;
 		case 1:
 			switch(z)
 			{
