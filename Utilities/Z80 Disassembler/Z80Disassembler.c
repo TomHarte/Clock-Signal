@@ -74,7 +74,7 @@ static char *bliTable[] = {
 			"LDD", "CPD", "IND", "OUTD",
 			"LDIR", "CPIR", "INIR", "OTIR",
 			"LDDR", "CPDR", "INDR", "OTDR"};
-#define bliTable(a, b) bliTable[((a) << 2) | (b)]
+#define bliTable(a, b) bliTable[(((a)-4) << 2) | (b)]
 
 typedef struct
 {
