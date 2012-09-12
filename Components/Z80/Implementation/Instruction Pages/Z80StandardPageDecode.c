@@ -450,8 +450,11 @@ static void llz80_iop_standardPageDecode_imp(LLZ80ProcessorState *const z80, con
 					newHalfCarry = (lowNibble < 0x6) ? LLZ80FlagHalfCarry : 0;
 				}
 			}
-			
-			z80->aRegister += amountToAdd;
+
+			if(z80->generalFlags&LLZ80FlagSubtraction)
+				z80->aRegister -= amountToAdd;
+			else
+				z80->aRegister += amountToAdd;
 
 			z80->lastSignResult = z80->lastZeroResult =
 			z80->bit5And3Flags = z80->aRegister;
