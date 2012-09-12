@@ -474,7 +474,7 @@ static void llz80_iop_EDPageDecode_imp(LLZ80ProcessorState *const z80, const LLZ
 				(overflow ? LLZ80FlagParityOverflow : 0) |
 				LLZ80FlagSubtraction |
 				((result >> 8)&LLZ80FlagCarry) |
-				((halfResult << 4)&LLZ80FlagHalfCarry);
+				(halfResult&LLZ80FlagHalfCarry);
 		}
 		break;
 		
