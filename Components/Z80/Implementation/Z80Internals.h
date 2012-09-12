@@ -262,7 +262,7 @@ void llz80_setF(struct LLZ80ProcessorState *z80, uint8_t value);
 
 */
 #define llz80_calculateParity(v)	\
-	uint8_t parity = ~v;\
+	uint8_t parity = v^1;\
 	parity ^= parity >> 4;\
 	parity ^= parity << 2;\
 	parity ^= parity >> 1;\
