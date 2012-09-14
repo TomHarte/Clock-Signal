@@ -441,28 +441,22 @@ static void llz80_iop_standardPageDecode_imp(LLZ80ProcessorState *const z80, con
 			int newHalfCarry = 0;
 			if(z80->generalFlags&LLZ80FlagSubtraction)
 			{
-				newHalfCarry = (lowNibble > 0x9) ? LLZ80FlagHalfCarry : 0;
-			}
-			else
-			{
+				z80->aRegister -= amountToAdd;
 				if(z80->generalFlags&LLZ80FlagHalfCarry)
 				{
 					newHalfCarry = (lowNibble < 0x6) ? LLZ80FlagHalfCarry : 0;
 				}
 			}
-
-			if(z80->generalFlags&LLZ80FlagSubtraction)
-				z80->aRegister -= amountToAdd;
 			else
+			{
 				z80->aRegister += amountToAdd;
+				newHalfCarry = (lowNibble > 0x9) ? LLZ80FlagHalfCarry : 0;
+			}
 
 			z80->lastSignResult = z80->lastZeroResult =
 			z80->bit5And3Flags = z80->aRegister;
 			
-			uint8_t parity = z80->aRegister;
-			parity ^= (parity >> 4);
-			parity ^= (parity >> 2);
-			parity ^= (parity >> 1);
+			llz80_calculateParity(z80->aRegister);
 
 			z80->generalFlags =
 				(uint8_t)(
