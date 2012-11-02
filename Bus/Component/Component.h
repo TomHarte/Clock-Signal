@@ -24,8 +24,8 @@ typedef uint64_t CSComponentNanoseconds;
 //		- the response has a valid initial state
 //
 typedef void (* csComponent_handlerFunction)(
-	void *const context,						// the context is whatever you supplied to csComponent_create; it will have been retained
-	CSBusState *const internalState,			// the internal state is your component's internal bus state
+	void *const restrict context,				// the context is whatever you supplied to csComponent_create; it will have been retained
+	CSBusState *const restrict internalState,	// the internal state is your component's internal bus state
 	const CSBusState externalState,				// the external state is the state of the bus externally
 	const bool conditionIsTrue,					// this flag indicates whether the condition supplied to csComponent_create has just become true;
 												// if not then logically it has just become false. You can specify whether you want to receive the
@@ -39,6 +39,6 @@ typedef void (* csComponent_handlerFunction)(
 void *csComponent_create(csComponent_handlerFunction function, CSBusCondition necessaryCondition, uint64_t outputLines, void *context);
 void csComponent_addToBus(void *bus, csComponent_handlerFunction function, CSBusCondition necessaryCondition, uint64_t outputLines, void *context);
 
-#define csComponent_observer(x)	static void x (void *const context, CSBusState *const internalState, const CSBusState externalState, const bool conditionIsTrue, const CSComponentNanoseconds timeSinceLaunch)
+#define csComponent_observer(x)	static void x (void *const restrict context, CSBusState *const restrict internalState, const CSBusState externalState, const bool conditionIsTrue, const CSComponentNanoseconds timeSinceLaunch)
 
 #endif
