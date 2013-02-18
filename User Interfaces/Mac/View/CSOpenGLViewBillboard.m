@@ -43,7 +43,15 @@
 	glClear(GL_COLOR_BUFFER_BIT);
 	glEnable(GL_TEXTURE_2D);
 	glBindTexture(GL_TEXTURE_2D, textureID);
-	glViewport(0, 0, (GLsizei)self.bounds.size.width, (GLsizei)self.bounds.size.height);
+
+	// if we have a retina display then because OpenGL is a low-level fragment-oriented
+	// API we need to deal with scaling up ourselves; we'll adjust the viewport, taking
+	// advantage of convertPointToBacking: if available
+	NSPoint farEdge = NSMakePoint(self.bounds.size.width, self.bounds.size.height);
+	if([self respondsToSelector:@selector(convertPointToBacking:)])
+		farEdge = [self convertPointToBacking:farEdge];
+
+	glViewport(0, 0, (GLsizei)farEdge.x, (GLsizei)farEdge.y);
 
 	NSRect outputRect = minimumSourceRect;
 
