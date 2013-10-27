@@ -42,7 +42,7 @@ typedef struct LLZX80ULAState
 
 } LLZX80ULAState;
 
-static uint8_t llzx80ula_lookAheadForTapeByte(LLZX8081MachineState *machineState)
+static int16_t llzx80ula_lookAheadForTapeByte(LLZX8081MachineState *machineState)
 {
 	unsigned int currentTime = csClockGenerator_getHalfCyclesToDate(machineState->clockGenerator);
 	uint64_t tapeTime = cstapePlayer_getTapeTime(machineState->tapePlayer, currentTime);
@@ -84,8 +84,8 @@ static uint8_t llzx80ula_lookAheadForTapeByte(LLZX8081MachineState *machineState
 		if(numPulses != 8 && numPulses != 18) break;
 		byte = (uint8_t)((byte << 1) | ((numPulses == 8) ? 0 : 1));
 	}
-	
-	if(bits != -1) return 0xff;
+
+	if(bits != -1) return -1;
 
 	cstapePlayer_setTapeTime(machineState->tapePlayer, currentTime, tapeTime);
 	return byte;
@@ -112,7 +112,7 @@ static void llzx80ula_observeInstructionForTapeTrap(void *z80, void *context)
 
 		// CPU is about to call in-byte to load another byte;
 		// decode next byte for ourselves and set PC to 0x380
-		uint8_t nextByte = llzx80ula_lookAheadForTapeByte(ula->machineState);
+		int16_t nextByte = llzx80ula_lookAheadForTapeByte(ula->machineState);
 
 		// if we collected 8 bits without error then
 		// write the thing out to HL and skip forward;
@@ -122,7 +122,7 @@ static void llzx80ula_observeInstructionForTapeTrap(void *z80, void *context)
 		{
 			uint16_t hlRegister = (uint16_t)llz80_monitor_getInternalValue(z80, LLZ80MonitorValueHLRegister);
 
-			uint8_t byteOnly = nextByte;
+			uint8_t byteOnly = (uint8_t)nextByte;
 			csStaticMemory_setContents(ula->machineState->RAM, hlRegister - 16384, &byteOnly, 1);
 
 			llz80_monitor_setInternalValue(z80, LLZ80MonitorValuePCRegister, 0x0380);
@@ -143,7 +143,7 @@ static void llzx80ula_observeInstructionForTapeTrap(void *z80, void *context)
 
 		// CPU is about to call in-byte to load another byte;
 		// decode next byte for ourselves and set PC to 0x380
-		uint8_t nextByte = llzx80ula_lookAheadForTapeByte(ula->machineState);
+		int16_t nextByte = llzx80ula_lookAheadForTapeByte(ula->machineState);
 
 		// if we collected 8 bits without error then
 		// write the thing out to HL and skip forward;
@@ -153,7 +153,7 @@ static void llzx80ula_observeInstructionForTapeTrap(void *z80, void *context)
 		{
 			uint16_t hlRegister = (uint16_t)llz80_monitor_getInternalValue(z80, LLZ80MonitorValueHLRegister);
 
-			uint8_t byteOnly = nextByte;
+			uint8_t byteOnly = (uint8_t)nextByte;
 			csStaticMemory_setContents(ula->machineState->RAM, hlRegister - 16384, &byteOnly, 1);
 
 			llz80_monitor_setInternalValue(z80, LLZ80MonitorValuePCRegister, 0x0248);
