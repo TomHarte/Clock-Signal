@@ -19,7 +19,7 @@
 {
 	// for the 32bit users out there ...
 	@private
-		id <CSKeyDelegate> keyDelegate;
+		id <CSKeyDelegate> __unsafe_unretained keyDelegate;
 		GLuint textureID;
 		NSRect minimumSourceRect;
 		NSRect idealSourceRect;
@@ -27,7 +27,7 @@
 		NSSize pixelSizeOfIdealRect;
 }
 
-@property (nonatomic, assign) id <CSKeyDelegate> keyDelegate;
+@property (nonatomic, unsafe_unretained) id <CSKeyDelegate> keyDelegate;
 
 @property (nonatomic, assign) GLuint textureID;
 

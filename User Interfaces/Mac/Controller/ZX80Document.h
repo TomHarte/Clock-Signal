@@ -23,14 +23,14 @@
 	@private
 
 		CSOpenGLViewBillboard *openGLView;
-		NSDrawer *machineOptionsDrawer;
-		NSSlider *speedSlider;
-		NSTextField *speedLabel;
+		NSDrawer *__weak machineOptionsDrawer;
+		NSSlider *__weak speedSlider;
+		NSTextField *__weak speedLabel;
 		float speedMultiplier;
-		NSMatrix *machineMatrix;
-		NSMatrix *RAMMatrix;
-		NSMatrix *ROMMatrix;
-		NSButton *pauseOrPlayButton;
+		NSMatrix *__weak machineMatrix;
+		NSMatrix *__weak RAMMatrix;
+		NSMatrix *__weak ROMMatrix;
+		NSButton *__weak pauseOrPlayButton;
 
 		BOOL isRunning;
 		unsigned int lastInternalTime;
@@ -55,26 +55,26 @@
 		uint16_t targetAddress;
 }
 
-@property (nonatomic, retain) IBOutlet CSOpenGLViewBillboard *openGLView;
+@property (nonatomic, strong) IBOutlet CSOpenGLViewBillboard *openGLView;
 //@property (nonatomic, retain) IBOutlet NSPanel *linePanel;
 
-@property (nonatomic, assign) IBOutlet NSDrawer *machineOptionsDrawer;
+@property (nonatomic, weak) IBOutlet NSDrawer *machineOptionsDrawer;
 
 - (IBAction)showDebugger:(id)sender;
 - (IBAction)showMachineDrawer:(id)sender;
 
-@property (nonatomic, assign) IBOutlet NSSlider *speedSlider;
-@property (nonatomic, assign) IBOutlet NSTextField *speedLabel;
+@property (nonatomic, weak) IBOutlet NSSlider *speedSlider;
+@property (nonatomic, weak) IBOutlet NSTextField *speedLabel;
 @property (atomic, assign) float speedMultiplier;
 - (IBAction)setNormalSpeed:(id)sender;
 
 - (IBAction)reconfigureMachine:(id)sender;
-@property (nonatomic, assign) IBOutlet NSMatrix *machineMatrix;
-@property (nonatomic, assign) IBOutlet NSMatrix *RAMMatrix;
-@property (nonatomic, assign) IBOutlet NSMatrix *ROMMatrix;
+@property (nonatomic, weak) IBOutlet NSMatrix *machineMatrix;
+@property (nonatomic, weak) IBOutlet NSMatrix *RAMMatrix;
+@property (nonatomic, weak) IBOutlet NSMatrix *ROMMatrix;
 
 - (IBAction)pauseOrPlayTape:(id)sender;
-@property (nonatomic, assign) IBOutlet NSButton *pauseOrPlayButton;
+@property (nonatomic, weak) IBOutlet NSButton *pauseOrPlayButton;
 
 @property (nonatomic, assign) BOOL fastLoad;
 

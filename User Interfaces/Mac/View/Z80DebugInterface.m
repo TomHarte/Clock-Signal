@@ -14,8 +14,8 @@
 
 @interface Z80DebugInterface ()
 @property (nonatomic, assign) unsigned int lastInternalTime;
-@property (nonatomic, retain) NSMutableArray *memoryCommentLines;
-@property (nonatomic, retain) NSArray *allLines;
+@property (nonatomic, strong) NSMutableArray *memoryCommentLines;
+@property (nonatomic, strong) NSArray *allLines;
 @end
 
 
@@ -61,12 +61,6 @@
 
 @synthesize allLines;
 
-- (void)dealloc
-{
-	self.memoryCommentLines = nil;
-	self.allLines = nil;
-	[super dealloc];
-}
 
 - (void)awakeFromNib
 {
@@ -111,7 +105,6 @@
 	NSScanner *scanner = [[NSScanner alloc] initWithString:addressField.stringValue];
 	unsigned int address;
 	[scanner scanHexInt:&address];
-	[scanner release];
 
 	[delegate debugInterface:self runUntilAddress:(uint16_t)address];
 }
@@ -286,7 +279,7 @@
 
 + (id)debugInterface
 {
-	id returnObject = [[[[self class] alloc] init] autorelease];
+	id returnObject = [[[self class] alloc] init];
 	[NSBundle loadNibNamed:@"Z80DebugInterface" owner:returnObject];
 	return returnObject;
 }

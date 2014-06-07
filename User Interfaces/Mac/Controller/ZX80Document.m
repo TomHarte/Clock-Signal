@@ -25,7 +25,7 @@
 
 @property (assign) void *ULA;
 
-@property (nonatomic, retain) Z80DebugInterface *debugInterface;
+@property (nonatomic, strong) Z80DebugInterface *debugInterface;
 @property (assign) void *tape;
 
 @property (assign) AudioQueueRef audioQueue;
@@ -110,7 +110,7 @@ static void audioOutputCallback(
 	AudioQueueRef inAQ,
 	AudioQueueBufferRef inBuffer)
 {
-	[(ZX80Document *)inUserData audioQueue:inAQ didCallbackWithBuffer:inBuffer];
+	[(__bridge ZX80Document *)inUserData audioQueue:inAQ didCallbackWithBuffer:inBuffer];
 }
 
 static void	ZX80DocumentAudioCallout(
@@ -119,7 +119,7 @@ static void	ZX80DocumentAudioCallout(
 	short *sampleBuffer,
 	void *context)
 {
-	[(ZX80Document *)context enqueueAudioBuffer:sampleBuffer numberOfSamples:numberOfSamples];
+	[(__bridge ZX80Document *)context enqueueAudioBuffer:sampleBuffer numberOfSamples:numberOfSamples];
 }
 
 - (id)init
@@ -155,7 +155,7 @@ static void	ZX80DocumentAudioCallout(
 		AudioQueueNewOutput(
 			&outputDescription,
 			audioOutputCallback,
-			self,
+			(__bridge void *)(self),
 			NULL,
 			kCFRunLoopCommonModes,
 			0,
@@ -206,8 +206,6 @@ static void	ZX80DocumentAudioCallout(
 	[openGLView.openGLContext makeCurrentContext];
 	glDeleteTextures(1, &textureID);
 
-	self.openGLView = nil;
-	self.debugInterface = nil;
 
 	if (self.tape)
 		cstape_release(self.tape);
@@ -223,7 +221,6 @@ static void	ZX80DocumentAudioCallout(
 		// to do anything explicit about the audioBuffers
 	}
 
-	[super dealloc];
 }
 
 - (NSString *)windowNibName
@@ -361,7 +358,7 @@ static void	ZX80DocumentAudioCallout(
 
 static void ZX80DocumentInstructionObserverBreakIn(void *z80, void *context)
 {
-	[(ZX80Document *)context z80WillFetchInstruction];
+	[(__bridge ZX80Document *)context z80WillFetchInstruction];
 }
 
 /*static void llzx8081_Z80WillFetchNewInstruction(void *z80, void *context)
@@ -408,7 +405,7 @@ static void ZX80DocumentInstructionObserverBreakIn(void *z80, void *context)
 	
 	instructionRunningCount = 1;
 
-	void *instructionObserver = llz80_monitor_addInstructionObserver([self z80ForDebugInterface], ZX80DocumentInstructionObserverBreakIn, self);
+	void *instructionObserver = llz80_monitor_addInstructionObserver([self z80ForDebugInterface], ZX80DocumentInstructionObserverBreakIn, (__bridge void *)(self));
 	while(instructionRunningCount)
 	{
 		llzx8081_runForHalfCycles(ULA, 1);
@@ -433,7 +430,7 @@ static void ZX80DocumentInstructionObserverBreakIn(void *z80, void *context)
 	atBreakpoint = NO;
 
 	int maxCycles = 3250000;
-	void *instructionObserver = llz80_monitor_addInstructionObserver([self z80ForDebugInterface], ZX80DocumentInstructionObserverBreakIn, self);
+	void *instructionObserver = llz80_monitor_addInstructionObserver([self z80ForDebugInterface], ZX80DocumentInstructionObserverBreakIn, (__bridge void *)(self));
 	while(!atBreakpoint && maxCycles--)
 	{
 		llzx8081_runForHalfCycles(ULA, 1);
@@ -578,7 +575,7 @@ static void ZX80DocumentCRTBreakIn(
 	void *buffer,
 	void *context)
 {
-	ZX80Document *document = (ZX80Document *)context;
+	ZX80Document *document = (__bridge ZX80Document *)context;
 
 	NSDictionary *infoDictionary =
 		@{@"widthOfBuffer": @(widthOfBuffer),
@@ -742,7 +739,7 @@ static void ZX80DocumentCRTBreakIn(
 		textureID = 0;
 	}
 	void *CRT = llzx8081_getCRT(ULA);
-	llcrt_setEndOfFieldDelegate(CRT, ZX80DocumentCRTBreakIn, self);
+	llcrt_setEndOfFieldDelegate(CRT, ZX80DocumentCRTBreakIn, (__bridge void *)(self));
 
 	// hand over our tape
 	if(self.tape)
@@ -751,7 +748,7 @@ static void ZX80DocumentCRTBreakIn(
 	}
 
 	void *tapePlayer = llzx8081_getTapePlayer(ULA);
-	cstapePlayer_setAudioDelegate(tapePlayer, ZX80DocumentAudioCallout, 44100, 2048, self);
+	cstapePlayer_setAudioDelegate(tapePlayer, ZX80DocumentAudioCallout, 44100, 2048, (__bridge void *)(self));
 	[pauseOrPlayButton setTitle:@"Play Tape"];
 
 	llzx8081_setFastLoadingIsEnabled(ULA, fastLoad);
