@@ -9,6 +9,9 @@
 #import "LineGraph.h"
 
 @implementation CSLineGraph
+{
+	NSUInteger _graphValue;
+}
 
 - (id)initWithFrame:(NSRect)frameRect
 {
@@ -17,7 +20,7 @@
 	if(self)
 	{
 		// start with a history of fully set values
-		graphValue = ~(NSUInteger)0;
+		_graphValue = ~(NSUInteger)0;
 	}
 
 	return self;
@@ -66,7 +69,7 @@
 	currentX = bounds.size.width;
 
 	// draw a digital value, thusly...
-	NSUInteger value = graphValue;
+	NSUInteger value = _graphValue;
 
 	CGContextBeginPath(context);
 
@@ -84,7 +87,7 @@
 
 - (void)pushBit:(unsigned int)value
 {
-	graphValue = (graphValue << 1) | (value ? 1 : 0);
+	_graphValue = (_graphValue << 1) | (value ? 1 : 0);
 //	[self setNeedsDisplay:YES];
 }
 
