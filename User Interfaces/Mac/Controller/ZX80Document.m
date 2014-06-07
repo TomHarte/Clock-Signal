@@ -20,6 +20,12 @@
 #import "Z80DebugInterface.h"
 #import <AudioToolbox/AudioToolbox.h>
 
+typedef enum
+{
+	ZX80DocumentRunningStatePaused,
+	ZX80DocumentRunningStateRunning,
+} ZX80DocumentRunningState;
+
 @interface ZX80Document () <CSKeyDelegate, Z80DebugDrawerDelegate>
 
 @property (nonatomic, weak) IBOutlet CSOpenGLViewBillboard *openGLView;
@@ -55,6 +61,8 @@
 
 	float _speedMultiplier;
 	GLuint _textureID;
+
+	NSConditionLock *_runningLock;
 	BOOL _isRunning;
 }
 
@@ -168,6 +176,7 @@ static void	ZX80DocumentAudioCallout(
 		AudioQueueStart(_audioQueue, NULL);
 
 		_fastLoad = [[NSUserDefaults standardUserDefaults] boolForKey:@"zx80.enableFastLoading"];
+		_runningLock = [[NSConditionLock alloc] initWithCondition:ZX80DocumentRunningStatePaused];
     }
 
     return self;
@@ -185,16 +194,12 @@ static void	ZX80DocumentAudioCallout(
 		dispatch_release(_serialDispatchQueue);
 		_serialDispatchQueue = NULL;
 	}
-//	[timer invalidate]; timer = nil;
 	[super close];
-}
-
-- (void)doNothing
-{
 }
 
 - (void)dealloc
 {
+	[self stopRunning];
 	[self.openGLView.openGLContext makeCurrentContext];
 	glDeleteTextures(1, &_textureID);
 
@@ -313,6 +318,27 @@ static void	ZX80DocumentAudioCallout(
     return YES;
 }
 
+- (void)startRunning
+{
+	if(_isRunning) return;
+	_debugInterface.isRunning = YES;
+
+	[_runningLock lockWhenCondition:ZX80DocumentRunningStatePaused];
+	_isRunning = YES;
+	[self scheduleNextRunForHalfField];
+	[_runningLock unlockWithCondition:ZX80DocumentRunningStateRunning];
+}
+
+- (void)stopRunning
+{
+	if(!_isRunning) return;
+	_debugInterface.isRunning = NO;
+
+	[_runningLock lockWhenCondition:ZX80DocumentRunningStateRunning];
+	_isRunning = NO;
+	[_runningLock unlockWithCondition:ZX80DocumentRunningStatePaused];
+}
+
 - (void)scheduleNextRunForHalfField
 {
 	dispatch_after(
@@ -325,19 +351,18 @@ static void	ZX80DocumentAudioCallout(
 
 - (void)runForHalfField
 {
-	[self scheduleNextRunForHalfField];
-
-	@synchronized(self)
+	if([_runningLock tryLockWhenCondition:ZX80DocumentRunningStateRunning])
 	{
-		if(_isRunning)
-		{
-			unsigned int cyclesToRunFor = (unsigned int)(_speedMultiplier * 325);
-																		// because multiplier is
-																		// a percentage there's a
-																		// hidden multiply by 100 here
+		[self scheduleNextRunForHalfField];
 
-			llzx8081_runForHalfCycles(_ULA, cyclesToRunFor << 1);
-		}
+		unsigned int cyclesToRunFor = (unsigned int)(_speedMultiplier * 325);
+																	// because multiplier is
+																	// a percentage there's a
+																	// hidden multiply by 100 here
+
+		llzx8081_runForHalfCycles(_ULA, cyclesToRunFor << 1);
+
+		[_runningLock unlockWithCondition:ZX80DocumentRunningStateRunning];
 	}
 }
 
@@ -371,14 +396,9 @@ static void ZX80DocumentInstructionObserverBreakIn(void *z80, void *context)
 }*/
 - (void)debugInterfaceRunForHalfACycle:(Z80DebugInterface *)drawer
 {
-	@synchronized(self)
-	{
-		_isRunning = NO;
-		drawer.isRunning = NO;
-	}
+	[self stopRunning];
 
 	[drawer addComment:@"----"];
-
 	llzx8081_runForHalfCycles(_ULA, 1);
 
 	[drawer refresh];
@@ -386,14 +406,9 @@ static void ZX80DocumentInstructionObserverBreakIn(void *z80, void *context)
 
 - (void)debugInterfaceRunForOneInstruction:(Z80DebugInterface *)drawer
 {
-	@synchronized(self)
-	{
-		_isRunning = NO;
-		drawer.isRunning = NO;
-	}
+	[self stopRunning];
 
 	[drawer addComment:@"----"];
-	
 	_instructionRunningCount = 1;
 
 	void *instructionObserver = llz80_monitor_addInstructionObserver([self z80ForDebugInterface], ZX80DocumentInstructionObserverBreakIn, (__bridge void *)(self));
@@ -409,11 +424,7 @@ static void ZX80DocumentInstructionObserverBreakIn(void *z80, void *context)
 
 - (void)debugInterface:(Z80DebugInterface *)drawer runUntilAddress:(uint16_t)address
 {
-	@synchronized(self)
-	{
-		_isRunning = NO;
-		drawer.isRunning = NO;
-	}
+	[self stopRunning];
 
 	[drawer addComment:@"----"];
 	
@@ -434,21 +445,14 @@ static void ZX80DocumentInstructionObserverBreakIn(void *z80, void *context)
 
 - (void)debugInterfaceRun:(Z80DebugInterface *)drawer
 {
-	@synchronized(self)
-	{
-		_isRunning = YES;
-		drawer.isRunning = YES;
-	}
+	[self startRunning];
+	[drawer refresh];
 }
 
 - (void)debugInterfacePause:(Z80DebugInterface *)drawer
 {
-	@synchronized(self)
-	{
-		_isRunning = NO;
-		drawer.isRunning = NO;
-		[drawer refresh];
-	}
+	[self stopRunning];
+	[drawer refresh];
 }
 
 - (IBAction)showDebugger:(id)sender
@@ -648,12 +652,8 @@ static void ZX80DocumentCRTBreakIn(
 
 - (IBAction)reconfigureMachine:(id)sender
 {
-//	[timer invalidate];
-//	timer = nil;
-	_isRunning = NO;
+	[self stopRunning];
 
-	@synchronized(self)
-	{
 	NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
 
 	// create the ULA
@@ -744,25 +744,15 @@ static void ZX80DocumentCRTBreakIn(
 
 	llzx8081_setFastLoadingIsEnabled(_ULA, _fastLoad);
 
-	_isRunning = YES;
-
 	NSLog(@"machine configured");
 
-	// create a queue on which to run the machine
-	_serialDispatchQueue = dispatch_queue_create("Clock Signal emulationqueue", DISPATCH_QUEUE_SERIAL);
-	[self scheduleNextRunForHalfField];
-//	timer =
-//		[[CSOwnThreadTimer alloc]
-//			initWithTimeInterval: 1.0 / 100.0f
-//			target:self
-//			selector:@selector(runForHalfField:)
-//			userInfo:nil];
+	// create a queue on which to run the machine if we don't already have one
+	if(!_serialDispatchQueue)
+		_serialDispatchQueue = dispatch_queue_create("Clock Signal emulationqueue", DISPATCH_QUEUE_SERIAL);
+	[self startRunning];
 
 	NSLog(@"timer started");
-	}
 }
-
-
 
 - (IBAction)setNormalSpeed:(id)sender
 {
