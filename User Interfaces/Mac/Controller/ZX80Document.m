@@ -587,11 +587,9 @@ static void ZX80DocumentCRTBreakIn(
 			nil];*/
 
 	NSDictionary *infoDictionary = 
-		[NSDictionary dictionaryWithObjectsAndKeys:
-			[NSNumber numberWithUnsignedInt:widthOfBuffer], @"widthOfBuffer",
-			[NSNumber numberWithUnsignedInt:heightOfBuffer], @"heightOfBuffer",
-			[NSData dataWithBytes:buffer length:widthOfBuffer*heightOfBuffer], @"buffer",
-			nil];
+		@{@"widthOfBuffer": @(widthOfBuffer),
+			@"heightOfBuffer": @(heightOfBuffer),
+			@"buffer": [NSData dataWithBytes:buffer length:widthOfBuffer*heightOfBuffer]};
 
 	[document
 		performSelectorOnMainThread:@selector(updateDisplay:)
@@ -634,12 +632,12 @@ static void ZX80DocumentCRTBreakIn(
 	else
 		glBindTexture(GL_TEXTURE_2D, self.textureID);
 
-	const void *buffer = [[details objectForKey:@"buffer"] bytes];
+	const void *buffer = [details[@"buffer"] bytes];
 	glTexImage2D(
 		GL_TEXTURE_2D,
 		0,
 		GL_LUMINANCE,
-		[[details objectForKey:@"widthOfBuffer"] intValue], [[details objectForKey:@"heightOfBuffer"] intValue],
+		[details[@"widthOfBuffer"] intValue], [details[@"heightOfBuffer"] intValue],
 		0,
 		GL_LUMINANCE, GL_UNSIGNED_BYTE,
 		buffer);

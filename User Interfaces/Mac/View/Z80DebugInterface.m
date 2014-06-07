@@ -70,13 +70,11 @@
 
 - (void)awakeFromNib
 {
-	self.allLines = [NSArray arrayWithObjects:
-		clockLine, m1Line, mReqLine, ioReqLine, refreshLine, readLine, writeLine, waitLine, haltLine,
+	self.allLines = @[clockLine, m1Line, mReqLine, ioReqLine, refreshLine, readLine, writeLine, waitLine, haltLine,
 		irqLine, nmiLine, resetLine, busReqLine, busAckLine,
 		d7Line, d6Line, d5Line, d4Line, d3Line, d2Line, d1Line, d0Line,
 		a15Line, a14Line, a13Line, a12Line, a11Line, a10Line, a9Line, a8Line,
-		a7Line, a6Line, a5Line, a4Line, a3Line, a2Line, a1Line, a0Line,
-		nil];
+		a7Line, a6Line, a5Line, a4Line, a3Line, a2Line, a1Line, a0Line];
 }
 
 - (IBAction)runForOneInstruction:(id)sender
@@ -194,14 +192,14 @@
 	[busAckLine pushBit:(busState&LLZ80SignalBusAcknowledge) ? 1 : 0];
 
 	uint8_t dataValue = (uint8_t)(busState >> CSBusStandardDataShift);
-	for(CSLineGraph *graph in [NSArray arrayWithObjects:d7Line, d6Line, d5Line, d4Line, d3Line, d2Line, d1Line, d0Line, nil])
+	for(CSLineGraph *graph in @[d7Line, d6Line, d5Line, d4Line, d3Line, d2Line, d1Line, d0Line])
 	{
 		[graph pushBit:(dataValue & 0x80) ? 1 : 0];
 		dataValue <<= 1;
 	}
 
 	uint16_t addressValue = (uint16_t)(busState >> CSBusStandardAddressShift);
-	for(CSLineGraph *graph in [NSArray arrayWithObjects:a15Line, a14Line, a13Line, a12Line, a11Line, a10Line, a9Line, a8Line, a7Line, a6Line, a5Line, a4Line, a3Line, a2Line, a1Line, a0Line, nil])
+	for(CSLineGraph *graph in @[a15Line, a14Line, a13Line, a12Line, a11Line, a10Line, a9Line, a8Line, a7Line, a6Line, a5Line, a4Line, a3Line, a2Line, a1Line, a0Line])
 	{
 		[graph pushBit:(addressValue & 0x8000) ? 1 : 0];
 		addressValue <<= 1;
@@ -252,7 +250,7 @@
 	cyclesRunForField.stringValue = [NSString stringWithFormat:@"%0.1f", (float)timeElapsed * 0.5f];
 
 	[self updateBus];
-	[self.allLines makeObjectsPerformSelector:@selector(setNeedsDisplay:) withObject:[NSNumber numberWithBool:YES]];
+	[self.allLines makeObjectsPerformSelector:@selector(setNeedsDisplay:) withObject:@YES];
 //	NSMutableString *totalString = [NSMutableString string];
 //	for(NSString *line in memoryCommentLines)
 //	{
