@@ -27,7 +27,7 @@
 		NSDrawer *machineOptionsDrawer;
 		NSSlider *speedSlider;
 		NSTextField *speedLabel;
-		unsigned int speedMultiplier;
+		float speedMultiplier;
 		NSMatrix *machineMatrix;
 		NSMatrix *RAMMatrix;
 		NSMatrix *ROMMatrix;
@@ -67,7 +67,7 @@
 
 @property (nonatomic, assign) IBOutlet NSSlider *speedSlider;
 @property (nonatomic, assign) IBOutlet NSTextField *speedLabel;
-@property (nonatomic, assign) unsigned int speedMultiplier;
+@property (nonatomic, assign) float speedMultiplier;
 - (IBAction)setNormalSpeed:(id)sender;
 
 - (IBAction)reconfigureMachine:(id)sender;

@@ -323,7 +323,8 @@ static void	ZX80DocumentAudioCallout(
 	{
 		if(self.isRunning)
 		{
-			unsigned int cyclesToRunFor = self.speedMultiplier * 325;	// because multiplier is
+			unsigned int cyclesToRunFor = (unsigned int)(self.speedMultiplier * 325);
+																		// because multiplier is
 																		// a percentage there's a
 																		// hidden multiply by 100 here
 
@@ -779,7 +780,7 @@ static void ZX80DocumentCRTBreakIn(
 
 - (IBAction)setNormalSpeed:(id)sender
 {
-	self.speedMultiplier = 100;
+	self.speedMultiplier = 100.0f;
 }
 
 - (void)setFastLoad:(BOOL)newFastLoad
