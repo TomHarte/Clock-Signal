@@ -9,11 +9,7 @@
 #import <Cocoa/Cocoa.h>
 
 @interface CSLineGraph : NSView
-{
-	NSUInteger graphValue;
-}
 
 - (void)pushBit:(unsigned int)value;
-
 
 @end

@@ -37,7 +37,6 @@
 		4BBC16421452DF7D00B12D3E /* StaticMemory.c in Sources */ = {isa = PBXBuildFile; fileRef = 4BBC16411452DF7D00B12D3E /* StaticMemory.c */; };
 		4BBC16491452E01B00B12D3E /* ReferenceCountedObject.c in Sources */ = {isa = PBXBuildFile; fileRef = 4BBC16481452E01B00B12D3E /* ReferenceCountedObject.c */; };
 		4BBCCFAB14411C81001EC07C /* ParallelDispatch.c in Sources */ = {isa = PBXBuildFile; fileRef = 4BBCCFAA14411C81001EC07C /* ParallelDispatch.c */; };
-		4BD960F01443751300BF196E /* OwnThreadTimer.m in Sources */ = {isa = PBXBuildFile; fileRef = 4BD960EF1443751300BF196E /* OwnThreadTimer.m */; };
 		4BE229FE141986CE00F3A516 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4BE229FD141986CE00F3A516 /* Cocoa.framework */; };
 		4BE26CAE1437D3AD0047B4F3 /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4BE26CAD1437D3AD0047B4F3 /* AudioToolbox.framework */; };
 		4BE3E15714389DDA004FC04F /* Credits.rtf in Resources */ = {isa = PBXBuildFile; fileRef = 4BE3E12814389DDA004FC04F /* Credits.rtf */; };
@@ -121,8 +120,6 @@
 		4BBCCFA914411B3B001EC07C /* ParallelDispatch.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ParallelDispatch.h; path = "Parallel Dispatch/ParallelDispatch.h"; sourceTree = "<group>"; };
 		4BBCCFAA14411C81001EC07C /* ParallelDispatch.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = ParallelDispatch.c; path = "Parallel Dispatch/ParallelDispatch.c"; sourceTree = "<group>"; };
 		4BBD8E0214198AC7002ADB76 /* CoreVideo.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreVideo.framework; path = System/Library/Frameworks/CoreVideo.framework; sourceTree = SDKROOT; };
-		4BD960EE1443751300BF196E /* OwnThreadTimer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OwnThreadTimer.h; sourceTree = "<group>"; };
-		4BD960EF1443751300BF196E /* OwnThreadTimer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OwnThreadTimer.m; sourceTree = "<group>"; };
 		4BE121521450375600117A22 /* BusState.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BusState.h; sourceTree = "<group>"; };
 		4BE229F9141986CE00F3A516 /* Clock Signal.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Clock Signal.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		4BE229FD141986CE00F3A516 /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
@@ -527,8 +524,6 @@
 				4BE3E1DA14389F30004FC04F /* ZX80Document.xib */,
 				4BE3E1D014389F30004FC04F /* ZX80Document.h */,
 				4BE3E1D114389F30004FC04F /* ZX80Document.m */,
-				4BD960EE1443751300BF196E /* OwnThreadTimer.h */,
-				4BD960EF1443751300BF196E /* OwnThreadTimer.m */,
 			);
 			path = Controller;
 			sourceTree = "<group>";
@@ -641,7 +636,7 @@
 		4BE229F0141986CE00F3A516 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 0460;
+				LastUpgradeCheck = 0510;
 				ORGANIZATIONNAME = acrossair;
 			};
 			buildConfigurationList = 4BE229F3141986CE00F3A516 /* Build configuration list for PBXProject "Clock Signal" */;
@@ -691,7 +686,6 @@
 				4BB4AFAC143BC9BE00636C4F /* AbstractTape.c in Sources */,
 				4BB4AFAE143BC9BE00636C4F /* ZX80Tape.c in Sources */,
 				4BBCCFAB14411C81001EC07C /* ParallelDispatch.c in Sources */,
-				4BD960F01443751300BF196E /* OwnThreadTimer.m in Sources */,
 				4BA04D7A1451E63B00DA159C /* Z80CBPageDecode.c in Sources */,
 				4BA04D7B1451E63B00DA159C /* Z80EDPageDecode.c in Sources */,
 				4BA04D7C1451E63B00DA159C /* Z80StandardPageDecode.c in Sources */,
@@ -778,8 +772,9 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
+				CLANG_WARN_BOOL_CONVERSION = YES;
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
 				CLANG_WARN_ENUM_CONVERSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
@@ -797,7 +792,9 @@
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_ABOUT_MISSING_PROTOTYPES = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				MACOSX_DEPLOYMENT_TARGET = 10.7;
 				ONLY_ACTIVE_ARCH = YES;
@@ -809,8 +806,9 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
+				CLANG_WARN_BOOL_CONVERSION = YES;
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
 				CLANG_WARN_ENUM_CONVERSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
@@ -822,7 +820,9 @@
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_ABOUT_MISSING_PROTOTYPES = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				MACOSX_DEPLOYMENT_TARGET = 10.7;
 				SDKROOT = macosx;
@@ -832,7 +832,7 @@
 		4BE22A1B141986CE00F3A516 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = "$(ARCHS_STANDARD_32_64_BIT)";
+				CLANG_ENABLE_OBJC_ARC = YES;
 				CLANG_WARN_IMPLICIT_SIGN_CONVERSION = YES;
 				CLANG_WARN_SUSPICIOUS_IMPLICIT_CONVERSION = YES;
 				COMBINE_HIDPI_IMAGES = YES;
@@ -845,7 +845,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				INFOPLIST_FILE = "Clock Signal-Info.plist";
-				MACOSX_DEPLOYMENT_TARGET = 10.5;
+				MACOSX_DEPLOYMENT_TARGET = 10.7;
 				PRODUCT_NAME = "Clock Signal";
 				WRAPPER_EXTENSION = app;
 			};
@@ -854,7 +854,7 @@
 		4BE22A1C141986CE00F3A516 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = "$(ARCHS_STANDARD_32_64_BIT)";
+				CLANG_ENABLE_OBJC_ARC = YES;
 				CLANG_WARN_IMPLICIT_SIGN_CONVERSION = YES;
 				CLANG_WARN_SUSPICIOUS_IMPLICIT_CONVERSION = YES;
 				COMBINE_HIDPI_IMAGES = YES;
@@ -867,7 +867,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				INFOPLIST_FILE = "Clock Signal-Info.plist";
-				MACOSX_DEPLOYMENT_TARGET = 10.5;
+				MACOSX_DEPLOYMENT_TARGET = 10.7;
 				PRODUCT_NAME = "Clock Signal";
 				WRAPPER_EXTENSION = app;
 			};

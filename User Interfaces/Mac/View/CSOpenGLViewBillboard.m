@@ -11,14 +11,6 @@
 
 @implementation CSOpenGLViewBillboard
 
-@synthesize textureID;
-@synthesize keyDelegate;
-
-@synthesize minimumSourceRect;
-@synthesize idealSourceRect;
-@synthesize maximumSourceRect;
-@synthesize pixelSizeOfIdealRect;
-
 - (id)initWithCoder:(NSCoder *)aDecoder
 {
 	self = [super initWithCoder:aDecoder];
@@ -42,7 +34,7 @@
 {
 	glClear(GL_COLOR_BUFFER_BIT);
 	glEnable(GL_TEXTURE_2D);
-	glBindTexture(GL_TEXTURE_2D, textureID);
+	glBindTexture(GL_TEXTURE_2D, _textureID);
 
 	// if we have a retina display then because OpenGL is a low-level fragment-oriented
 	// API we need to deal with scaling up ourselves; we'll adjust the viewport, taking
@@ -53,7 +45,7 @@
 
 	glViewport(0, 0, (GLsizei)farEdge.x, (GLsizei)farEdge.y);
 
-	NSRect outputRect = minimumSourceRect;
+	NSRect outputRect = _minimumSourceRect;
 
 		// drawing here
 		glPushMatrix();
@@ -85,17 +77,17 @@
 
 - (void)keyUp:(NSEvent *)theEvent
 {
-	[keyDelegate keyUp:theEvent];
+	[self.keyDelegate keyUp:theEvent];
 }
 
 - (void)keyDown:(NSEvent *)theEvent
 {
-	[keyDelegate keyDown:theEvent];
+	[self.keyDelegate keyDown:theEvent];
 }
 
 - (void)flagsChanged:(NSEvent *)theEvent
 {
-	[keyDelegate flagsChanged:theEvent];
+	[self.keyDelegate flagsChanged:theEvent];
 }
 
 @end
