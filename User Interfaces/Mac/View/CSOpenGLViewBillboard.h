@@ -16,18 +16,8 @@
 @end
 
 @interface CSOpenGLViewBillboard : NSOpenGLView
-{
-	// for the 32bit users out there ...
-	@private
-		id <CSKeyDelegate> __unsafe_unretained keyDelegate;
-		GLuint textureID;
-		NSRect minimumSourceRect;
-		NSRect idealSourceRect;
-		NSRect maximumSourceRect;
-		NSSize pixelSizeOfIdealRect;
-}
 
-@property (nonatomic, unsafe_unretained) id <CSKeyDelegate> keyDelegate;
+@property (nonatomic, weak) id <CSKeyDelegate> keyDelegate;
 
 @property (nonatomic, assign) GLuint textureID;
 
