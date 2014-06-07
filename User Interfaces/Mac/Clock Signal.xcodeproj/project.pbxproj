@@ -37,7 +37,6 @@
 		4BBC16421452DF7D00B12D3E /* StaticMemory.c in Sources */ = {isa = PBXBuildFile; fileRef = 4BBC16411452DF7D00B12D3E /* StaticMemory.c */; };
 		4BBC16491452E01B00B12D3E /* ReferenceCountedObject.c in Sources */ = {isa = PBXBuildFile; fileRef = 4BBC16481452E01B00B12D3E /* ReferenceCountedObject.c */; };
 		4BBCCFAB14411C81001EC07C /* ParallelDispatch.c in Sources */ = {isa = PBXBuildFile; fileRef = 4BBCCFAA14411C81001EC07C /* ParallelDispatch.c */; };
-		4BD960F01443751300BF196E /* OwnThreadTimer.m in Sources */ = {isa = PBXBuildFile; fileRef = 4BD960EF1443751300BF196E /* OwnThreadTimer.m */; };
 		4BE229FE141986CE00F3A516 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4BE229FD141986CE00F3A516 /* Cocoa.framework */; };
 		4BE26CAE1437D3AD0047B4F3 /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4BE26CAD1437D3AD0047B4F3 /* AudioToolbox.framework */; };
 		4BE3E15714389DDA004FC04F /* Credits.rtf in Resources */ = {isa = PBXBuildFile; fileRef = 4BE3E12814389DDA004FC04F /* Credits.rtf */; };
@@ -121,8 +120,6 @@
 		4BBCCFA914411B3B001EC07C /* ParallelDispatch.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ParallelDispatch.h; path = "Parallel Dispatch/ParallelDispatch.h"; sourceTree = "<group>"; };
 		4BBCCFAA14411C81001EC07C /* ParallelDispatch.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = ParallelDispatch.c; path = "Parallel Dispatch/ParallelDispatch.c"; sourceTree = "<group>"; };
 		4BBD8E0214198AC7002ADB76 /* CoreVideo.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreVideo.framework; path = System/Library/Frameworks/CoreVideo.framework; sourceTree = SDKROOT; };
-		4BD960EE1443751300BF196E /* OwnThreadTimer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OwnThreadTimer.h; sourceTree = "<group>"; };
-		4BD960EF1443751300BF196E /* OwnThreadTimer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OwnThreadTimer.m; sourceTree = "<group>"; };
 		4BE121521450375600117A22 /* BusState.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BusState.h; sourceTree = "<group>"; };
 		4BE229F9141986CE00F3A516 /* Clock Signal.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Clock Signal.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		4BE229FD141986CE00F3A516 /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
@@ -527,8 +524,6 @@
 				4BE3E1DA14389F30004FC04F /* ZX80Document.xib */,
 				4BE3E1D014389F30004FC04F /* ZX80Document.h */,
 				4BE3E1D114389F30004FC04F /* ZX80Document.m */,
-				4BD960EE1443751300BF196E /* OwnThreadTimer.h */,
-				4BD960EF1443751300BF196E /* OwnThreadTimer.m */,
 			);
 			path = Controller;
 			sourceTree = "<group>";
@@ -691,7 +686,6 @@
 				4BB4AFAC143BC9BE00636C4F /* AbstractTape.c in Sources */,
 				4BB4AFAE143BC9BE00636C4F /* ZX80Tape.c in Sources */,
 				4BBCCFAB14411C81001EC07C /* ParallelDispatch.c in Sources */,
-				4BD960F01443751300BF196E /* OwnThreadTimer.m in Sources */,
 				4BA04D7A1451E63B00DA159C /* Z80CBPageDecode.c in Sources */,
 				4BA04D7B1451E63B00DA159C /* Z80EDPageDecode.c in Sources */,
 				4BA04D7C1451E63B00DA159C /* Z80StandardPageDecode.c in Sources */,

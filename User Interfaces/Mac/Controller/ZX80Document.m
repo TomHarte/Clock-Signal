@@ -35,6 +35,9 @@
 @end
 
 @implementation ZX80Document
+{
+	dispatch_queue_t _serialDispatchQueue;
+}
 
 @synthesize openGLView;
 @synthesize ULA;
@@ -185,7 +188,12 @@ static void	ZX80DocumentAudioCallout(
 
 - (void)close
 {
-	[timer invalidate]; timer = nil;
+	if(_serialDispatchQueue)
+	{
+		dispatch_release(_serialDispatchQueue);
+		_serialDispatchQueue = NULL;
+	}
+//	[timer invalidate]; timer = nil;
 	[super close];
 }
 
@@ -317,8 +325,20 @@ static void	ZX80DocumentAudioCallout(
     return YES;
 }
 
-- (void)runForHalfField:(NSTimer *)timer
+- (void)scheduleNextRunForHalfField
 {
+	dispatch_after(
+		dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.01 * NSEC_PER_SEC)),
+		_serialDispatchQueue,
+		^{
+			[self runForHalfField];
+		});
+}
+
+- (void)runForHalfField
+{
+	[self scheduleNextRunForHalfField];
+
 	@synchronized(self)
 	{
 		if(self.isRunning)
@@ -560,41 +580,15 @@ static void ZX80DocumentCRTBreakIn(
 {
 	ZX80Document *document = (ZX80Document *)context;
 
-/*	uint8_t *fatBuffer = (uint8_t *)malloc(widthOfBuffer*2*heightOfBuffer);
-	for(int y = 0; y < heightOfBuffer; y++)
-	{
-		uint8_t *sourcePointer = &buffer[y * widthOfBuffer];
-		uint8_t *targetPointer = &fatBuffer[y * widthOfBuffer * 2];
-
-		for(int x = 0; x < widthOfBuffer-1; x++)
-		{
-			uint8_t sourceValue = sourcePointer[x];
-			uint8_t quarterValue = sourceValue >> 2;
-			uint8_t threeQuarterValue = sourceValue - quarterValue;
-
-			int tx = x << 1;
-			targetPointer[tx] += quarterValue;
-			targetPointer[tx+1] += threeQuarterValue;
-			targetPointer[tx+2] = threeQuarterValue;
-			targetPointer[tx+3] = quarterValue;
-		}
-	}
-	NSDictionary *infoDictionary = 
-		[NSDictionary dictionaryWithObjectsAndKeys:
-			[NSNumber numberWithInt:widthOfBuffer*2], @"widthOfBuffer",
-			[NSNumber numberWithInt:heightOfBuffer], @"heightOfBuffer",
-			[NSValue valueWithPointer:fatBuffer], @"buffer",
-			nil];*/
-
-	NSDictionary *infoDictionary = 
+	NSDictionary *infoDictionary =
 		@{@"widthOfBuffer": @(widthOfBuffer),
 			@"heightOfBuffer": @(heightOfBuffer),
 			@"buffer": [NSData dataWithBytes:buffer length:widthOfBuffer*heightOfBuffer]};
 
-	[document
-		performSelectorOnMainThread:@selector(updateDisplay:)
-		withObject:infoDictionary
-		waitUntilDone:NO];
+	dispatch_async(dispatch_get_main_queue(),
+	^{
+		[document updateDisplay:infoDictionary];
+	});
 }
 
 - (void)updateDisplay:(NSDictionary *)details
@@ -666,9 +660,12 @@ static void ZX80DocumentCRTBreakIn(
 
 - (IBAction)reconfigureMachine:(id)sender
 {
-	[timer invalidate];
-	timer = nil;
+//	[timer invalidate];
+//	timer = nil;
+	self.isRunning = NO;
 
+@synchronized(self)
+{
 	NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
 
 	// create the ULA
@@ -763,15 +760,18 @@ static void ZX80DocumentCRTBreakIn(
 
 	NSLog(@"machine configured");
 
-	// create a thread on which to run the machine
-	timer =
-		[[CSOwnThreadTimer alloc]
-			initWithTimeInterval: 1.0 / 100.0f
-			target:self
-			selector:@selector(runForHalfField:)
-			userInfo:nil];
+	// create a queue on which to run the machine
+	_serialDispatchQueue = dispatch_queue_create("Clock Signal emulationqueue", DISPATCH_QUEUE_SERIAL);
+	[self scheduleNextRunForHalfField];
+//	timer =
+//		[[CSOwnThreadTimer alloc]
+//			initWithTimeInterval: 1.0 / 100.0f
+//			target:self
+//			selector:@selector(runForHalfField:)
+//			userInfo:nil];
 
 	NSLog(@"timer started");
+	}
 }
 
 

@@ -10,7 +10,6 @@
 #import <AudioToolbox/AudioToolbox.h>
 #import "CSOpenGLViewBillboard.h"
 #import "Z80DebugInterface.h"
-#import "OwnThreadTimer.h"
 
 #define kZX80DocumentNumAudioBuffers	3
 #define kZX80DocumentAudioStreamLength	16384
@@ -33,7 +32,6 @@
 		NSMatrix *ROMMatrix;
 		NSButton *pauseOrPlayButton;
 
-		CSOwnThreadTimer *timer;
 		BOOL isRunning;
 		unsigned int lastInternalTime;
 
@@ -67,7 +65,7 @@
 
 @property (nonatomic, assign) IBOutlet NSSlider *speedSlider;
 @property (nonatomic, assign) IBOutlet NSTextField *speedLabel;
-@property (nonatomic, assign) float speedMultiplier;
+@property (atomic, assign) float speedMultiplier;
 - (IBAction)setNormalSpeed:(id)sender;
 
 - (IBAction)reconfigureMachine:(id)sender;
