@@ -69,122 +69,7 @@ typedef enum
 }
 
 #pragma mark -
-#pragma mark AudioQueue callbacks and setup; for pushing audio out
-
-- (void)audioQueue:(AudioQueueRef)theAudioQueue didCallbackWithBuffer:(AudioQueueBufferRef)buffer
-{
-	@synchronized(self)
-	{
-		if(_queuedAudioStreamSegments > 2) _isOutputtingAudio = YES;
-
-		if(_isOutputtingAudio && _queuedAudioStreamSegments)
-		{
-			_queuedAudioStreamSegments--;
-			memcpy(buffer->mAudioData, &_audioStream[_audioStreamReadPosition], buffer->mAudioDataByteSize);
-			_audioStreamReadPosition = (_audioStreamReadPosition + kZX80DocumentAudioBufferLength)%kZX80DocumentAudioStreamLength;
-		}
-		else
-		{
-			memset(buffer->mAudioData, 0, buffer->mAudioDataByteSize);
-			_isOutputtingAudio = NO;
-		}
-		AudioQueueEnqueueBuffer(theAudioQueue, buffer, 0, NULL);
-	}
-}
-
-static void audioOutputCallback(
-	void *inUserData,
-	AudioQueueRef inAQ,
-	AudioQueueBufferRef inBuffer)
-{
-	[(__bridge ZX80Document *)inUserData audioQueue:inAQ didCallbackWithBuffer:inBuffer];
-}
-
-- (void)setupAudioQueue
-{
-	/*
-	
-		Describe a mono, 16bit, 44.1Khz audio format
-	
-	*/
-	AudioStreamBasicDescription outputDescription;
-
-	outputDescription.mSampleRate = 44100;
-
-	outputDescription.mFormatID = kAudioFormatLinearPCM;
-	outputDescription.mFormatFlags = kLinearPCMFormatFlagIsSignedInteger;
-
-	outputDescription.mBytesPerPacket = 2;
-	outputDescription.mFramesPerPacket = 1;
-	outputDescription.mBytesPerFrame = 2;
-	outputDescription.mChannelsPerFrame = 1;
-	outputDescription.mBitsPerChannel = 16;
-
-	outputDescription.mReserved = 0;
-
-	// create an audio output queue along those lines
-	AudioQueueNewOutput(
-		&outputDescription,
-		audioOutputCallback,
-		(__bridge void *)(self),
-		NULL,
-		kCFRunLoopCommonModes,
-		0,
-		&_audioQueue);
-
-	_audioStreamWritePosition = kZX80DocumentAudioBufferLength;
-	UInt32 bufferBytes = kZX80DocumentAudioBufferLength * sizeof(short);
-
-	int c = kZX80DocumentNumAudioBuffers;
-	while(c--)
-	{
-		AudioQueueAllocateBuffer(_audioQueue, bufferBytes, &_audioBuffers[c]);
-		memset(_audioBuffers[c]->mAudioData, 0, bufferBytes);
-		_audioBuffers[c]->mAudioDataByteSize = bufferBytes;
-		AudioQueueEnqueueBuffer(_audioQueue, _audioBuffers[c], 0, NULL);
-	}
-
-	AudioQueueStart(_audioQueue, NULL);
-}
-
-#pragma mark -
-#pragma mark ULA audio callbacks; for receiving audio in
-
-- (void)enqueueAudioBuffer:(short *)buffer numberOfSamples:(unsigned int)lengthInSamples
-{
-	@synchronized(self)
-	{
-		memcpy(&_audioStream[_audioStreamWritePosition], buffer, lengthInSamples * sizeof(short));
-		_audioStreamWritePosition = (_audioStreamWritePosition + lengthInSamples)%kZX80DocumentAudioStreamLength;
-
-		if(_queuedAudioStreamSegments == (kZX80DocumentAudioStreamLength/kZX80DocumentAudioBufferLength))
-		{
-			_audioStreamReadPosition = (_audioStreamReadPosition + lengthInSamples)%kZX80DocumentAudioStreamLength;
-		}
-		else
-		{
-			_queuedAudioStreamSegments++;
-		}
-	}
-}
-
-static void	ZX80DocumentAudioCallout(
-	void *tapePlayer,
-	unsigned int numberOfSamples,
-	short *sampleBuffer,
-	void *context)
-{
-	[(__bridge ZX80Document *)context enqueueAudioBuffer:sampleBuffer numberOfSamples:numberOfSamples];
-}
-
-- (void)setupAudioInput
-{
-	void *tapePlayer = llzx8081_getTapePlayer(_ULA);
-	cstapePlayer_setAudioDelegate(tapePlayer, ZX80DocumentAudioCallout, 44100, 2048, (__bridge void *)(self));
-}
-
-#pragma mark -
-#pragma mark Standard lifecycle stuff
+#pragma mark Standard lifecycle
 
 - (id)init
 {
@@ -241,7 +126,7 @@ static void	ZX80DocumentAudioCallout(
 }
 
 #pragma mark -
-#pragma mark
+#pragma mark NSDocument overrides
 
 - (NSString *)windowNibName
 {
@@ -402,7 +287,7 @@ static void	ZX80DocumentAudioCallout(
 }
 
 #pragma mark -
-#pragma mark
+#pragma mark Z80 instruction observer
 
 - (void)z80WillFetchInstruction
 {
@@ -671,6 +556,121 @@ static void ZX80DocumentCRTBreakIn(
 	glGenerateMipmap(GL_TEXTURE_2D);
 
 	[openGLBillboard setNeedsDisplay:YES];
+}
+
+#pragma mark -
+#pragma mark AudioQueue callbacks and setup; for pushing audio out
+
+- (void)audioQueue:(AudioQueueRef)theAudioQueue didCallbackWithBuffer:(AudioQueueBufferRef)buffer
+{
+	@synchronized(self)
+	{
+		if(_queuedAudioStreamSegments > 2) _isOutputtingAudio = YES;
+
+		if(_isOutputtingAudio && _queuedAudioStreamSegments)
+		{
+			_queuedAudioStreamSegments--;
+			memcpy(buffer->mAudioData, &_audioStream[_audioStreamReadPosition], buffer->mAudioDataByteSize);
+			_audioStreamReadPosition = (_audioStreamReadPosition + kZX80DocumentAudioBufferLength)%kZX80DocumentAudioStreamLength;
+		}
+		else
+		{
+			memset(buffer->mAudioData, 0, buffer->mAudioDataByteSize);
+			_isOutputtingAudio = NO;
+		}
+		AudioQueueEnqueueBuffer(theAudioQueue, buffer, 0, NULL);
+	}
+}
+
+static void audioOutputCallback(
+	void *inUserData,
+	AudioQueueRef inAQ,
+	AudioQueueBufferRef inBuffer)
+{
+	[(__bridge ZX80Document *)inUserData audioQueue:inAQ didCallbackWithBuffer:inBuffer];
+}
+
+- (void)setupAudioQueue
+{
+	/*
+	
+		Describe a mono, 16bit, 44.1Khz audio format
+	
+	*/
+	AudioStreamBasicDescription outputDescription;
+
+	outputDescription.mSampleRate = 44100;
+
+	outputDescription.mFormatID = kAudioFormatLinearPCM;
+	outputDescription.mFormatFlags = kLinearPCMFormatFlagIsSignedInteger;
+
+	outputDescription.mBytesPerPacket = 2;
+	outputDescription.mFramesPerPacket = 1;
+	outputDescription.mBytesPerFrame = 2;
+	outputDescription.mChannelsPerFrame = 1;
+	outputDescription.mBitsPerChannel = 16;
+
+	outputDescription.mReserved = 0;
+
+	// create an audio output queue along those lines
+	AudioQueueNewOutput(
+		&outputDescription,
+		audioOutputCallback,
+		(__bridge void *)(self),
+		NULL,
+		kCFRunLoopCommonModes,
+		0,
+		&_audioQueue);
+
+	_audioStreamWritePosition = kZX80DocumentAudioBufferLength;
+	UInt32 bufferBytes = kZX80DocumentAudioBufferLength * sizeof(short);
+
+	int c = kZX80DocumentNumAudioBuffers;
+	while(c--)
+	{
+		AudioQueueAllocateBuffer(_audioQueue, bufferBytes, &_audioBuffers[c]);
+		memset(_audioBuffers[c]->mAudioData, 0, bufferBytes);
+		_audioBuffers[c]->mAudioDataByteSize = bufferBytes;
+		AudioQueueEnqueueBuffer(_audioQueue, _audioBuffers[c], 0, NULL);
+	}
+
+	AudioQueueStart(_audioQueue, NULL);
+}
+
+#pragma mark -
+#pragma mark ULA audio callbacks; for receiving audio in
+
+- (void)enqueueAudioBuffer:(short *)buffer numberOfSamples:(unsigned int)lengthInSamples
+{
+	@synchronized(self)
+	{
+		memcpy(&_audioStream[_audioStreamWritePosition], buffer, lengthInSamples * sizeof(short));
+		_audioStreamWritePosition = (_audioStreamWritePosition + lengthInSamples)%kZX80DocumentAudioStreamLength;
+
+		if(_queuedAudioStreamSegments == (kZX80DocumentAudioStreamLength/kZX80DocumentAudioBufferLength))
+		{
+			_audioStreamReadPosition = (_audioStreamReadPosition + lengthInSamples)%kZX80DocumentAudioStreamLength;
+		}
+		else
+		{
+			_queuedAudioStreamSegments++;
+		}
+	}
+}
+
+static void	ZX80DocumentAudioCallout(
+	void *tapePlayer,
+	unsigned int numberOfSamples,
+	short *sampleBuffer,
+	void *context)
+{
+	[(__bridge ZX80Document *)context enqueueAudioBuffer:sampleBuffer numberOfSamples:numberOfSamples];
+}
+
+- (void)setupAudioInput
+{
+	void *tapePlayer = llzx8081_getTapePlayer(_ULA);
+	cstapePlayer_setAudioDelegate(tapePlayer, ZX80DocumentAudioCallout, 44100, 2048, (__bridge void *)(self));
 }
 
 #pragma mark -
