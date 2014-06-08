@@ -7,18 +7,20 @@
 //
 
 #import "ZX80Document.h"
-#import "Z80.h"
+
 #import "Z80Internals.h"
 #include "ZX8081.h"
+#import "Z80DebugInterface.h"
+
 #include "CRT.h"
-#import <OpenGL/gl.h>
-#include "AbstractTape.h"
 #include "ZX80Tape.h"
 #include "TapePlayer.h"
-#include "Z80Disassembler.h"
-#import "CSOpenGLViewBillboard.h"
-#import "Z80DebugInterface.h"
+
+#import <OpenGL/gl.h>
 #import <AudioToolbox/AudioToolbox.h>
+
+#import "CSOpenGLViewBillboard.h"
+
 
 typedef enum
 {
@@ -26,7 +28,7 @@ typedef enum
 	ZX80DocumentRunningStateRunning,
 } ZX80DocumentRunningState;
 
-@interface ZX80Document () <CSKeyDelegate, Z80DebugDrawerDelegate>
+@interface ZX80Document () <CSKeyDelegate, Z80DebugInterfaceDelegate>
 
 @property (nonatomic, weak) IBOutlet CSOpenGLViewBillboard *openGLView;
 @property (nonatomic, weak) IBOutlet NSDrawer *machineOptionsDrawer;
@@ -37,7 +39,7 @@ typedef enum
 @property (nonatomic, weak) IBOutlet NSMatrix *ROMMatrix;
 @property (nonatomic, weak) IBOutlet NSButton *pauseOrPlayButton;
 
-@property (nonatomic, assign) BOOL fastLoad;
+@property (nonatomic, assign) BOOL shouldFastLoad;
 
 @end
 
@@ -66,6 +68,9 @@ typedef enum
 	BOOL _isRunning;
 }
 
+#pragma mark -
+#pragma mark AudioQueue callbacks and setup; for pushing audio out
+
 - (void)audioQueue:(AudioQueueRef)theAudioQueue didCallbackWithBuffer:(AudioQueueBufferRef)buffer
 {
 	@synchronized(self)
@@ -87,6 +92,64 @@ typedef enum
 	}
 }
 
+static void audioOutputCallback(
+	void *inUserData,
+	AudioQueueRef inAQ,
+	AudioQueueBufferRef inBuffer)
+{
+	[(__bridge ZX80Document *)inUserData audioQueue:inAQ didCallbackWithBuffer:inBuffer];
+}
+
+- (void)setupAudioQueue
+{
+	/*
+	
+		Describe a mono, 16bit, 44.1Khz audio format
+	
+	*/
+	AudioStreamBasicDescription outputDescription;
+
+	outputDescription.mSampleRate = 44100;
+
+	outputDescription.mFormatID = kAudioFormatLinearPCM;
+	outputDescription.mFormatFlags = kLinearPCMFormatFlagIsSignedInteger;
+
+	outputDescription.mBytesPerPacket = 2;
+	outputDescription.mFramesPerPacket = 1;
+	outputDescription.mBytesPerFrame = 2;
+	outputDescription.mChannelsPerFrame = 1;
+	outputDescription.mBitsPerChannel = 16;
+
+	outputDescription.mReserved = 0;
+
+	// create an audio output queue along those lines
+	AudioQueueNewOutput(
+		&outputDescription,
+		audioOutputCallback,
+		(__bridge void *)(self),
+		NULL,
+		kCFRunLoopCommonModes,
+		0,
+		&_audioQueue);
+
+	_audioStreamWritePosition = kZX80DocumentAudioBufferLength;
+	UInt32 bufferBytes = kZX80DocumentAudioBufferLength * sizeof(short);
+
+	int c = kZX80DocumentNumAudioBuffers;
+	while(c--)
+	{
+		AudioQueueAllocateBuffer(_audioQueue, bufferBytes, &_audioBuffers[c]);
+		memset(_audioBuffers[c]->mAudioData, 0, bufferBytes);
+		_audioBuffers[c]->mAudioDataByteSize = bufferBytes;
+		AudioQueueEnqueueBuffer(_audioQueue, _audioBuffers[c], 0, NULL);
+	}
+
+	AudioQueueStart(_audioQueue, NULL);
+}
+
+#pragma mark -
+#pragma mark ULA audio callbacks; for receiving audio in
+
 - (void)enqueueAudioBuffer:(short *)buffer numberOfSamples:(unsigned int)lengthInSamples
 {
 	@synchronized(self)
@@ -105,14 +168,6 @@ typedef enum
 	}
 }
 
-static void audioOutputCallback(
-	void *inUserData,
-	AudioQueueRef inAQ,
-	AudioQueueBufferRef inBuffer)
-{
-	[(__bridge ZX80Document *)inUserData audioQueue:inAQ didCallbackWithBuffer:inBuffer];
-}
-
 static void	ZX80DocumentAudioCallout(
 	void *tapePlayer,
 	unsigned int numberOfSamples,
@@ -121,6 +176,15 @@ static void	ZX80DocumentAudioCallout(
 {
 	[(__bridge ZX80Document *)context enqueueAudioBuffer:sampleBuffer numberOfSamples:numberOfSamples];
 }
+
+- (void)setupAudioInput
+{
+	void *tapePlayer = llzx8081_getTapePlayer(_ULA);
+	cstapePlayer_setAudioDelegate(tapePlayer, ZX80DocumentAudioCallout, 44100, 2048, (__bridge void *)(self));
+}
+
+#pragma mark -
+#pragma mark Standard lifecycle stuff
 
 - (id)init
 {
@@ -131,61 +195,18 @@ static void	ZX80DocumentAudioCallout(
 		// set a default speed of 100%
 		_speedMultiplier = 100.0f;
 
-		/*
-		
-			Describe a mono, 16bit, 44.1Khz audio format
-		
-		*/
-		AudioStreamBasicDescription outputDescription;
+		// create a means to output audio
+		[self setupAudioQueue];
 
-		outputDescription.mSampleRate = 44100;
+		// restore
+		_shouldFastLoad = [[NSUserDefaults standardUserDefaults] boolForKey:@"zx80.enableFastLoading"];
 
-		outputDescription.mFormatID = kAudioFormatLinearPCM;
-		outputDescription.mFormatFlags = kLinearPCMFormatFlagIsSignedInteger;
-
-		outputDescription.mBytesPerPacket = 2;
-		outputDescription.mFramesPerPacket = 1;
-		outputDescription.mBytesPerFrame = 2;
-		outputDescription.mChannelsPerFrame = 1;
-		outputDescription.mBitsPerChannel = 16;
-
-		outputDescription.mReserved = 0;
-
-		// create an audio output queue along those lines
-		AudioQueueNewOutput(
-			&outputDescription,
-			audioOutputCallback,
-			(__bridge void *)(self),
-			NULL,
-			kCFRunLoopCommonModes,
-			0,
-			&_audioQueue);
-
-		_audioStreamWritePosition = kZX80DocumentAudioBufferLength;
-		UInt32 bufferBytes = kZX80DocumentAudioBufferLength * sizeof(short);
-
-		int c = kZX80DocumentNumAudioBuffers;
-		while(c--)
-		{
-			AudioQueueAllocateBuffer(_audioQueue, bufferBytes, &_audioBuffers[c]);
-			memset(_audioBuffers[c]->mAudioData, 0, bufferBytes);
-			_audioBuffers[c]->mAudioDataByteSize = bufferBytes;
-			AudioQueueEnqueueBuffer(_audioQueue, _audioBuffers[c], 0, NULL);
-		}
-
-		AudioQueueStart(_audioQueue, NULL);
-
-		_fastLoad = [[NSUserDefaults standardUserDefaults] boolForKey:@"zx80.enableFastLoading"];
+		// build a locking mechanism for cross-queue communications
 		_runningLock = [[NSConditionLock alloc] initWithCondition:ZX80DocumentRunningStatePaused];
     }
 
     return self;
 }
-
-//- (BOOL)isDocumentEdited
-//{
-//	return YES;
-//}
 
 - (void)close
 {
@@ -213,11 +234,14 @@ static void	ZX80DocumentAudioCallout(
 		AudioQueueDispose(_audioQueue, NO);
 
 		// per the documentation, this should dispose of any
-		// buffers tied to teh queue also, so there's no need
+		// buffers tied to the queue also, so there's no need
 		// to do anything explicit about the audioBuffers
 	}
 
 }
+
+#pragma mark -
+#pragma mark
 
 - (NSString *)windowNibName
 {
@@ -229,30 +253,21 @@ static void	ZX80DocumentAudioCallout(
 - (void)windowControllerDidLoadNib:(NSWindowController *)aController
 {
 	[super windowControllerDidLoadNib:aController];
-	// Add any code here that needs to be executed once the windowController has loaded the document's window.
 
+	// constrain the window to 4:3 and establish button state
 	[aController.window setContentAspectRatio:NSSizeFromCGSize( CGSizeMake(4.0f, 3.0f) )];
 	[self setDefaultConfiguration];
 
+	// we'll want to receive keyboard input
 	self.openGLView.keyDelegate = self;
 
-	// get a Z80 debug drawer
+	// get a Z80 debug interface and open our drawer
 	_debugInterface = [Z80DebugInterface debugInterface];
-//	debugDrawer.parentWindow = [self windowForSheet];
 	_debugInterface.delegate = self;
-
 	[self.machineOptionsDrawer openOnEdge:NSMaxXEdge];
-//	[debugDrawer openOnEdge:NSMinXEdge];
-
-//	[linePanel setIsVisible:YES];
 
 	// create a machine with the default configuration
 	[self reconfigureMachine:nil];
-}
-
-- (void *)z80ForDebugInterface
-{
-	return llzx8081_getCPU(_ULA);
 }
 
 - (NSData *)dataOfType:(NSString *)typeName error:(NSError **)outError
@@ -318,6 +333,26 @@ static void	ZX80DocumentAudioCallout(
     return YES;
 }
 
+- (void)setDefaultConfiguration
+{
+	NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
+
+	[self.machineMatrix selectCellAtRow:[userDefaults boolForKey:@"zx80.machineIsZX81"] ? 1 : 0 column:0];
+
+	switch([userDefaults integerForKey:@"zx80.amountOfRAM"])
+	{
+		case 1024:	[self.RAMMatrix selectCellAtRow:0 column:0];	break;
+		case 3072:	[self.RAMMatrix selectCellAtRow:1 column:0];	break;
+		case 16384:	[self.RAMMatrix selectCellAtRow:2 column:0];	break;
+		default:	[self.RAMMatrix selectCellAtRow:3 column:0];	break;
+	}
+
+	[self.ROMMatrix selectCellAtRow:[userDefaults boolForKey:@"zx80.machineHasZX81ROM"] ? 1 : 0 column:0];
+}
+
+#pragma mark -
+#pragma mark 'Timer' logic
+
 - (void)startRunning
 {
 	if(_isRunning) return;
@@ -366,10 +401,13 @@ static void	ZX80DocumentAudioCallout(
 	}
 }
 
+#pragma mark -
+#pragma mark
+
 - (void)z80WillFetchInstruction
 {
 	_instructionRunningCount--;
-	_atBreakpoint = (llz80_monitor_getInternalValue([self z80ForDebugInterface], LLZ80MonitorValuePCRegister) == _targetAddress);
+	_atBreakpoint = (llz80_monitor_getInternalValue(llzx8081_getCPU(_ULA), LLZ80MonitorValuePCRegister) == _targetAddress);
 }
 
 static void ZX80DocumentInstructionObserverBreakIn(void *z80, void *context)
@@ -394,76 +432,78 @@ static void ZX80DocumentInstructionObserverBreakIn(void *z80, void *context)
 
 	ula->lastPC = pc;
 }*/
-- (void)debugInterfaceRunForHalfACycle:(Z80DebugInterface *)drawer
+
+#pragma mark -
+#pragma mark Z80DebugDebugInterfaceDelegate
+
+- (void *)z80ForDebugInterface:(Z80DebugInterface *)debugInterface
 {
-	[self stopRunning];
-
-	[drawer addComment:@"----"];
-	llzx8081_runForHalfCycles(_ULA, 1);
-
-	[drawer refresh];
+	return llzx8081_getCPU(_ULA);
 }
 
-- (void)debugInterfaceRunForOneInstruction:(Z80DebugInterface *)drawer
+- (void)debugInterfaceRunForHalfACycle:(Z80DebugInterface *)debugInterface
 {
 	[self stopRunning];
 
-	[drawer addComment:@"----"];
+	[debugInterface addComment:@"----"];
+	llzx8081_runForHalfCycles(_ULA, 1);
+
+	[debugInterface refresh];
+}
+
+- (void)debugInterfaceRunForOneInstruction:(Z80DebugInterface *)debugInterface
+{
+	[self stopRunning];
+
+	[debugInterface addComment:@"----"];
 	_instructionRunningCount = 1;
 
-	void *instructionObserver = llz80_monitor_addInstructionObserver([self z80ForDebugInterface], ZX80DocumentInstructionObserverBreakIn, (__bridge void *)(self));
+	void *instructionObserver = llz80_monitor_addInstructionObserver([self z80ForDebugInterface:debugInterface], ZX80DocumentInstructionObserverBreakIn, (__bridge void *)(self));
 	while(_instructionRunningCount)
 	{
 		llzx8081_runForHalfCycles(_ULA, 1);
-		[drawer updateBus];
+		[debugInterface updateBus];
 	}
-	llz80_monitor_removeInstructionObserver([self z80ForDebugInterface], instructionObserver);
+	llz80_monitor_removeInstructionObserver([self z80ForDebugInterface:debugInterface], instructionObserver);
 
-	[drawer refresh];
+	[debugInterface refresh];
 }
 
-- (void)debugInterface:(Z80DebugInterface *)drawer runUntilAddress:(uint16_t)address
+- (void)debugInterface:(Z80DebugInterface *)debugInterface runUntilAddress:(uint16_t)address
 {
 	[self stopRunning];
 
-	[drawer addComment:@"----"];
+	[debugInterface addComment:@"----"];
 	
 	_targetAddress = address;
 	_atBreakpoint = NO;
 
 	int maxCycles = 3250000;
-	void *instructionObserver = llz80_monitor_addInstructionObserver([self z80ForDebugInterface], ZX80DocumentInstructionObserverBreakIn, (__bridge void *)(self));
+	void *instructionObserver = llz80_monitor_addInstructionObserver([self z80ForDebugInterface:debugInterface], ZX80DocumentInstructionObserverBreakIn, (__bridge void *)(self));
 	while(!_atBreakpoint && maxCycles--)
 	{
 		llzx8081_runForHalfCycles(_ULA, 1);
-		[drawer updateBus];
+		[debugInterface updateBus];
 	}
-	llz80_monitor_removeInstructionObserver([self z80ForDebugInterface], instructionObserver);
+	llz80_monitor_removeInstructionObserver([self z80ForDebugInterface:debugInterface], instructionObserver);
 
-	[drawer refresh];
+	[debugInterface refresh];
 }
 
-- (void)debugInterfaceRun:(Z80DebugInterface *)drawer
+- (void)debugInterfaceRun:(Z80DebugInterface *)debugInterface
 {
 	[self startRunning];
-	[drawer refresh];
+	[debugInterface refresh];
 }
 
-- (void)debugInterfacePause:(Z80DebugInterface *)drawer
+- (void)debugInterfacePause:(Z80DebugInterface *)debugInterface
 {
 	[self stopRunning];
-	[drawer refresh];
+	[debugInterface refresh];
 }
 
-- (IBAction)showDebugger:(id)sender
-{
-	[_debugInterface show];
-}
-
-- (IBAction)showMachineDrawer:(id)sender
-{
-	[self.machineOptionsDrawer openOnEdge:NSMaxXEdge];
-}
+#pragma mark -
+#pragma mark Keyboard Input
 
 - (void)setKey:(unsigned short)key isPressed:(BOOL)isPressed
 {
@@ -561,6 +601,9 @@ static void ZX80DocumentInstructionObserverBreakIn(void *z80, void *context)
 		llzx8081_setKeyUp(_ULA, LLZX8081VirtualKeyShift);
 }
 
+#pragma mark -
+#pragma mark Display
+
 static void ZX80DocumentCRTBreakIn(
 	void *crt,
 	unsigned int widthOfBuffer,
@@ -601,12 +644,9 @@ static void ZX80DocumentCRTBreakIn(
 
 		_textureID = newTextureID;
 
+		// just show a middle portion of the raster display;
+		// like a real TV
 		openGLBillboard.minimumSourceRect =
-//			NSMakeRect(
-//				0.0f,
-//				0.0f,
-//				1.0f,
-//				1.0f);
 			NSMakeRect(
 				0.18f,
 				0.075f,
@@ -633,21 +673,17 @@ static void ZX80DocumentCRTBreakIn(
 	[openGLBillboard setNeedsDisplay:YES];
 }
 
-- (void)setDefaultConfiguration
+#pragma mark -
+#pragma mark IBActions
+
+- (IBAction)showDebugger:(id)sender
 {
-	NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
+	[_debugInterface show];
+}
 
-	[self.machineMatrix selectCellAtRow:[userDefaults boolForKey:@"zx80.machineIsZX81"] ? 1 : 0 column:0];
-
-	switch([userDefaults integerForKey:@"zx80.amountOfRAM"])
-	{
-		case 1024:	[self.RAMMatrix selectCellAtRow:0 column:0];	break;
-		case 3072:	[self.RAMMatrix selectCellAtRow:1 column:0];	break;
-		case 16384:	[self.RAMMatrix selectCellAtRow:2 column:0];	break;
-		default:	[self.RAMMatrix selectCellAtRow:3 column:0];	break;
-	}
-
-	[self.ROMMatrix selectCellAtRow:[userDefaults boolForKey:@"zx80.machineHasZX81ROM"] ? 1 : 0 column:0];
+- (IBAction)showMachineDrawer:(id)sender
+{
+	[self.machineOptionsDrawer openOnEdge:NSMaxXEdge];
 }
 
 - (IBAction)reconfigureMachine:(id)sender
@@ -656,11 +692,9 @@ static void ZX80DocumentCRTBreakIn(
 
 	NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
 
-	// create the ULA
+	// destroy any existing ULA and create a new one
 	csObject_release(_ULA);
 	_ULA = llzx8081_create();
-
-	NSLog(@"machine created");
 
 	// set the machine type; if it's a ZX81 then
 	// disabled the ROM selection and force the
@@ -717,11 +751,6 @@ static void ZX80DocumentCRTBreakIn(
 	NSData *contentsOfROM = [NSData dataWithContentsOfFile:pathToROM];
 	llzx8081_provideROM(_ULA, [contentsOfROM bytes], (unsigned int)[contentsOfROM length]);
 
-	// quick test
-//	void *object = csZ80Disassembler_createDisassembly((uint8_t *)[contentsOfROM bytes], 0, [contentsOfROM length]);
-//	csObject_printDescription(object, stdout);
-//	csObject_release(object);
-
 	// do some tidying up and set our outputter as the
 	// end-of-field delegate for the CRT
 	if(_textureID)
@@ -738,35 +767,22 @@ static void ZX80DocumentCRTBreakIn(
 		llzx8081_setTape(_ULA, _tape);
 	}
 
-	void *tapePlayer = llzx8081_getTapePlayer(_ULA);
-	cstapePlayer_setAudioDelegate(tapePlayer, ZX80DocumentAudioCallout, 44100, 2048, (__bridge void *)(self));
+	// set ourself to receive audio
+	[self setupAudioInput];
+
+	// configure tape button and fast loading state
 	[self.pauseOrPlayButton setTitle:@"Play Tape"];
+	llzx8081_setFastLoadingIsEnabled(_ULA, _shouldFastLoad);
 
-	llzx8081_setFastLoadingIsEnabled(_ULA, _fastLoad);
-
-	NSLog(@"machine configured");
-
-	// create a queue on which to run the machine if we don't already have one
+	// create a queue on which to run the machine if we don't already have one and start running
 	if(!_serialDispatchQueue)
 		_serialDispatchQueue = dispatch_queue_create("Clock Signal emulationqueue", DISPATCH_QUEUE_SERIAL);
 	[self startRunning];
-
-	NSLog(@"timer started");
 }
 
 - (IBAction)setNormalSpeed:(id)sender
 {
 	_speedMultiplier = 100.0f;
-}
-
-- (void)setFastLoad:(BOOL)newFastLoad
-{
-	_fastLoad = newFastLoad;
-
-	llzx8081_setFastLoadingIsEnabled(_ULA, _fastLoad);
-
-	[[NSUserDefaults standardUserDefaults]
-		setBool:newFastLoad forKey:@"zx80.enableFastLoading"];
 }
 
 - (IBAction)pauseOrPlayTape:(id)sender
@@ -783,6 +799,19 @@ static void ZX80DocumentCRTBreakIn(
 		cstapePlayer_play(tapePlayer, llzx8081_getTimeStamp(_ULA));
 		[self.pauseOrPlayButton setTitle:@"Pause Tape"];
 	}
+}
+
+#pragma mark -
+#pragma mark Cocoa Bindings bound properties
+
+- (void)setShouldFastLoad:(BOOL)newFastLoad
+{
+	_shouldFastLoad = newFastLoad;
+
+	llzx8081_setFastLoadingIsEnabled(_ULA, _shouldFastLoad);
+
+	[[NSUserDefaults standardUserDefaults]
+		setBool:newFastLoad forKey:@"zx80.enableFastLoading"];
 }
 
 @end

@@ -212,7 +212,7 @@
                         <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                         <font key="font" metaFont="system"/>
                         <connections>
-                            <binding destination="-2" name="value" keyPath="fastLoad" id="100263"/>
+                            <binding destination="-2" name="value" keyPath="shouldFastLoad" id="100263"/>
                         </connections>
                     </buttonCell>
                 </button>

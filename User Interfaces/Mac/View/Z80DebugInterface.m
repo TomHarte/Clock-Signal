@@ -181,7 +181,7 @@
 {
 	[self
 		setString:
-			[NSString stringWithFormat:@"%02x", llz80_monitor_getInternalValue(self.delegate.z80ForDebugInterface, value)]
+			[NSString stringWithFormat:@"%02x", llz80_monitor_getInternalValue([self.delegate z80ForDebugInterface:self], value)]
 			toField:field];
 }
 
@@ -189,7 +189,7 @@
 {
 	[self
 		setString:
-			[NSString stringWithFormat:@"%04x", llz80_monitor_getInternalValue(self.delegate.z80ForDebugInterface, value)]
+			[NSString stringWithFormat:@"%04x", llz80_monitor_getInternalValue([self.delegate z80ForDebugInterface:self], value)]
 			toField:field];
 }
 
@@ -198,20 +198,20 @@
 	[self
 		setString:
 			[NSString stringWithFormat:@"%04x",
-				llz80_monitor_getInternalValue(self.delegate.z80ForDebugInterface, lowValue) |
-				(llz80_monitor_getInternalValue(self.delegate.z80ForDebugInterface, highValue) << 8)
+				llz80_monitor_getInternalValue([self.delegate z80ForDebugInterface:self], lowValue) |
+				(llz80_monitor_getInternalValue([self.delegate z80ForDebugInterface:self], highValue) << 8)
 			]
 			toField:field];
 }
 
 - (void)updateBus
 {
-	unsigned int z80Time = llz80_monitor_getInternalValue(self.delegate.z80ForDebugInterface, LLZ80MonitorValueHalfCyclesToDate);
+	unsigned int z80Time = llz80_monitor_getInternalValue([self.delegate z80ForDebugInterface:self], LLZ80MonitorValueHalfCyclesToDate);
 
 	if(z80Time == _lastBusTime) return;
 	_lastBusTime = z80Time;
 
-	uint64_t busState = llz80_monitor_getBusLineState(self.delegate.z80ForDebugInterface);
+	uint64_t busState = llz80_monitor_getBusLineState([self.delegate z80ForDebugInterface:self]);
 
 	[self.clockLine		pushBit:(busState&CSBusStandardClockLine) ? 1 : 0];
 	[self.m1Line		pushBit:(busState&LLZ80SignalMachineCycleOne) ? 1 : 0];
@@ -247,7 +247,7 @@
 {
 	[self set8BitValue:LLZ80MonitorValueARegister toField:self.aRegisterField];
 
-	uint8_t flagRegister = (uint8_t)llz80_monitor_getInternalValue(self.delegate.z80ForDebugInterface, LLZ80MonitorValueFRegister);
+	uint8_t flagRegister = (uint8_t)llz80_monitor_getInternalValue([self.delegate z80ForDebugInterface:self], LLZ80MonitorValueFRegister);
 	[self setString:
 	 	[NSString stringWithFormat:@"%c%c%c%c%c%c%c%c",
 		(flagRegister&0x80) ? 'S' : '-',
@@ -281,7 +281,7 @@
 	[self set16BitValueLow:LLZ80MonitorValueEDashRegister high:LLZ80MonitorValueDDashRegister toField:self.deDashRegisterField];
 	[self set16BitValueLow:LLZ80MonitorValueLDashRegister high:LLZ80MonitorValueHDashRegister toField:self.hlDashRegisterField];
 
-	unsigned int newInternalTime = llz80_monitor_getInternalValue(self.delegate.z80ForDebugInterface, LLZ80MonitorValueHalfCyclesToDate);
+	unsigned int newInternalTime = llz80_monitor_getInternalValue([self.delegate z80ForDebugInterface:self], LLZ80MonitorValueHalfCyclesToDate);
 	unsigned int timeElapsed = newInternalTime - _lastInternalTime;
 	_lastInternalTime = newInternalTime;
 	self.cyclesRunForField.stringValue = [NSString stringWithFormat:@"%0.1f", (float)timeElapsed * 0.5f];

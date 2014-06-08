@@ -10,14 +10,14 @@
 
 @class Z80DebugInterface;
 
-@protocol Z80DebugDrawerDelegate <NSObject>
+@protocol Z80DebugInterfaceDelegate <NSObject>
 
-- (void)debugInterfaceRun:(Z80DebugInterface *)drawer;
-- (void)debugInterfacePause:(Z80DebugInterface *)drawer;
-- (void)debugInterface:(Z80DebugInterface *)drawer runUntilAddress:(uint16_t)address;
-- (void)debugInterfaceRunForOneInstruction:(Z80DebugInterface *)drawer;
-- (void)debugInterfaceRunForHalfACycle:(Z80DebugInterface *)drawer;
-- (void *)z80ForDebugInterface;
+- (void)debugInterfaceRun:(Z80DebugInterface *)debugInterface;
+- (void)debugInterfacePause:(Z80DebugInterface *)debugInterface;
+- (void)debugInterface:(Z80DebugInterface *)debugInterface runUntilAddress:(uint16_t)address;
+- (void)debugInterfaceRunForOneInstruction:(Z80DebugInterface *)debugInterface;
+- (void)debugInterfaceRunForHalfACycle:(Z80DebugInterface *)debugInterface;
+- (void *)z80ForDebugInterface:(Z80DebugInterface *)debugInterface;
 
 @end
 
@@ -33,7 +33,7 @@
 
 - (void)show;
 
-@property (nonatomic, weak) id <Z80DebugDrawerDelegate> delegate;
+@property (nonatomic, weak) id <Z80DebugInterfaceDelegate> delegate;
 @property (nonatomic, assign) BOOL isRunning;
 
 @end
