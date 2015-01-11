@@ -46,23 +46,7 @@
 	return self;
 }
 
-- (void)reshape
-{
-	// if we have a retina display then because OpenGL is a low-level fragment-oriented
-	// API we need to deal with scaling up ourselves; we'll adjust the viewport, taking
-	// advantage of convertPointToBacking: if available
-	NSPoint farEdge = NSMakePoint(self.bounds.size.width, self.bounds.size.height);
-	if([self respondsToSelector:@selector(convertPointToBacking:)])
-		farEdge = [self convertPointToBacking:farEdge];
-
-	glViewport(0, 0, (GLsizei)farEdge.x, (GLsizei)farEdge.y);
-}
-
-- (void)drawRect:(NSRect)dirtyRect
-{
-	glDrawArrays(GL_QUADS, 0, 4);
-	glSwapAPPLE();
-}
+#pragma mark - Setters
 
 - (void)setMinimumSourceRect:(NSRect)minimumSourceRect
 {
@@ -101,6 +85,28 @@
 	_textureID = textureID;
 	glBindTexture(GL_TEXTURE_2D, _textureID);
 }
+
+#pragma mark - Drawing
+
+- (void)reshape
+{
+	// if we have a retina display then because OpenGL is a low-level fragment-oriented
+	// API we need to deal with scaling up ourselves; we'll adjust the viewport, taking
+	// advantage of convertPointToBacking: if available
+	NSPoint farEdge = NSMakePoint(self.bounds.size.width, self.bounds.size.height);
+	if([self respondsToSelector:@selector(convertPointToBacking:)])
+		farEdge = [self convertPointToBacking:farEdge];
+	
+	glViewport(0, 0, (GLsizei)farEdge.x, (GLsizei)farEdge.y);
+}
+
+- (void)drawRect:(NSRect)dirtyRect
+{
+	glDrawArrays(GL_QUADS, 0, 4);
+	glSwapAPPLE();
+}
+
+#pragma mark - NSResponder
 
 - (BOOL)acceptsFirstResponder
 {
