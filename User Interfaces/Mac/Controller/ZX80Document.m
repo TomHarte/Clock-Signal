@@ -525,7 +525,7 @@ static void ZX80DocumentCRTBreakIn(
 		GLuint newTextureID;
 		glGenTextures(1, &newTextureID);
 		glBindTexture(GL_TEXTURE_2D, newTextureID);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);	// no mip mapping for you
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
@@ -555,8 +555,6 @@ static void ZX80DocumentCRTBreakIn(
 		0,
 		GL_LUMINANCE, GL_UNSIGNED_BYTE,
 		buffer);
-
-	glGenerateMipmap(GL_TEXTURE_2D);
 
 	[openGLBillboard setNeedsDisplay:YES];
 }
