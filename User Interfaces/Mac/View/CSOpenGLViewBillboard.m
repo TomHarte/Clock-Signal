@@ -21,20 +21,18 @@
 
 		glMatrixMode(GL_PROJECTION);
 		glLoadIdentity();
-		glScalef(3.0f / 4.0f, 1.0f, 1.0f);
 
 		glMatrixMode(GL_MODELVIEW);
 		glLoadIdentity();
+
+		glEnable(GL_TEXTURE_2D);
 	}
 
 	return self;
 }
 
-- (void)drawRect:(NSRect)dirtyRect
+- (void)reshape
 {
-	glEnable(GL_TEXTURE_2D);
-	glBindTexture(GL_TEXTURE_2D, _textureID);
-
 	// if we have a retina display then because OpenGL is a low-level fragment-oriented
 	// API we need to deal with scaling up ourselves; we'll adjust the viewport, taking
 	// advantage of convertPointToBacking: if available
@@ -43,7 +41,10 @@
 		farEdge = [self convertPointToBacking:farEdge];
 
 	glViewport(0, 0, (GLsizei)farEdge.x, (GLsizei)farEdge.y);
+}
 
+- (void)drawRect:(NSRect)dirtyRect
+{
 	NSRect outputRect = _minimumSourceRect;
 
 		// drawing here
@@ -53,20 +54,29 @@
 
 			glBegin(GL_QUADS);
 				glTexCoord2f((GLfloat)outputRect.origin.x, (GLfloat)(outputRect.origin.y + outputRect.size.height));
-				glVertex2f(-4.0f / 3.0f, -1.0);
+				glVertex2f(-1.0f, -1.0);
 
 				glTexCoord2f((GLfloat)outputRect.origin.x, (GLfloat)outputRect.origin.y);
-				glVertex2f(-4.0f / 3.0f, 1.0);
+				glVertex2f(-1.0f, 1.0);
 
 				glTexCoord2f((GLfloat)(outputRect.origin.x + outputRect.size.width), (GLfloat)outputRect.origin.y);
-				glVertex2f(4.0f / 3.0f, 1.0);
+				glVertex2f(1.0f, 1.0);
 
 				glTexCoord2f((GLfloat)(outputRect.origin.x + outputRect.size.width), (GLfloat)(outputRect.origin.y + outputRect.size.height));
-				glVertex2f(4.0f / 3.0f, -1.0);
+				glVertex2f(1.0f, -1.0);
 			glEnd();
 		glPopMatrix();
 
 	glSwapAPPLE();
+}
+
+- (void)setTextureID:(GLuint)textureID
+{
+	if(_textureID == textureID) return;
+
+	[self.openGLContext makeCurrentContext];
+	_textureID = textureID;
+	glBindTexture(GL_TEXTURE_2D, _textureID);
 }
 
 - (BOOL)acceptsFirstResponder
