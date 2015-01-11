@@ -10,6 +10,9 @@
 #import <OpenGL/gl.h>
 
 @implementation CSOpenGLViewBillboard
+{
+//	GLuint _arrayBuffer;
+}
 
 - (id)initWithCoder:(NSCoder *)aDecoder
 {
@@ -26,6 +29,17 @@
 		glLoadIdentity();
 
 		glEnable(GL_TEXTURE_2D);
+
+//		glGenBuffers(1, &_arrayBuffer);
+//		glBindBuffer(GL_ARRAY_BUFFER, _arrayBuffer);
+//		GLbyte vertices[] =
+//		{
+//			-1, -1, -1, 1,
+//			1, 1, 1, -1
+//		};
+//		glBufferData(GL_ARRAY_BUFFER_ARB, sizeof(vertices), vertices, GL_STATIC_DRAW);
+
+		glColor3f(1.0, 1.0, 1.0);
 	}
 
 	return self;
@@ -47,25 +61,19 @@
 {
 	NSRect outputRect = _minimumSourceRect;
 
-		// drawing here
-		glPushMatrix();
+	glBegin(GL_QUADS);
+		glTexCoord2f((GLfloat)outputRect.origin.x, (GLfloat)(outputRect.origin.y + outputRect.size.height));
+		glVertex2i(-1, -1);
 
-			glColor3f(1.0, 1.0, 1.0);
+		glTexCoord2f((GLfloat)outputRect.origin.x, (GLfloat)outputRect.origin.y);
+		glVertex2i(-1, 1);
 
-			glBegin(GL_QUADS);
-				glTexCoord2f((GLfloat)outputRect.origin.x, (GLfloat)(outputRect.origin.y + outputRect.size.height));
-				glVertex2f(-1.0f, -1.0);
+		glTexCoord2f((GLfloat)(outputRect.origin.x + outputRect.size.width), (GLfloat)outputRect.origin.y);
+		glVertex2i(1, 1);
 
-				glTexCoord2f((GLfloat)outputRect.origin.x, (GLfloat)outputRect.origin.y);
-				glVertex2f(-1.0f, 1.0);
-
-				glTexCoord2f((GLfloat)(outputRect.origin.x + outputRect.size.width), (GLfloat)outputRect.origin.y);
-				glVertex2f(1.0f, 1.0);
-
-				glTexCoord2f((GLfloat)(outputRect.origin.x + outputRect.size.width), (GLfloat)(outputRect.origin.y + outputRect.size.height));
-				glVertex2f(1.0f, -1.0);
-			glEnd();
-		glPopMatrix();
+		glTexCoord2f((GLfloat)(outputRect.origin.x + outputRect.size.width), (GLfloat)(outputRect.origin.y + outputRect.size.height));
+		glVertex2i(1, -1);
+	glEnd();
 
 	glSwapAPPLE();
 }
