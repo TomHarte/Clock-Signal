@@ -49,6 +49,7 @@ struct LLZ80InternalInstruction;
 
 typedef void (* LLZ80InternalInstructionFunction)(struct LLZ80ProcessorState *const z80, const struct LLZ80InternalInstruction *const metadata);
 extern LLZ80InternalInstructionFunction llz80_iop_advanceHalfCycleCounter;
+#define LLZ80iop(x) static void x(LLZ80ProcessorState *const z80, const LLZ80InternalInstruction *const instruction)
 
 typedef struct LLZ80InternalInstruction
 {
