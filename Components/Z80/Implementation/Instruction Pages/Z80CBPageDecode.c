@@ -15,12 +15,12 @@
 #include "../Operations/Z80SetResetTestOps.h"
 #include "../Operations/Z80RotateAndShiftOps.h"
 
-static void llz80_iop_copyTemporary8BitValueToRegister(LLZ80ProcessorState *const z80, const LLZ80InternalInstruction *const instruction)
+LLZ80iop(llz80_iop_copyTemporary8BitValueToRegister)
 {
 	*instruction->extraData.referenceToRegister.registerReference = z80->temporary8bitValue;
 }
 
-static void llz80_iop_doShiftOp(LLZ80ProcessorState *const z80, const LLZ80InternalInstruction *const instruction)
+LLZ80iop(llz80_iop_doShiftOp)
 {
 	switch(instruction->extraData.ALUOrShiftOp.operation)
 	{
@@ -39,12 +39,12 @@ static void llz80_iop_doShiftOp(LLZ80ProcessorState *const z80, const LLZ80Inter
 	(metadata)->extraData.bitOp.mask = (uint8_t)(maskVal);\
 	(metadata)->extraData.bitOp.value = (valueVal);
 
-static void llz80_iop_CBPageDecode_imp(LLZ80ProcessorState *const z80, const LLZ80InternalInstruction *const instruction)
+LLZ80iop(llz80_iop_CBPageDecode_imp)
 {
 	uint8_t opcode = z80->temporary8bitValue;
 	bool addOffset = instruction->extraData.opcodeDecode.addOffset;
 
-	uint8_t *rTable[] =
+	uint8_t *const rTable[] =
 	{
 		&z80->bcRegister.bytes.high,
 		&z80->bcRegister.bytes.low,
@@ -55,7 +55,7 @@ static void llz80_iop_CBPageDecode_imp(LLZ80ProcessorState *const z80, const LLZ
 		NULL,
 		&z80->aRegister
 	};
-	uint8_t *value = rTable[opcode&7];
+	uint8_t *const value = rTable[opcode&7];
 
 	if(addOffset)
 	{
@@ -89,7 +89,7 @@ static void llz80_iop_CBPageDecode_imp(LLZ80ProcessorState *const z80, const LLZ
 
 			default:	// bit, res, set
 			{
-				LLZ80InternalInstructionFunction functionTable[] =
+				const LLZ80InternalInstructionFunction functionTable[] =
 				{
 					NULL,
 					llz80_iop_bit,
@@ -101,7 +101,7 @@ static void llz80_iop_CBPageDecode_imp(LLZ80ProcessorState *const z80, const LLZ
 				llz80_scheduleRead(z80, &z80->temporary8bitValue, &z80->temporaryAddress.fullValue);
 
 				// do the instruction
-				LLZ80InternalInstruction *nextInstruction = llz80_scheduleFunction(z80, functionTable[opcode >> 6]);
+				LLZ80InternalInstruction *const nextInstruction = llz80_scheduleFunction(z80, functionTable[opcode >> 6]);
 				llz80_metadata_setMaskAndValue(nextInstruction,
 						1 << ((opcode >> 3)&7),
 						&z80->temporary8bitValue);
@@ -160,7 +160,7 @@ static void llz80_iop_CBPageDecode_imp(LLZ80ProcessorState *const z80, const LLZ
 
 			default:	// bit, res, set
 			{
-				LLZ80InternalInstructionFunction functionTable[] =
+				const LLZ80InternalInstructionFunction functionTable[] =
 				{
 					NULL,
 					llz80_iop_bit,
@@ -197,4 +197,4 @@ static void llz80_iop_CBPageDecode_imp(LLZ80ProcessorState *const z80, const LLZ
 	}
 }
 
-LLZ80InternalInstructionFunction llz80_iop_CBPageDecode = llz80_iop_CBPageDecode_imp;
+const LLZ80InternalInstructionFunction llz80_iop_CBPageDecode = llz80_iop_CBPageDecode_imp;

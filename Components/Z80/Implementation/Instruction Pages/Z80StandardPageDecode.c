@@ -62,18 +62,18 @@ static void llz80_schedule16BitReadFromPC(LLZ80ProcessorState *const z80, LLZ80R
 	llz80_schedule8BitReadFromPC(z80, &targetRegister->bytes.high);
 }
 
-static void llz80_iop_finishPopAF(LLZ80ProcessorState *const z80, const LLZ80InternalInstruction *const instruction)
+LLZ80iop(llz80_iop_finishPopAF)
 {
 	llz80_setF(z80, z80->temporary8bitValue);
 	z80->spRegister.fullValue++;
 }
 
-static void llz80_copyTemporaryAddressToRegister(LLZ80ProcessorState *const z80, const LLZ80InternalInstruction *const instruction)
+LLZ80iop(llz80_copyTemporaryAddressToRegister)
 {
 	*instruction->extraData.referenceToIndexRegister.indexRegister = z80->temporaryAddress;
 }
 
-static void llz80_doALUOp(LLZ80ProcessorState *const z80, const LLZ80InternalInstruction *const instruction)
+LLZ80iop(llz80_doALUOp)
 {
 	switch(instruction->extraData.ALUOrShiftOp.operation)
 	{
@@ -89,17 +89,17 @@ static void llz80_doALUOp(LLZ80ProcessorState *const z80, const LLZ80InternalIns
 	}
 }
 
-static void llz80_incrementTemporary8BitValue(LLZ80ProcessorState *const z80, const LLZ80InternalInstruction *const instruction)
+LLZ80iop(llz80_incrementTemporary8BitValue)
 {
 	llz80_increment_8bit(z80, &z80->temporary8bitValue);
 }
 
-static void llz80_decrementTemporary8BitValue(LLZ80ProcessorState *const z80, const LLZ80InternalInstruction *const instruction)
+LLZ80iop(llz80_decrementTemporary8BitValue)
 {
 	llz80_decrement_8bit(z80, &z80->temporary8bitValue);
 }
 
-static void llz80_jrConditional(LLZ80ProcessorState *const z80, const LLZ80InternalInstruction *const instruction)
+LLZ80iop(llz80_jrConditional)
 {
 	z80->pcRegister.fullValue++;
 
@@ -110,7 +110,7 @@ static void llz80_jrConditional(LLZ80ProcessorState *const z80, const LLZ80Inter
 	}
 }
 
-static void llz80_addOffsetToIndexRegister(LLZ80ProcessorState *const z80, const LLZ80InternalInstruction *const instruction)
+LLZ80iop(llz80_addOffsetToIndexRegister)
 {
 	z80->temporaryAddress.fullValue = 
 		instruction->extraData.referenceToIndexRegister.indexRegister->fullValue + z80->temporaryOffset;
@@ -127,15 +127,14 @@ static void llz80_scheduleCalculationOfSourceAddress(LLZ80ProcessorState *const 
 		llz80_schedulePauseForCycles(z80, 1);
 		llz80_beginNewHalfCycle(z80);
 
-		LLZ80InternalInstruction *instruction;
-		instruction = llz80_scheduleHalfCycleForFunction(z80, llz80_addOffsetToIndexRegister);
+		LLZ80InternalInstruction *const instruction = llz80_scheduleHalfCycleForFunction(z80, llz80_addOffsetToIndexRegister);
 		instruction->extraData.referenceToIndexRegister.indexRegister = indexRegister;
 	}
 	else
 		z80->temporaryAddress = *indexRegister;
 }
 
-static void llz80_djnz(LLZ80ProcessorState *const z80, const LLZ80InternalInstruction *const instruction)
+LLZ80iop(llz80_djnz)
 {
 	z80->pcRegister.fullValue++;
 	z80->bcRegister.bytes.high--;
@@ -147,12 +146,12 @@ static void llz80_djnz(LLZ80ProcessorState *const z80, const LLZ80InternalInstru
 	}
 }
 
-static void llz80_iop_standardPageDecode_imp(LLZ80ProcessorState *const z80, const LLZ80InternalInstruction *const instruction)
+LLZ80iop(llz80_iop_standardPageDecode_imp)
 {
 	LLZ80RegisterPair *const indexRegister = instruction->extraData.opcodeDecode.indexRegister;
 	bool addOffset = instruction->extraData.opcodeDecode.addOffset;
 
-	uint8_t *rTable[] =
+	uint8_t *const rTable[] =
 	{
 		&z80->bcRegister.bytes.high,
 		&z80->bcRegister.bytes.low,
@@ -164,7 +163,7 @@ static void llz80_iop_standardPageDecode_imp(LLZ80ProcessorState *const z80, con
 		&z80->aRegister
 	};
 
-	LLZ80RegisterPair *rpTable[] =
+	LLZ80RegisterPair *const rpTable[] =
 	{
 		&z80->bcRegister,
 		&z80->deRegister,
@@ -182,7 +181,7 @@ static void llz80_iop_standardPageDecode_imp(LLZ80ProcessorState *const z80, con
 		case 0xdd:
 		case 0xfd:	// do one of the indexed register pages
 		{
-			LLZ80RegisterPair *newIndexRegister = (opcode == 0xdd) ? &z80->ixRegister : &z80->iyRegister;
+			LLZ80RegisterPair *const newIndexRegister = (opcode == 0xdd) ? &z80->ixRegister : &z80->iyRegister;
 			llz80_scheduleInstructionFetchForFunction(z80, llz80_iop_standardPageDecode_imp, newIndexRegister, true);
 		}
 		break;
@@ -508,7 +507,7 @@ static void llz80_iop_standardPageDecode_imp(LLZ80ProcessorState *const z80, con
 		case 0x36:
 		case 0x3e:	// ld r, n
 		{
-			uint8_t *destination = rTable[opcode >> 3];
+			uint8_t *const destination = rTable[opcode >> 3];
 
 			if(destination)
 			{
@@ -672,7 +671,7 @@ static void llz80_iop_standardPageDecode_imp(LLZ80ProcessorState *const z80, con
 		case 0x34: case 0x35:
 		case 0x3c: case 0x3d:	// inc r and dec r
 		{
-			uint8_t *source = rTable[opcode >> 3];
+			uint8_t *const source = rTable[opcode >> 3];
 
 			if(source)
 			{
@@ -709,8 +708,8 @@ static void llz80_iop_standardPageDecode_imp(LLZ80ProcessorState *const z80, con
 		case 0x70: case 0x71: case 0x72: case 0x73: case 0x74: case 0x75: case 0x76: case 0x77:
 		case 0x78: case 0x79: case 0x7a: case 0x7b: case 0x7c: case 0x7d: case 0x7e: case 0x7f:
 		{
-			uint8_t *source = rTable[opcode&7];
-			uint8_t *destination = rTable[(opcode >> 3)&7];
+			uint8_t *const source = rTable[opcode&7];
+			uint8_t *const destination = rTable[(opcode >> 3)&7];
 
 			// if source and destination are registers, just do
 			// the copy
@@ -738,7 +737,7 @@ static void llz80_iop_standardPageDecode_imp(LLZ80ProcessorState *const z80, con
 			// NB: if an offset and a memory read/write is involved,
 			// the named register is always one of H or L, not
 			// half of one of the index registers
-			uint8_t *rHLTable[] =
+			uint8_t *const rHLTable[] =
 			{
 				&z80->bcRegister.bytes.high,
 				&z80->bcRegister.bytes.low,
@@ -794,7 +793,7 @@ static void llz80_iop_standardPageDecode_imp(LLZ80ProcessorState *const z80, con
 		case 0xb0: case 0xb1: case 0xb2: case 0xb3: case 0xb4: case 0xb5: case 0xb6: case 0xb7:
 		case 0xb8: case 0xb9: case 0xba: case 0xbb: case 0xbc: case 0xbd: case 0xbe: case 0xbf:
 		{
-			uint8_t *source = rTable[opcode&7];
+			uint8_t *const source = rTable[opcode&7];
 			int operation = (opcode >> 3)&7;
 
 			if(source)
@@ -851,4 +850,4 @@ static void llz80_iop_standardPageDecode_imp(LLZ80ProcessorState *const z80, con
 	}
 }
 
-LLZ80InternalInstructionFunction llz80_iop_standardPageDecode = llz80_iop_standardPageDecode_imp;
+const LLZ80InternalInstructionFunction llz80_iop_standardPageDecode = llz80_iop_standardPageDecode_imp;

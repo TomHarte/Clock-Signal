@@ -8,7 +8,7 @@
 
 #include "Z80SetResetTestOps.h"
 
-static void llz80_iop_bit_imp(LLZ80ProcessorState *const z80, const LLZ80InternalInstruction *const instruction)
+LLZ80iop(llz80_iop_bit_imp)
 {
 	uint8_t result = instruction->extraData.bitOp.mask & *instruction->extraData.bitOp.value;
 
@@ -20,16 +20,16 @@ static void llz80_iop_bit_imp(LLZ80ProcessorState *const z80, const LLZ80Interna
 		(result ? 0 : LLZ80FlagParityOverflow);
 }
 
-static void llz80_iop_set_imp(LLZ80ProcessorState *const z80, const LLZ80InternalInstruction *const instruction)
+LLZ80iop(llz80_iop_set_imp)
 {
 	*instruction->extraData.bitOp.value |= instruction->extraData.bitOp.mask;
 }
 
-static void llz80_iop_res_imp(LLZ80ProcessorState *const z80, const LLZ80InternalInstruction *const instruction)
+LLZ80iop(llz80_iop_res_imp)
 {
 	*instruction->extraData.bitOp.value &= ~instruction->extraData.bitOp.mask;
 }
 
-LLZ80InternalInstructionFunction llz80_iop_bit = llz80_iop_bit_imp;
-LLZ80InternalInstructionFunction llz80_iop_set = llz80_iop_set_imp;
-LLZ80InternalInstructionFunction llz80_iop_res = llz80_iop_res_imp;
+const LLZ80InternalInstructionFunction llz80_iop_bit = llz80_iop_bit_imp;
+const LLZ80InternalInstructionFunction llz80_iop_set = llz80_iop_set_imp;
+const LLZ80InternalInstructionFunction llz80_iop_res = llz80_iop_res_imp;

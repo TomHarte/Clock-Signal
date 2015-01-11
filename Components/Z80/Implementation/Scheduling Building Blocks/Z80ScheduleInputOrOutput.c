@@ -14,17 +14,17 @@
 	Input
 
 */
-static void llz80_iop_inputOrOutputHalfCycle1(LLZ80ProcessorState *const z80, const LLZ80InternalInstruction *const instruction)
+LLZ80iop(llz80_iop_inputOrOutputHalfCycle1)
 {
 	llz80_setAddress(z80, *instruction->extraData.readOrWriteAddress.address);
 }
 
-static void llz80_iop_inputHalfCycle3(LLZ80ProcessorState *const z80, const LLZ80InternalInstruction *const instruction)
+LLZ80iop(llz80_iop_inputHalfCycle3)
 {
 	llz80_setLinesActive(z80, LLZ80SignalRead | LLZ80SignalInputOutputRequest);
 }
 
-static void llz80_iop_inputHalfCycle8(LLZ80ProcessorState *const z80, const LLZ80InternalInstruction *const instruction)
+LLZ80iop(llz80_iop_inputHalfCycle8)
 {
 	*instruction->extraData.readOrWriteValue.value = llz80_getDataInput(z80);
 	llz80_setLinesInactive(z80, LLZ80SignalRead | LLZ80SignalInputOutputRequest);
@@ -32,9 +32,9 @@ static void llz80_iop_inputHalfCycle8(LLZ80ProcessorState *const z80, const LLZ8
 
 
 LLZ80InternalInstruction *llz80_scheduleInput(
-	LLZ80ProcessorState *z80,
-	uint8_t *value,
-	uint16_t *address)
+	LLZ80ProcessorState *const z80,
+	uint8_t *const value,
+	uint16_t *const address)
 {
 	llz80_scheduleHalfCycleForFunction(z80, llz80_iop_inputOrOutputHalfCycle1)->extraData.readOrWriteAddress.address = address;
 	llz80_beginNewHalfCycle(z80);
@@ -60,28 +60,27 @@ LLZ80InternalInstruction *llz80_scheduleInput(
 	Output
 
 */
-static void llz80_iop_outputHalfCycle2(LLZ80ProcessorState *const z80, const LLZ80InternalInstruction *const instruction)
+LLZ80iop(llz80_iop_outputHalfCycle2)
 {
 	llz80_setDataOutput(z80, *instruction->extraData.readOrWriteValue.value);
 }
 
-static void llz80_iop_outputHalfCycle3(LLZ80ProcessorState *const z80, const LLZ80InternalInstruction *const instruction)
+LLZ80iop(llz80_iop_outputHalfCycle3)
 {
 	llz80_setLinesActive(z80, LLZ80SignalInputOutputRequest | LLZ80SignalWrite);
 }
 
-static void llz80_iop_outputHalfCycle7(LLZ80ProcessorState *const z80, const LLZ80InternalInstruction *const instruction)
+LLZ80iop(llz80_iop_outputHalfCycle7)
 {
 	llz80_setLinesInactive(z80, LLZ80SignalInputOutputRequest | LLZ80SignalWrite);
 }
 
 
 LLZ80InternalInstruction *llz80_scheduleOutput(
-	LLZ80ProcessorState *z80,
-	uint8_t *value,
-	uint16_t *address)
+	LLZ80ProcessorState *const z80,
+	uint8_t *const value,
+	uint16_t *const address)
 {
-
 	llz80_scheduleHalfCycleForFunction(z80, llz80_iop_inputOrOutputHalfCycle1)->extraData.readOrWriteAddress.address = address;
 	llz80_scheduleHalfCycleForFunction(z80, llz80_iop_outputHalfCycle2)->extraData.readOrWriteValue.value = value;
 

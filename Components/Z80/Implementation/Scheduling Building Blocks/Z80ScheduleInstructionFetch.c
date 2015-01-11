@@ -9,7 +9,7 @@
 #include "Z80StandardSchedulingComponents.h"
 #include "Z80ScheduleInstructionFetch.h"
 
-static void llz80_iop_instructionfetchHalfCycle1(LLZ80ProcessorState *const z80, const LLZ80InternalInstruction *const instruction)
+LLZ80iop(llz80_iop_instructionfetchHalfCycle1)
 {
 	// load the program counter to the address line;
 	// set m1, increment the refresh register
@@ -22,7 +22,7 @@ static void llz80_iop_instructionfetchHalfCycle1(LLZ80ProcessorState *const z80,
 	z80->pcRegister.fullValue++;
 }
 
-static void llz80_iop_instructionfetchHalfCycle1_noIncrement(LLZ80ProcessorState *const z80, const LLZ80InternalInstruction *const instruction)
+LLZ80iop(llz80_iop_instructionfetchHalfCycle1_noIncrement)
 {
 	// load the program counter to the address line;
 	// set m1, increment the refresh register
@@ -30,7 +30,7 @@ static void llz80_iop_instructionfetchHalfCycle1_noIncrement(LLZ80ProcessorState
 	llz80_setLinesActive(z80, LLZ80SignalMachineCycleOne);
 }
 
-static void llz80_iop_instructionfetchHalfCycle5(LLZ80ProcessorState *const z80, const LLZ80InternalInstruction *const instruction)
+LLZ80iop(llz80_iop_instructionfetchHalfCycle5)
 {
 	// store the current value of the data line away
 	// for safe keeping
@@ -43,27 +43,27 @@ static void llz80_iop_instructionfetchHalfCycle5(LLZ80ProcessorState *const z80,
 	z80->rRegister = (z80->rRegister&0x80) | ((z80->rRegister+1)&0x7f);
 }
 
-static void llz80_iop_irqAcknowledgeHalfCycle6(LLZ80ProcessorState *const z80, const LLZ80InternalInstruction *const instruction)
+LLZ80iop(llz80_iop_irqAcknowledgeHalfCycle6)
 {
 	llz80_setLinesActive(z80, LLZ80SignalInputOutputRequest);
 }
 
-static void llz80_iop_instructionfetchHalfCycle8(LLZ80ProcessorState *const z80, const LLZ80InternalInstruction *const instruction)
+LLZ80iop(llz80_iop_instructionfetchHalfCycle8)
 {
 	// end the refresh cycle
 	llz80_setLinesInactive(z80, LLZ80SignalMemoryRequest | LLZ80SignalRefresh);
 }
 
-static void llz80_iop_irqAcknowledgeHalfCycle9(LLZ80ProcessorState *const z80, const LLZ80InternalInstruction *const instruction)
+LLZ80iop(llz80_iop_irqAcknowledgeHalfCycle9)
 {
 	z80->temporary8bitValue = llz80_getDataInput(z80);
 	llz80_setLinesInactive(z80, LLZ80SignalMachineCycleOne | LLZ80SignalInputOutputRequest);
 }
 
 void llz80_scheduleInstructionFetchForFunction(
-	LLZ80ProcessorState *z80,
+	LLZ80ProcessorState *const z80,
 	LLZ80InternalInstructionFunction function,
-	LLZ80RegisterPair *indexRegister,
+	LLZ80RegisterPair *const indexRegister,
 	bool addOffset)
 {
 	llz80_scheduleHalfCycleForFunction(z80, llz80_iop_instructionfetchHalfCycle1);
@@ -85,7 +85,7 @@ void llz80_scheduleInstructionFetchForFunction(
 	// TODO: refresh should actually last a half cycle longer
 }
 
-void llz80_schedulePseudoInstructionFetch(LLZ80ProcessorState *z80)
+void llz80_schedulePseudoInstructionFetch(LLZ80ProcessorState *const z80)
 {
 	llz80_scheduleHalfCycleForFunction(z80, llz80_iop_instructionfetchHalfCycle1_noIncrement);
 	llz80_scheduleHalfCycleForFunction(z80, llz80_iop_setReadAndMemoryRequest);
@@ -100,7 +100,7 @@ void llz80_schedulePseudoInstructionFetch(LLZ80ProcessorState *z80)
 	llz80_scheduleHalfCycleForFunction(z80, llz80_iop_instructionfetchHalfCycle8);
 }
 
-void llz80_scheduleNOP(LLZ80ProcessorState *z80)
+void llz80_scheduleNOP(LLZ80ProcessorState *const z80)
 {
 	llz80_scheduleHalfCycleForFunction(z80, llz80_iop_instructionfetchHalfCycle1_noIncrement);
 	llz80_scheduleHalfCycleForFunction(z80, llz80_iop_setReadAndMemoryRequest);
@@ -116,7 +116,7 @@ void llz80_scheduleNOP(LLZ80ProcessorState *z80)
 	llz80_scheduleHalfCycleForFunction(z80, llz80_iop_instructionfetchHalfCycle8);
 }
 
-void llz80_scheduleIRQAcknowledge(LLZ80ProcessorState *z80)
+void llz80_scheduleIRQAcknowledge(LLZ80ProcessorState *const z80)
 {
 	llz80_scheduleHalfCycleForFunction(z80, llz80_iop_instructionfetchHalfCycle1_noIncrement);
 	llz80_beginNewHalfCycle(z80);

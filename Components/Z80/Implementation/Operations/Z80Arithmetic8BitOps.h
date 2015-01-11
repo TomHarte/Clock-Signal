@@ -11,15 +11,15 @@
 
 #include "../Z80Internals.h"
 
-void llz80_compare(LLZ80ProcessorState *z80, uint8_t value);
+void llz80_compare(LLZ80ProcessorState *const z80, uint8_t value);
 
-void llz80_subtract_8bit(LLZ80ProcessorState *z80, uint8_t value);
-void llz80_subtractWithCarry_8bit(LLZ80ProcessorState *z80, uint8_t value);
+void llz80_subtract_8bit(LLZ80ProcessorState *const z80, uint8_t value);
+void llz80_subtractWithCarry_8bit(LLZ80ProcessorState *const z80, uint8_t value);
 
-void llz80_add_8bit(LLZ80ProcessorState *z80, uint8_t value);
-void llz80_addWithCarry_8bit(LLZ80ProcessorState *z80, uint8_t value);
+void llz80_add_8bit(LLZ80ProcessorState *const z80, uint8_t value);
+void llz80_addWithCarry_8bit(LLZ80ProcessorState *const z80, uint8_t value);
 
-void llz80_increment_8bit(LLZ80ProcessorState *z80, uint8_t *value);
-void llz80_decrement_8bit(LLZ80ProcessorState *z80, uint8_t *value);
+void llz80_increment_8bit(LLZ80ProcessorState *const z80, uint8_t *const value);
+void llz80_decrement_8bit(LLZ80ProcessorState *const z80, uint8_t *const value);
 
 #endif

@@ -9,7 +9,7 @@
 #include "Z80Internals.h"
 #include <stdio.h>
 
-bool llz80_conditionIsTrue(LLZ80ProcessorState *z80, LLZ80Condition condition)
+bool llz80_conditionIsTrue(const LLZ80ProcessorState *const z80, LLZ80Condition condition)
 {
 	switch(condition)
 	{
@@ -26,7 +26,7 @@ bool llz80_conditionIsTrue(LLZ80ProcessorState *z80, LLZ80Condition condition)
 	}
 }
 
-uint8_t llz80_getF(LLZ80ProcessorState *z80)
+uint8_t llz80_getF(const LLZ80ProcessorState *const z80)
 {
 	return 
 		(z80->bit5And3Flags & (LLZ80FlagBit3 | LLZ80FlagBit5)) |
@@ -35,7 +35,7 @@ uint8_t llz80_getF(LLZ80ProcessorState *z80)
 		(z80->lastZeroResult ? 0 : LLZ80FlagZero);
 }
 
-void llz80_setF(LLZ80ProcessorState *z80, uint8_t value)
+void llz80_setF(LLZ80ProcessorState *const z80, uint8_t value)
 {
 	z80->bit5And3Flags = value & (LLZ80FlagBit3 | LLZ80FlagBit5);
 	z80->generalFlags = value & (LLZ80FlagCarry | LLZ80FlagHalfCarry | LLZ80FlagParityOverflow | LLZ80FlagSubtraction);

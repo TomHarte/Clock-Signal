@@ -11,16 +11,16 @@
 
 #include "../Z80Internals.h"
 
-extern LLZ80InternalInstructionFunction llz80_iop_setReadAndMemoryRequest;
-extern LLZ80InternalInstructionFunction llz80_iop_setMemoryRequest;
+extern const LLZ80InternalInstructionFunction llz80_iop_setReadAndMemoryRequest;
+extern const LLZ80InternalInstructionFunction llz80_iop_setMemoryRequest;
 
-extern LLZ80InternalInstructionFunction llz80_iop_incrementProgramCounter;
-extern LLZ80InternalInstructionFunction llz80_iop_incrementTemporaryAddress;
-extern LLZ80InternalInstructionFunction llz80_iop_incrementStackPointer;
-extern LLZ80InternalInstructionFunction llz80_iop_decrementStackPointer;
+extern const LLZ80InternalInstructionFunction llz80_iop_incrementProgramCounter;
+extern const LLZ80InternalInstructionFunction llz80_iop_incrementTemporaryAddress;
+extern const LLZ80InternalInstructionFunction llz80_iop_incrementStackPointer;
+extern const LLZ80InternalInstructionFunction llz80_iop_decrementStackPointer;
 
-extern LLZ80InternalInstructionFunction llz80_iop_setPCToTemporaryAddress;
+extern const LLZ80InternalInstructionFunction llz80_iop_setPCToTemporaryAddress;
 
-void llz80_schedulePauseForCycles(LLZ80ProcessorState *const z80, unsigned int numberOfCycles);
+extern void llz80_schedulePauseForCycles(LLZ80ProcessorState *const z80, unsigned int numberOfCycles);
 
 #endif

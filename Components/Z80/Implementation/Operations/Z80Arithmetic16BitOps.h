@@ -11,9 +11,9 @@
 
 #include "../Z80Internals.h"
 
-void llz80_subtractWithCarry_16bit(LLZ80ProcessorState *z80, LLZ80RegisterPair *source, uint16_t *operand);
+void llz80_subtractWithCarry_16bit(LLZ80ProcessorState *const z80, LLZ80RegisterPair *const source, uint16_t *const operand);
 
-void llz80_add_16bit(LLZ80ProcessorState *z80, LLZ80RegisterPair *source, uint16_t *operand);
-void llz80_addWithCarry_16bit(LLZ80ProcessorState *z80, LLZ80RegisterPair *source, uint16_t *operand);
+void llz80_add_16bit(LLZ80ProcessorState *const z80, LLZ80RegisterPair *const source, uint16_t *const operand);
+void llz80_addWithCarry_16bit(LLZ80ProcessorState *const z80, LLZ80RegisterPair *const source, uint16_t *const operand);
 
 #endif

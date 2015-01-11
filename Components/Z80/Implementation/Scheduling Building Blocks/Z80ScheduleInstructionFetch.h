@@ -11,19 +11,19 @@
 
 #include "../Z80Internals.h"
 
-void llz80_scheduleInstructionFetchForFunction(
-	LLZ80ProcessorState *z80,
+extern void llz80_scheduleInstructionFetchForFunction(
+	LLZ80ProcessorState *const z80,
 	LLZ80InternalInstructionFunction function,
-	LLZ80RegisterPair *indexRegister,
+	LLZ80RegisterPair *const indexRegister,
 	bool addOffset);
 
 /*
 	a pseudo instruction fetch is defined to be one that
 	doesn't increment the PC and throws away the result
 */
-void llz80_schedulePseudoInstructionFetch(LLZ80ProcessorState *z80);
+extern void llz80_schedulePseudoInstructionFetch(LLZ80ProcessorState *const z80);
 
-void llz80_scheduleNOP(LLZ80ProcessorState *z80);
-void llz80_scheduleIRQAcknowledge(LLZ80ProcessorState *z80);
+extern void llz80_scheduleNOP(LLZ80ProcessorState *const z80);
+extern void llz80_scheduleIRQAcknowledge(LLZ80ProcessorState *const z80);
 
 #endif

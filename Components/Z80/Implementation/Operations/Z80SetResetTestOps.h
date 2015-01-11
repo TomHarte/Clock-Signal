@@ -11,8 +11,8 @@
 
 #include "../Z80Internals.h"
 
-extern LLZ80InternalInstructionFunction llz80_iop_bit;
-extern LLZ80InternalInstructionFunction llz80_iop_set;
-extern LLZ80InternalInstructionFunction llz80_iop_res;
+extern const LLZ80InternalInstructionFunction llz80_iop_bit;
+extern const LLZ80InternalInstructionFunction llz80_iop_set;
+extern const LLZ80InternalInstructionFunction llz80_iop_res;
 
 #endif

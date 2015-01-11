@@ -24,13 +24,13 @@ static void llz80_destroyGenericList(struct LLZ80GenericLinkedListRecord *list)
 {
 	while(list)
 	{
-		void *thisRecord = list;
+		void *const thisRecord = list;
 		list = (struct LLZ80GenericLinkedListRecord *)list->next;
 		free(thisRecord);
 	}
 }
 
-static void llz80_insertItemIntoGenericList(struct LLZ80GenericLinkedListRecord **list, struct LLZ80GenericLinkedListRecord *item)
+static void llz80_insertItemIntoGenericList(struct LLZ80GenericLinkedListRecord **const list, struct LLZ80GenericLinkedListRecord *const item)
 {
 	item->next = *list;
 	if(*list)
@@ -40,7 +40,7 @@ static void llz80_insertItemIntoGenericList(struct LLZ80GenericLinkedListRecord 
 	*list = item;
 }
 
-static void llz80_removeItemFromGenericList(struct LLZ80GenericLinkedListRecord **list, struct LLZ80GenericLinkedListRecord *item)
+static void llz80_removeItemFromGenericList(struct LLZ80GenericLinkedListRecord **const list, struct LLZ80GenericLinkedListRecord *const item)
 {
 	// if listener record has a 'last' then unlink it from
 	// mid list
@@ -63,16 +63,16 @@ static void llz80_removeItemFromGenericList(struct LLZ80GenericLinkedListRecord 
 	free(item);
 }
 
-static void llz80_destroy(void *opaqueZ80)
+static void llz80_destroy(void *const opaqueZ80)
 {
-	LLZ80ProcessorState *z80 = opaqueZ80;
+	const LLZ80ProcessorState *const z80 = opaqueZ80;
 
 	// release all existing refereces to listeners
 	free(z80->signalObservers);
 	llz80_destroyGenericList((struct LLZ80GenericLinkedListRecord *)z80->instructionObservers);
 }
 
-static void llz80_iop_advanceHalfCycleCounter_imp(LLZ80ProcessorState *const z80, const LLZ80InternalInstruction *const metadata)
+LLZ80iop(llz80_iop_advanceHalfCycleCounter_imp)
 {
 	// set flag changed mask back to 0, ready for the next
 	// half cycle, and decrement the relevant counter
@@ -91,16 +91,16 @@ static void llz80_iop_advanceHalfCycleCounter_imp(LLZ80ProcessorState *const z80
 	}
 
 	// if this is a cycle that checks the wait state then do so
-	if(metadata->extraData.advance.isWaitCycle)
+	if(instruction->extraData.advance.isWaitCycle)
 		z80->isWaiting = llz80_linesAreActive(z80, LLZ80SignalWait);
 }
 
-static void llz80_iop_setupForInterruptMode1(LLZ80ProcessorState *const z80, const LLZ80InternalInstruction *const instruction)
+LLZ80iop(llz80_iop_setupForInterruptMode1)
 {
 	z80->temporary8bitValue = 0xff;
 }
 
-static void llz80_iop_setupForInterruptMode2(LLZ80ProcessorState *const z80, const LLZ80InternalInstruction *const instruction)
+LLZ80iop(llz80_iop_setupForInterruptMode2)
 {
 	z80->temporaryAddress.bytes.high = z80->iRegister;
 	z80->temporaryAddress.bytes.low = z80->temporary8bitValue;
@@ -129,7 +129,7 @@ static void llz80_iop_setupForInterruptMode2(LLZ80ProcessorState *const z80, con
 	llz80_scheduleRead(z80, &z80->pcRegister.bytes.high, &z80->temporaryAddress.fullValue);
 }
 
-LLZ80InternalInstructionFunction llz80_iop_advanceHalfCycleCounter = llz80_iop_advanceHalfCycleCounter_imp;
+const LLZ80InternalInstructionFunction llz80_iop_advanceHalfCycleCounter = llz80_iop_advanceHalfCycleCounter_imp;
 static LLZ80InternalInstruction waitCycles[2];
 
 csComponent_observer(llz80_observeClock)
@@ -161,7 +161,7 @@ csComponent_observer(llz80_observeClock)
 		{
 			while(z80->instructionReadPointer != z80->instructionWritePointer)
 			{
-				LLZ80InternalInstruction *instruction =
+				const LLZ80InternalInstruction *const instruction =
 					&z80->scheduledInstructions[z80->instructionReadPointer];
 				z80->instructionReadPointer = (z80->instructionReadPointer+1)%kLLZ80HalfCycleQueueLength;
 
@@ -186,7 +186,7 @@ csComponent_observer(llz80_observeClock)
 				{
 					// if someone is observing for the beginning of new instruction fetches,
 					// then give them a shout out now
-					struct LLZ80InstructionObserverRecord *instructionObserver = z80->instructionObservers;
+					const struct LLZ80InstructionObserverRecord *instructionObserver = z80->instructionObservers;
 					while(instructionObserver)
 					{
 						instructionObserver->observer(z80, instructionObserver->context);
@@ -279,9 +279,9 @@ csComponent_observer(llz80_observeClock)
 	*internalState = z80->internalBusState;
 }
 
-void *llz80_createOnBus(void *bus)
+void *llz80_createOnBus(void *const bus)
 {
-	LLZ80ProcessorState *z80 = (LLZ80ProcessorState *)calloc(1, sizeof(LLZ80ProcessorState));
+	LLZ80ProcessorState *const z80 = (LLZ80ProcessorState *)calloc(1, sizeof(LLZ80ProcessorState));
 
 	if(z80)
 	{
@@ -316,9 +316,9 @@ void *llz80_createOnBus(void *bus)
 	return z80;
 }
 
-void *llz80_monitor_addInstructionObserver(void *opaqueZ80, llz80_instructionObserver observer, void *context)
+void *llz80_monitor_addInstructionObserver(void *const opaqueZ80, llz80_instructionObserver observer, void *const context)
 {
-	LLZ80ProcessorState *z80 = (LLZ80ProcessorState *)opaqueZ80;
+	const LLZ80ProcessorState *const z80 = (LLZ80ProcessorState *)opaqueZ80;
 	struct LLZ80InstructionObserverRecord *observerRecord = 
 		(struct LLZ80InstructionObserverRecord *)calloc(1, sizeof(struct LLZ80InstructionObserverRecord));
 
@@ -346,7 +346,7 @@ void llz80_monitor_removeInstructionObserver(void *opaqueZ80, void *observer)
 
 uint64_t llz80_monitor_getBusLineState(void *opaqueZ80)
 {
-	LLZ80ProcessorState *z80 = opaqueZ80;
+	const LLZ80ProcessorState *const z80 = opaqueZ80;
 
 	return
 		z80->internalBusState.lineValues & 
@@ -360,9 +360,9 @@ uint64_t llz80_monitor_getBusLineState(void *opaqueZ80)
 		);
 }
 
-unsigned int llz80_monitor_getInternalValue(void *opaqueZ80, LLZ80MonitorValue key)
+unsigned int llz80_monitor_getInternalValue(void *const opaqueZ80, LLZ80MonitorValue key)
 {
-	LLZ80ProcessorState *z80 = opaqueZ80;
+	const LLZ80ProcessorState *const z80 = opaqueZ80;
 
 	switch(key)
 	{
@@ -421,9 +421,9 @@ unsigned int llz80_monitor_getInternalValue(void *opaqueZ80, LLZ80MonitorValue k
 	}
 }
 
-void llz80_monitor_setInternalValue(void *opaqueZ80, LLZ80MonitorValue key, unsigned int value)
+void llz80_monitor_setInternalValue(void *const opaqueZ80, LLZ80MonitorValue key, unsigned int value)
 {
-	LLZ80ProcessorState *z80 = opaqueZ80;
+	LLZ80ProcessorState *const z80 = opaqueZ80;
 
 	switch(key)
 	{

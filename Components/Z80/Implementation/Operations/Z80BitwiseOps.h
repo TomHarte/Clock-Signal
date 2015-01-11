@@ -11,8 +11,8 @@
 
 #include "../Z80Internals.h"
 
-void llz80_bitwiseAnd(LLZ80ProcessorState *z80, uint8_t value);
-void llz80_bitwiseOr(LLZ80ProcessorState *z80, uint8_t value);
-void llz80_bitwiseXOr(LLZ80ProcessorState *z80, uint8_t value);
+void llz80_bitwiseAnd(LLZ80ProcessorState *const z80, uint8_t value);
+void llz80_bitwiseOr(LLZ80ProcessorState *const z80, uint8_t value);
+void llz80_bitwiseXOr(LLZ80ProcessorState *const z80, uint8_t value);
 
 #endif

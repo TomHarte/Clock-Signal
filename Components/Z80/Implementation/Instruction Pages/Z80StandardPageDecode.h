@@ -11,6 +11,6 @@
 
 #include "../Z80Internals.h"
 
-extern LLZ80InternalInstructionFunction llz80_iop_standardPageDecode;
+extern const LLZ80InternalInstructionFunction llz80_iop_standardPageDecode;
 
 #endif

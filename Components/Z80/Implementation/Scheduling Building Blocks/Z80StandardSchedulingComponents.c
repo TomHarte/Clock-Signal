@@ -8,37 +8,37 @@
 
 #include "Z80StandardSchedulingComponents.h"
 
-static void llz80_iop_setReadAndMemoryRequest_imp(LLZ80ProcessorState *const z80, const LLZ80InternalInstruction *const instruction)
+LLZ80iop(llz80_iop_setReadAndMemoryRequest_imp)
 {
 	llz80_setLinesActive(z80, LLZ80SignalRead | LLZ80SignalMemoryRequest);
 }
 
-static void llz80_iop_setMemoryRequest_imp(LLZ80ProcessorState *const z80, const LLZ80InternalInstruction *const instruction)
+LLZ80iop(llz80_iop_setMemoryRequest_imp)
 {
 	llz80_setLinesActive(z80, LLZ80SignalMemoryRequest);
 }
 
-static void llz80_iop_incrementProgramCounter_imp(LLZ80ProcessorState *const z80, const LLZ80InternalInstruction *const instruction)
+LLZ80iop(llz80_iop_incrementProgramCounter_imp)
 {
 	z80->pcRegister.fullValue++;
 }
 
-static void llz80_iop_incrementTemporaryAddress_imp(LLZ80ProcessorState *const z80, const LLZ80InternalInstruction *const instruction)
+LLZ80iop(llz80_iop_incrementTemporaryAddress_imp)
 {
 	z80->temporaryAddress.fullValue++;
 }
 
-static void llz80_iop_incrementStackPointer_imp(LLZ80ProcessorState *const z80, const LLZ80InternalInstruction *const instruction)
+LLZ80iop(llz80_iop_incrementStackPointer_imp)
 {
 	z80->spRegister.fullValue++;
 }
 
-static void llz80_iop_decrementStackPointer_imp(LLZ80ProcessorState *const z80, const LLZ80InternalInstruction *const instruction)
+LLZ80iop(llz80_iop_decrementStackPointer_imp)
 {
 	z80->spRegister.fullValue--;
 }
 
-static void llz80_iop_setPCToTemporaryAddress_imp(LLZ80ProcessorState *const z80, const LLZ80InternalInstruction *const instruction)
+LLZ80iop(llz80_iop_setPCToTemporaryAddress_imp)
 {
 	z80->pcRegister.fullValue = z80->temporaryAddress.fullValue;
 }
@@ -52,12 +52,12 @@ void llz80_schedulePauseForCycles(LLZ80ProcessorState *const z80, unsigned int n
 	}
 }
 
-LLZ80InternalInstructionFunction llz80_iop_setReadAndMemoryRequest = llz80_iop_setReadAndMemoryRequest_imp;
-LLZ80InternalInstructionFunction llz80_iop_setMemoryRequest = llz80_iop_setMemoryRequest_imp;
+const LLZ80InternalInstructionFunction llz80_iop_setReadAndMemoryRequest = llz80_iop_setReadAndMemoryRequest_imp;
+const LLZ80InternalInstructionFunction llz80_iop_setMemoryRequest = llz80_iop_setMemoryRequest_imp;
 
-LLZ80InternalInstructionFunction llz80_iop_incrementProgramCounter = llz80_iop_incrementProgramCounter_imp;
-LLZ80InternalInstructionFunction llz80_iop_incrementTemporaryAddress = llz80_iop_incrementTemporaryAddress_imp;
-LLZ80InternalInstructionFunction llz80_iop_incrementStackPointer = llz80_iop_incrementStackPointer_imp;
-LLZ80InternalInstructionFunction llz80_iop_decrementStackPointer = llz80_iop_decrementStackPointer_imp;
+const LLZ80InternalInstructionFunction llz80_iop_incrementProgramCounter = llz80_iop_incrementProgramCounter_imp;
+const LLZ80InternalInstructionFunction llz80_iop_incrementTemporaryAddress = llz80_iop_incrementTemporaryAddress_imp;
+const LLZ80InternalInstructionFunction llz80_iop_incrementStackPointer = llz80_iop_incrementStackPointer_imp;
+const LLZ80InternalInstructionFunction llz80_iop_decrementStackPointer = llz80_iop_decrementStackPointer_imp;
 
-LLZ80InternalInstructionFunction llz80_iop_setPCToTemporaryAddress = llz80_iop_setPCToTemporaryAddress_imp;
+const LLZ80InternalInstructionFunction llz80_iop_setPCToTemporaryAddress = llz80_iop_setPCToTemporaryAddress_imp;

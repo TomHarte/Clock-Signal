@@ -198,9 +198,9 @@ typedef enum
 	state mid-operation and end up with an unpredictable result.
 
 */
-unsigned int llz80_monitor_getInternalValue(void *z80, LLZ80MonitorValue key);
-void llz80_monitor_setInternalValue(void *z80, LLZ80MonitorValue key, unsigned int value);
+extern unsigned int llz80_monitor_getInternalValue(void *z80, LLZ80MonitorValue key);
+extern void llz80_monitor_setInternalValue(void *z80, LLZ80MonitorValue key, unsigned int value);
 
-uint64_t llz80_monitor_getBusLineState(void *z80);
+extern uint64_t llz80_monitor_getBusLineState(void *const z80);
 
 #endif

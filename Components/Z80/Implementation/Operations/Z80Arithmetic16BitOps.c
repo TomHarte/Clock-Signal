@@ -8,7 +8,7 @@
 
 #include "Z80Arithmetic16BitOps.h"
 
-void llz80_subtractWithCarry_16bit(LLZ80ProcessorState *z80, LLZ80RegisterPair *source, uint16_t *operand)
+void llz80_subtractWithCarry_16bit(LLZ80ProcessorState *const z80, LLZ80RegisterPair *const source, uint16_t *const operand)
 {
 	int result = source->fullValue - *operand - (z80->generalFlags&LLZ80FlagCarry);
 	int halfResult = (source->fullValue&0xfff) - (*operand&0xfff) - (z80->generalFlags&LLZ80FlagCarry);
@@ -29,7 +29,7 @@ void llz80_subtractWithCarry_16bit(LLZ80ProcessorState *z80, LLZ80RegisterPair *
 		((overflow&0x8000) >> 13);
 }
 
-void llz80_add_16bit(LLZ80ProcessorState *z80, LLZ80RegisterPair *source, uint16_t *operand)
+void llz80_add_16bit(LLZ80ProcessorState *const z80, LLZ80RegisterPair *const source, uint16_t *const operand)
 {
 	int result = source->fullValue + *operand;
 	int halfResult = (source->fullValue&0xfff) + (*operand&0xfff);
@@ -43,7 +43,7 @@ void llz80_add_16bit(LLZ80ProcessorState *z80, LLZ80RegisterPair *source, uint16
 	source->fullValue = (uint16_t)result;
 }
 
-void llz80_addWithCarry_16bit(LLZ80ProcessorState *z80, LLZ80RegisterPair *source, uint16_t *operand)
+void llz80_addWithCarry_16bit(LLZ80ProcessorState *const z80, LLZ80RegisterPair *const source, uint16_t *const operand)
 {
 	int result = source->fullValue + *operand + (z80->generalFlags&LLZ80FlagCarry);
 	int halfResult = (source->fullValue&0xfff) + (*operand&0xfff) + (z80->generalFlags&LLZ80FlagCarry);

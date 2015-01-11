@@ -11,14 +11,14 @@
 
 #include "../Z80Internals.h"
 
-LLZ80InternalInstruction *llz80_scheduleRead(
-	LLZ80ProcessorState *z80,
-	uint8_t *value,
-	uint16_t *address);
+extern LLZ80InternalInstruction *llz80_scheduleRead(
+	LLZ80ProcessorState *const z80,
+	uint8_t *const value,
+	uint16_t *const address);
 
-LLZ80InternalInstruction *llz80_scheduleWrite(
-	LLZ80ProcessorState *z80,
-	uint8_t *value,
-	uint16_t *address);
+extern LLZ80InternalInstruction *llz80_scheduleWrite(
+	LLZ80ProcessorState *const z80,
+	uint8_t *const value,
+	uint16_t *const address);
 
 #endif
