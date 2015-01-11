@@ -11,7 +11,7 @@
 
 @implementation CSOpenGLViewBillboard
 {
-//	GLuint _arrayBuffer;
+	GLuint _arrayBuffer;
 }
 
 - (id)initWithCoder:(NSCoder *)aDecoder
@@ -28,18 +28,19 @@
 		glMatrixMode(GL_MODELVIEW);
 		glLoadIdentity();
 
-		glEnable(GL_TEXTURE_2D);
-
-//		glGenBuffers(1, &_arrayBuffer);
-//		glBindBuffer(GL_ARRAY_BUFFER, _arrayBuffer);
-//		GLbyte vertices[] =
-//		{
-//			-1, -1, -1, 1,
-//			1, 1, 1, -1
-//		};
-//		glBufferData(GL_ARRAY_BUFFER_ARB, sizeof(vertices), vertices, GL_STATIC_DRAW);
+		glMatrixMode(GL_TEXTURE);
+		glScalef(1.0f / 32767.0f, 1.0f / 32767.0f, 1.0f / 32767.0f);
 
 		glColor3f(1.0, 1.0, 1.0);
+
+		[self setMinimumSourceRect:NSMakeRect(0.0, 0.0, 1.0, 1.0)];
+
+		glEnable(GL_TEXTURE_2D);
+		glEnableClientState(GL_VERTEX_ARRAY);
+		glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+		
+		glVertexPointer(2, GL_SHORT, 4 * sizeof(GLshort), (void *)0);
+		glTexCoordPointer(2, GL_SHORT, 4 * sizeof(GLshort), (void *)4);
 	}
 
 	return self;
@@ -59,23 +60,37 @@
 
 - (void)drawRect:(NSRect)dirtyRect
 {
-	NSRect outputRect = _minimumSourceRect;
-
-	glBegin(GL_QUADS);
-		glTexCoord2f((GLfloat)outputRect.origin.x, (GLfloat)(outputRect.origin.y + outputRect.size.height));
-		glVertex2i(-1, -1);
-
-		glTexCoord2f((GLfloat)outputRect.origin.x, (GLfloat)outputRect.origin.y);
-		glVertex2i(-1, 1);
-
-		glTexCoord2f((GLfloat)(outputRect.origin.x + outputRect.size.width), (GLfloat)outputRect.origin.y);
-		glVertex2i(1, 1);
-
-		glTexCoord2f((GLfloat)(outputRect.origin.x + outputRect.size.width), (GLfloat)(outputRect.origin.y + outputRect.size.height));
-		glVertex2i(1, -1);
-	glEnd();
-
+	glDrawArrays(GL_QUADS, 0, 4);
 	glSwapAPPLE();
+}
+
+- (void)setMinimumSourceRect:(NSRect)minimumSourceRect
+{
+	_minimumSourceRect = minimumSourceRect;
+	
+	if(!_arrayBuffer)
+		glGenBuffers(1, &_arrayBuffer);
+
+	glBindBuffer(GL_ARRAY_BUFFER, _arrayBuffer);
+	GLshort coordinates[] =
+	{
+		-1, -1,
+		(GLshort)(32767.0f * (GLfloat)minimumSourceRect.origin.x),
+		(GLshort)(32767.0f * (GLfloat)(minimumSourceRect.origin.y + minimumSourceRect.size.height)),
+
+		-1, 1,
+		(GLshort)(32767.0f * (GLfloat)minimumSourceRect.origin.x),
+		(GLshort)(32767.0f * (GLfloat)minimumSourceRect.origin.y),
+
+		1, 1,
+		(GLshort)(32767.0f * (GLfloat)(minimumSourceRect.origin.x + minimumSourceRect.size.width)),
+		(GLshort)(32767.0f * (GLfloat)minimumSourceRect.origin.y),
+
+		1, -1,
+		(GLshort)(32767.0f * (GLfloat)(minimumSourceRect.origin.x + minimumSourceRect.size.width)),
+		(GLshort)(32767.0f * (GLfloat)(minimumSourceRect.origin.y + minimumSourceRect.size.height))
+	};
+	glBufferData(GL_ARRAY_BUFFER_ARB, sizeof(coordinates), coordinates, GL_STATIC_DRAW);
 }
 
 - (void)setTextureID:(GLuint)textureID
