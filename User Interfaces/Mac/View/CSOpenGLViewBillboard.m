@@ -32,7 +32,6 @@
 
 - (void)drawRect:(NSRect)dirtyRect
 {
-	glClear(GL_COLOR_BUFFER_BIT);
 	glEnable(GL_TEXTURE_2D);
 	glBindTexture(GL_TEXTURE_2D, _textureID);
 
