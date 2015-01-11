@@ -718,19 +718,19 @@ static void	ZX80DocumentAudioCallout(
 	switch(self.RAMMatrix.selectedRow)
 	{
 		default:
-			llzx8081_setRAMSize(_ULA, 1024);
+			llzx8081_setRAMSize(_ULA, LLZX8081RAMSize1Kb);
 			[userDefaults setInteger:1024 forKey:@"zx80.amountOfRAM"];
 		break;
 		case 1:
-			llzx8081_setRAMSize(_ULA, 3072);
+			llzx8081_setRAMSize(_ULA, LLZX8081RAMSize2Kb);
 			[userDefaults setInteger:3072 forKey:@"zx80.amountOfRAM"];
 		break;
 		case 2:
-			llzx8081_setRAMSize(_ULA, 16384);
+			llzx8081_setRAMSize(_ULA, LLZX8081RAMSize16Kb);
 			[userDefaults setInteger:16384 forKey:@"zx80.amountOfRAM"];
 		break;
 		case 3:
-			llzx8081_setRAMSize(_ULA, 65536);
+			llzx8081_setRAMSize(_ULA, LLZX8081RAMSize64Kb);
 			[userDefaults setInteger:65536 forKey:@"zx80.amountOfRAM"];
 		break;
 	}
