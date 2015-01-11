@@ -95,6 +95,7 @@ typedef enum
 
 - (void)close
 {
+	[self stopRunning];
 	if(_serialDispatchQueue)
 	{
 		dispatch_release(_serialDispatchQueue);
@@ -261,6 +262,8 @@ typedef enum
 
 - (void)scheduleNextRunForHalfField
 {
+	// the point here is: each dispatch is 0.01 seconds apart; i.e. there are 100 in a second;
+	// i.e. given that each one runs for half a field, there are 50 fields in a second
 	dispatch_after(
 		dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.01 * NSEC_PER_SEC)),
 		_serialDispatchQueue,
