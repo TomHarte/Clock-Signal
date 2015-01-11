@@ -50,6 +50,7 @@
 
 - (void)setMinimumSourceRect:(NSRect)minimumSourceRect
 {
+	[self.openGLContext makeCurrentContext];
 	_minimumSourceRect = minimumSourceRect;
 	
 	if(!_arrayBuffer)
