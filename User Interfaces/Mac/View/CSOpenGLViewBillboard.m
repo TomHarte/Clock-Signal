@@ -98,11 +98,13 @@
 	if([self respondsToSelector:@selector(convertPointToBacking:)])
 		farEdge = [self convertPointToBacking:farEdge];
 	
+	[self.openGLContext makeCurrentContext];
 	glViewport(0, 0, (GLsizei)farEdge.x, (GLsizei)farEdge.y);
 }
 
 - (void)drawRect:(NSRect)dirtyRect
 {
+	[self.openGLContext makeCurrentContext];
 	glDrawArrays(GL_QUADS, 0, 4);
 	glSwapAPPLE();
 }
