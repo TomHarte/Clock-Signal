@@ -109,6 +109,10 @@ static void csfilter_setIdealisedFilterResponse(short *filterCoefficients, float
 
 void *csfilter_createBandPass(unsigned int numberOfTaps, unsigned int sampleRate, float lowFrequency, float highFrequency, float attenuation)
 {
+	// we must be asked to filter based on an odd number of
+	// taps, and at least three
+	if(numberOfTaps < 3 || !(numberOfTaps&1)) return NULL;
+
 	struct CSLinearFilter *filter;
 
 	filter = (struct CSLinearFilter *)calloc(1, sizeof(struct CSLinearFilter));
