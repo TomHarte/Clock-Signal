@@ -23,11 +23,7 @@
 static void llzx80ula_considerSync(LLZX8081MachineState *machineState)
 {
 	// decide the new output sync level
-	bool newSyncLevel;
-	if(machineState->vsyncIsActive | machineState->hsyncIsActive)
-		newSyncLevel = true;
-	else
-		newSyncLevel = false;
+	bool newSyncLevel = (machineState->vsyncIsActive || machineState->hsyncIsActive);
 
 	// if this is a leading edge of hsync then increment
 	// the line counter
@@ -155,46 +151,41 @@ csComponent_observer(llzx80ula_observeIORead)
 
 csComponent_observer(llzx80ula_observeIOWrite)
 {
-	if(conditionIsTrue)
+	// an IO write request ...
+	LLZX8081MachineState *const machineState = (LLZX8081MachineState *const)context;
+	uint16_t address = (uint16_t)(externalState.lineValues >> CSBusStandardAddressShift);
+
+	// determine whether activate or deactive the NMI generator;
+	// this is relevant to the ZX81 only, and since NMI enabled
+	// prevents output of 'vertical' sync, it would adversely
+	// affect ZX80 emulation if we went ahead regardless
+	if(!(address&1))
 	{
-		// an IO write request ...
-		LLZX8081MachineState *const machineState = (LLZX8081MachineState *const)context;
-		uint16_t address = (uint16_t)(externalState.lineValues >> CSBusStandardAddressShift);
+		machineState->nmiIsEnabled = (machineState->machineType == LLZX8081MachineTypeZX81);
+	}
 
-		// determine whether activate or deactive the NMI generator;
-		// this is relevant to the ZX81 only, and since NMI enabled
-		// prevents output of 'vertical' sync, it would adversely
-		// affect ZX80 emulation if we went ahead regardless
-		if(!(address&1))
-		{
-			machineState->nmiIsEnabled = (machineState->machineType == LLZX8081MachineTypeZX81);
-		}
+	if(!(address&2))
+	{
+		machineState->nmiIsEnabled = false;
+	}
 
-		if(!(address&2))
-		{
-			machineState->nmiIsEnabled = false;
-		}
+	if(!(address&4))
+	{
+	}
 
-		if(!(address&4))
+	if((address&7) == 7)
+	{
+		if(!machineState->nmiIsEnabled)
 		{
-		}
-
-		if((address&7) == 7)
-		{
-			if(!machineState->nmiIsEnabled)
-			{
-				machineState->lineCounter = 0;
-				machineState->vsyncIsActive = false;
-				llzx80ula_considerSync(machineState);
-			}
+			machineState->lineCounter = 0;
+			machineState->vsyncIsActive = false;
+			llzx80ula_considerSync(machineState);
 		}
 	}
 }
 
 csComponent_observer(llzx80ula_observeIntAck)
 {
-	if(!conditionIsTrue) return;
-
 	// This triggers on IO request + M1 active, i.e. interrupt acknowledge;
 	// we need to arrange for horizontal sync to occur; the ZX81 has a
 	// well-documented counter for the purpose and we'll need to count M1
@@ -206,8 +197,6 @@ csComponent_observer(llzx80ula_observeIntAck)
 // This one is hooked up for the ZX80 only
 csComponent_observer(llzx80ula_observeMachineCycleOne)
 {
-	if(!conditionIsTrue) return;
-
 	// M1 cycles clock the horizontal sync generator, but
 	// only when we're in an hsync cycle
 	LLZX8081MachineState *const machineState = (LLZX8081MachineState *const)context;
@@ -232,8 +221,6 @@ csComponent_observer(llzx80ula_observeMachineCycleOne)
 // This one is hooked up for the ZX81 only
 csComponent_observer(llzx80ula_observeClock)
 {
-	if(!conditionIsTrue) return;
-
 	LLZX8081MachineState *const machineState = (LLZX8081MachineState *const)context;
 
 	// increment the hsync counter, check whether sync output is
