@@ -260,7 +260,7 @@ void cstapePlayer_setAudioDelegate(
 		if(!player->audioBuffer)
 		{
 			player->audioBuffer = (short *)malloc(sizeof(short) * player->minimumAudioSamplesToProcess);
-			player->audioFilter = csfilter_createBandPass(kCSTapeNumTaps, player->tapeSampleRate, 0, outputSampleRate >> 1, kCSFilterDefaultAttenuation / 3.0f);
+			player->audioFilter = csfilter_createBandPass(kCSTapeNumTaps, player->tapeSampleRate, 0, outputSampleRate >> 1, kCSFilterDefaultAttenuation);
 		}
 	}
 	else
