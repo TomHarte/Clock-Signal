@@ -64,29 +64,30 @@ void *csClockGenerator_createWithBus(void *bus, uint32_t ticksPerSecond)
 
 void csClockGenerator_runForHalfCycles(void *opaqueGenerator, unsigned int halfCycles)
 {
-	CSClockGenerator *generator = (CSClockGenerator *)opaqueGenerator;
+	CSClockGenerator generator = *(CSClockGenerator *)opaqueGenerator;
+	CSBusComponent component = *generator.component;
 	CSBusState throwawayState;
 
-//	printf("starting clock generator loop\n");
 	while(halfCycles--)
 	{
-		generator->currentBusState.lineValues ^= CSBusStandardClockLine;
-		generator->component->handlerFunction(generator->component->context, &throwawayState, generator->currentBusState, true, generator->timeToNow);
-		generator->halfCyclesToDate++;
+		generator.currentBusState.lineValues ^= CSBusStandardClockLine;
+		component.handlerFunction(component.context, &throwawayState, generator.currentBusState, true, generator.timeToNow);
+		generator.halfCyclesToDate++;
 
 		// this is standard Bresenham run-slice stuff; add the
 		// whole step, which is floor(y/x), then see whether
 		// doing so has accumulated enough error to push us
 		// up an extra spot
-		generator->timeToNow += generator->wholeStep;
-		generator->accumulatedError += generator->adjustmentUp;
-		if(generator->accumulatedError > 0)
+		generator.timeToNow += generator.wholeStep;
+		generator.accumulatedError += generator.adjustmentUp;
+		if(generator.accumulatedError > 0)
 		{
-			generator->timeToNow++;
-			generator->accumulatedError -= generator->adjustmentDown;
+			generator.timeToNow++;
+			generator.accumulatedError -= generator.adjustmentDown;
 		}
 	}
-//	printf("clock generator loop done\n");
+
+	*(CSClockGenerator *)opaqueGenerator = generator;
 }
 
 unsigned int csClockGenerator_getHalfCyclesToDate(void *opaqueGenerator)
