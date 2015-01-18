@@ -49,22 +49,22 @@ struct CSLinearFilter
 /* ino evaluates the 0th order Bessel function at a */
 static float csfilter_ino(float a)
 {
-	float d = 0.0;
-	float ds = 1.0;
-	float s = 1.0;
+	float d = 0.0f;
+	float ds = 1.0f;
+	float s = 1.0f;
 
 	do
 	{
-		d += 2.0;
+		d += 2.0f;
 		ds *= (a * a) / (d * d);
 		s += ds;
 	}
-	while(ds > s*1e-6);
+	while(ds > s*1e-6f);
 
 	return s;
 }
 
-static void csfilter_setIdealisedFilterResponse(short *filterCoefficients, float *A, float attenuation, unsigned int numberOfTaps)
+static void csfilter_setIdealisedFilterResponse(short *restrict filterCoefficients, float *restrict A, float attenuation, unsigned int numberOfTaps)
 {
 	/* calculate alpha, which is the Kaiser-Bessel window shape factor */
 	float a;	// to take the place of alpha in the normal derivation
@@ -84,11 +84,12 @@ static void csfilter_setIdealisedFilterResponse(short *filterCoefficients, float
 	/* work out the right hand side of the filter coefficients */
 	unsigned int Np = (numberOfTaps - 1) / 2;
 	float I0 = csfilter_ino(a);
+	float NpSquared = (float)(Np * Np);
 	for(unsigned int i = 0; i <= Np; i++)
 	{
 		filterCoefficientsFloat[Np + i] = 
 				A[i] * 
-				csfilter_ino(a * sqrtf(1.0f - ((float)(i * i) / (float)(Np * Np)) )) /
+				csfilter_ino(a * sqrtf(1.0f - ((float)(i * i) / NpSquared) )) /
 				I0;
 	}
 
@@ -111,7 +112,8 @@ void *csfilter_createBandPass(unsigned int numberOfTaps, unsigned int sampleRate
 {
 	// we must be asked to filter based on an odd number of
 	// taps, and at least three
-	if(numberOfTaps < 3 || !(numberOfTaps&1)) return NULL;
+	if(numberOfTaps < 3) numberOfTaps = 3;
+	if(attenuation < 21.0f) attenuation = 21.0f;
 
 	struct CSLinearFilter *filter;
 
@@ -121,7 +123,7 @@ void *csfilter_createBandPass(unsigned int numberOfTaps, unsigned int sampleRate
 	{
 		// ensure we have an odd number of taps
 		numberOfTaps |= 1;
-	
+
 		filter->numberOfTaps = numberOfTaps;
 		filter->filterCoefficients = (short *)malloc(sizeof(short)*numberOfTaps);
 		filter->valueQueue = (short *)malloc(sizeof(short)*numberOfTaps);
@@ -137,16 +139,18 @@ void *csfilter_createBandPass(unsigned int numberOfTaps, unsigned int sampleRate
 
 		/* calculate idealised filter response */
 		unsigned int Np = (numberOfTaps - 1) / 2;
+		float twoOverSampleRate = 2.0f / (float)sampleRate;
 
 		float *A = (float *)malloc(sizeof(float)*(Np+1));
 		A[0] = 2.0f * (highFrequency - lowFrequency) / (float)sampleRate;
 		for(unsigned int i = 1; i <= Np; i++)
 		{
+			float iPi = (float)i * (float)M_PI;
 			A[i] = 
 				(
-					sinf(2.0f * (float)i * (float)M_PI * highFrequency / (float)sampleRate) -
-					sinf(2.0f * (float)i * (float)M_PI * lowFrequency / (float)sampleRate)
-				) / ((float)i * (float)M_PI);
+					sinf(twoOverSampleRate * iPi * highFrequency) -
+					sinf(twoOverSampleRate * iPi * lowFrequency)
+				) / iPi;
 		}
 
 		csfilter_setIdealisedFilterResponse(filter->filterCoefficients, A, attenuation, numberOfTaps);
