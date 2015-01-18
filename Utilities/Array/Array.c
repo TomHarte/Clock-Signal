@@ -121,9 +121,9 @@ void *csArray_create(bool retainObjects)
 	return array;
 }
 
-bool csArray_addObject(void *opaqueArray, void *object)
+bool csArray_addObject(void *restrict opaqueArray, void *restrict object)
 {
-	CSRetainedArray *array = (CSRetainedArray *)opaqueArray;
+	CSRetainedArray *const restrict array = (CSRetainedArray *)opaqueArray;
 
 	// check whether we have enough storage available
 	if(array->numberOfObjects == array->numberOfAllocatedObjects)
@@ -149,9 +149,9 @@ bool csArray_addObject(void *opaqueArray, void *object)
 	return true;
 }
 
-bool csArray_removeObject(void *opaqueArray, void *object)
+bool csArray_removeObject(void *restrict opaqueArray, void *restrict object)
 {
-	CSRetainedArray *array = (CSRetainedArray *)opaqueArray;
+	CSRetainedArray *const restrict array = (CSRetainedArray *)opaqueArray;
 	bool foundObject = false;
 
 	// do a linear search for the object
@@ -201,9 +201,9 @@ bool csArray_removeObjectAtIndex(void *opaqueArray, unsigned int index)
 	return true;
 }
 
-void **csArray_getCArray(void *opaqueArray, unsigned int *numberOfObjects)
+void **csArray_getCArray(void *restrict opaqueArray, unsigned int *restrict numberOfObjects)
 {
-	CSRetainedArray *array = (CSRetainedArray *)opaqueArray;
+	CSRetainedArray *const restrict array = (CSRetainedArray *)opaqueArray;
 	*numberOfObjects = array->numberOfObjects;
 	return array->objects;
 }
