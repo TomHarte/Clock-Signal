@@ -165,7 +165,7 @@ static void csFlatBus_addComponent(void *node, void *opaqueComponent)
 
 csComponent_observer(csFlatBus_message)
 {
-	CSFlatBus *const flatBus = (CSFlatBus *const)context;
+	CSFlatBus *const restrict flatBus = (CSFlatBus *)context;
 	CSBusState totalState;
 	uint64_t changedLines, setLines, resetLines;
 
