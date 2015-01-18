@@ -65,6 +65,7 @@ void *csClockGenerator_createWithBus(void *bus, uint32_t ticksPerSecond)
 void csClockGenerator_runForHalfCycles(void *opaqueGenerator, unsigned int halfCycles)
 {
 	CSClockGenerator generator = *(CSClockGenerator *)opaqueGenerator;
+	CSClockGenerator *const restrict wgenerator = (CSClockGenerator *)opaqueGenerator;
 	CSBusComponent component = *generator.component;
 	CSBusState throwawayState;
 
@@ -73,6 +74,7 @@ void csClockGenerator_runForHalfCycles(void *opaqueGenerator, unsigned int halfC
 		generator.currentBusState.lineValues ^= CSBusStandardClockLine;
 		component.handlerFunction(component.context, &throwawayState, generator.currentBusState, true, generator.timeToNow);
 		generator.halfCyclesToDate++;
+		wgenerator->halfCyclesToDate = generator.halfCyclesToDate;
 
 		// this is standard Bresenham run-slice stuff; add the
 		// whole step, which is floor(y/x), then see whether
