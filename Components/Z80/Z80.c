@@ -72,7 +72,7 @@ static void llz80_destroy(void *const opaqueZ80)
 	llz80_destroyGenericList((struct LLZ80GenericLinkedListRecord *)z80->instructionObservers);
 }
 
-LLZ80iop_restrict(llz80_iop_advanceHalfCycleCounter_imp)
+static void inline llz80_iop_advanceHalfCycleCounter_imp(LLZ80ProcessorState *const restrict z80, const LLZ80InternalInstruction *const restrict instruction)
 {
 	// increment the internal time counter
 	z80->internalTime++;
