@@ -305,9 +305,9 @@ void csFlatBus_runForHalfCycles(void *context, unsigned int halfCycles)
 								time.timeToNow);
 							trueFalseComponents[componentIndex]->lastResult = newEvaluation;
 						}
-
-						flatBus->trueFalseComponents.state.lineValues &= trueFalseComponents[componentIndex]->currentInternalState.lineValues;
 					}
+
+					flatBus->trueFalseComponents.state.lineValues &= trueFalseComponents[componentIndex]->currentInternalState.lineValues;
 				}
 			}
 		}
@@ -320,15 +320,15 @@ void csFlatBus_runForHalfCycles(void *context, unsigned int halfCycles)
 		flatBus->clockedComponents.state.lineValues = ~0llu;
 
 		componentIndex = numberOfClockedComponents;
+		bool newClockLine = !!(flatBus->currentBusState.lineValues & CSBusStandardClockLine);
 		while(componentIndex--)
 		{
-			bool newResult = clockedComponents[componentIndex]->condition.lineValues == (clockedComponents[componentIndex]->condition.lineMask&totalState.lineValues);
-			if(!clockedComponents[componentIndex]->condition.signalOnTrueOnly || newResult)
+			if(newClockLine || !clockedComponents[componentIndex]->condition.signalOnTrueOnly)
 				clockedComponents[componentIndex]->handlerFunction(
 					clockedComponents[componentIndex]->context,
 					&clockedComponents[componentIndex]->currentInternalState,
 					totalState,
-					newResult,
+					newClockLine,
 					time.timeToNow);
 
 			flatBus->clockedComponents.state.lineValues &= clockedComponents[componentIndex]->currentInternalState.lineValues;
