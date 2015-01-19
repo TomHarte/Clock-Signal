@@ -22,9 +22,9 @@ typedef struct
 
 #define csRateConverter_setup(state, inputRate, outputRate)	\
 	{\
-		state.wholeStep = outputRate / inputRate; \
-		state.adjustmentUp = (outputRate % inputRate) << 1; \
-		state.adjustmentDown = inputRate << 1; \
+		state.wholeStep = inputRate / outputRate; \
+		state.adjustmentUp = (inputRate % outputRate) << 1; \
+		state.adjustmentDown = outputRate << 1; \
 		state.accumulatedError = state.adjustmentUp - state.adjustmentDown; \
 	}
 #define csRateConverter_advance(state) \
@@ -38,5 +38,6 @@ typedef struct
 		}\
 	}
 #define csRateConverter_getLocation(state) state.timeToNow
+#define csRateConverter_decreaseLocation(state, x) state.timeToNow -= x
 
 #endif

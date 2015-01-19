@@ -49,13 +49,13 @@
 
 #define kCSFilterDefaultAttenuation	60.0f
 
-void *csfilter_createBandPass(unsigned int numberOfTaps, unsigned int sampleRate, float lowFrequency, float highFrequency, float attenuation);
+void *csfilter_createBandPass(unsigned int numberOfTaps, unsigned int inputSampleRate, unsigned int outputSampleRate, float lowFrequency, float highFrequency, float attenuation);
 void *csfilter_retain(void *filter);
 void csfilter_release(void *filter);
 
 void csfilter_pushShort(void *filter, short value);
 short csfilter_getFilteredShort(void *filter);
 
-unsigned int csfilter_applyToBuffer(void *filter, short *targetBuffer, const short *sourceBuffer, float sourceSamplesPerTargetSample, unsigned int numberOfOutputSamples);
+unsigned int csfilter_applyToBuffer(void *filter, short *targetBuffer, const short *sourceBuffer, unsigned int numberOfOutputSamples);
 
 #endif

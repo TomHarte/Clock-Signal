@@ -11,6 +11,7 @@
 #include <math.h>
 
 #include "LinearFilter.h"
+#include "RateConverter.h"
 
 /*
 
@@ -40,6 +41,8 @@ struct CSLinearFilter
 	short *valueQueue;
 	unsigned int numberOfTaps;
 	unsigned int writePosition;
+
+	CSRateConverterState rateConverter;
 };
 
 // our little fixed point scheme
@@ -108,7 +111,7 @@ static void csfilter_setIdealisedFilterResponse(short *restrict filterCoefficien
 	free(filterCoefficientsFloat);
 }
 
-void *csfilter_createBandPass(unsigned int numberOfTaps, unsigned int sampleRate, float lowFrequency, float highFrequency, float attenuation)
+void *csfilter_createBandPass(unsigned int numberOfTaps, unsigned int inputSampleRate, unsigned int outputSampleRate, float lowFrequency, float highFrequency, float attenuation)
 {
 	// we must be asked to filter based on an odd number of
 	// taps, and at least three
@@ -128,6 +131,7 @@ void *csfilter_createBandPass(unsigned int numberOfTaps, unsigned int sampleRate
 		filter->filterCoefficients = (short *)malloc(sizeof(short)*numberOfTaps);
 		filter->valueQueue = (short *)malloc(sizeof(short)*numberOfTaps);
 		filter->retainCount = 1;
+		csRateConverter_setup(filter->rateConverter, inputSampleRate, outputSampleRate);
 
 		if(!filter->filterCoefficients || !filter->valueQueue)
 		{
@@ -139,10 +143,10 @@ void *csfilter_createBandPass(unsigned int numberOfTaps, unsigned int sampleRate
 
 		/* calculate idealised filter response */
 		unsigned int Np = (numberOfTaps - 1) / 2;
-		float twoOverSampleRate = 2.0f / (float)sampleRate;
+		float twoOverSampleRate = 2.0f / (float)inputSampleRate;
 
 		float *A = (float *)malloc(sizeof(float)*(Np+1));
-		A[0] = 2.0f * (highFrequency - lowFrequency) / (float)sampleRate;
+		A[0] = 2.0f * (highFrequency - lowFrequency) / (float)inputSampleRate;
 		for(unsigned int i = 1; i <= Np; i++)
 		{
 			float iPi = (float)i * (float)M_PI;
@@ -205,14 +209,12 @@ short csfilter_getFilteredShort(void *opaqueFilter)
 	return (short)(result >> kCSKaiserBesselFilterFixedShift);
 }
 
-unsigned int csfilter_applyToBuffer(void *opaqueFilter, short *targetBuffer, const short *sourceBuffer, float sourceSamplesPerTargetSample, unsigned int numberOfOutputSamples)
+unsigned int csfilter_applyToBuffer(void *opaqueFilter, short *targetBuffer, const short *sourceBuffer, unsigned int numberOfOutputSamples)
 {
 	struct CSLinearFilter *filter = (struct CSLinearFilter *)opaqueFilter;
-	unsigned int fixedAdder = (unsigned int)(sourceSamplesPerTargetSample * 256.0f);
-	unsigned int readPosition = 0;
 	for(unsigned int sampleToWrite = 0; sampleToWrite < numberOfOutputSamples; sampleToWrite++)
 	{
-		unsigned int shortReadPosition = readPosition >> 8;
+		size_t shortReadPosition = (size_t)csRateConverter_getLocation(filter->rateConverter);
 
 		int outputValue = 0;
 		for(unsigned int c = 0; c < filter->numberOfTaps; c++)
@@ -221,7 +223,10 @@ unsigned int csfilter_applyToBuffer(void *opaqueFilter, short *targetBuffer, con
 		}
 
 		targetBuffer[sampleToWrite] = (short)(outputValue >> kCSKaiserBesselFilterFixedShift);
-		readPosition += fixedAdder;
+		csRateConverter_advance(filter->rateConverter)
 	}
-	return readPosition >> 8;
+
+	unsigned int readPosition = (unsigned int)csRateConverter_getLocation(filter->rateConverter);
+	csRateConverter_decreaseLocation(filter->rateConverter, readPosition);
+	return readPosition;
 }

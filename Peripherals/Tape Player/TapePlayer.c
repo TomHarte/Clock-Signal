@@ -171,7 +171,6 @@ void cstapePlayer_runToTime(void *opaquePlayer, unsigned int timeStamp)
 							player->audioFilter,
 							outputBuffer,
 							player->audioBuffer,
-							(float)player->tapeSampleRate / (float)player->audioSampleRate,
 							player->audioBufferOutputSize);
 
 					unsigned int residue = player->minimumAudioSamplesToProcess - samplesTaken;
@@ -260,7 +259,7 @@ void cstapePlayer_setAudioDelegate(
 		if(!player->audioBuffer)
 		{
 			player->audioBuffer = (short *)malloc(sizeof(short) * player->minimumAudioSamplesToProcess);
-			player->audioFilter = csfilter_createBandPass(kCSTapeNumTaps, player->tapeSampleRate, 0, outputSampleRate >> 1, kCSFilterDefaultAttenuation);
+			player->audioFilter = csfilter_createBandPass(kCSTapeNumTaps, player->tapeSampleRate, player->audioSampleRate, 0, outputSampleRate >> 1, kCSFilterDefaultAttenuation);
 		}
 	}
 	else
