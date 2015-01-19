@@ -9,7 +9,7 @@
 #include "Z80StandardSchedulingComponents.h"
 #include "Z80ScheduleInstructionFetch.h"
 
-LLZ80iop(llz80_iop_instructionfetchHalfCycle1)
+LLZ80iop_restrict(llz80_iop_instructionfetchHalfCycle1)
 {
 	// load the program counter to the address line;
 	// set m1, increment the refresh register
@@ -22,7 +22,7 @@ LLZ80iop(llz80_iop_instructionfetchHalfCycle1)
 	z80->pcRegister.fullValue++;
 }
 
-LLZ80iop(llz80_iop_instructionfetchHalfCycle1_noIncrement)
+LLZ80iop_restrict(llz80_iop_instructionfetchHalfCycle1_noIncrement)
 {
 	// load the program counter to the address line;
 	// set m1, increment the refresh register
@@ -30,7 +30,7 @@ LLZ80iop(llz80_iop_instructionfetchHalfCycle1_noIncrement)
 	llz80_setLinesActive(z80, LLZ80SignalMachineCycleOne);
 }
 
-LLZ80iop(llz80_iop_instructionfetchHalfCycle5)
+LLZ80iop_restrict(llz80_iop_instructionfetchHalfCycle5)
 {
 	// store the current value of the data line away
 	// for safe keeping
@@ -43,18 +43,18 @@ LLZ80iop(llz80_iop_instructionfetchHalfCycle5)
 	z80->rRegister = (z80->rRegister&0x80) | ((z80->rRegister+1)&0x7f);
 }
 
-LLZ80iop(llz80_iop_irqAcknowledgeHalfCycle6)
+LLZ80iop_restrict(llz80_iop_irqAcknowledgeHalfCycle6)
 {
 	llz80_setLinesActive(z80, LLZ80SignalInputOutputRequest);
 }
 
-LLZ80iop(llz80_iop_instructionfetchHalfCycle8)
+LLZ80iop_restrict(llz80_iop_instructionfetchHalfCycle8)
 {
 	// end the refresh cycle
 	llz80_setLinesInactive(z80, LLZ80SignalMemoryRequest | LLZ80SignalRefresh);
 }
 
-LLZ80iop(llz80_iop_irqAcknowledgeHalfCycle9)
+LLZ80iop_restrict(llz80_iop_irqAcknowledgeHalfCycle9)
 {
 	z80->temporary8bitValue = llz80_getDataInput(z80);
 	llz80_setLinesInactive(z80, LLZ80SignalMachineCycleOne | LLZ80SignalInputOutputRequest);

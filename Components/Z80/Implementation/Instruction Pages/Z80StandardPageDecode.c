@@ -62,7 +62,7 @@ static void llz80_schedule16BitReadFromPC(LLZ80ProcessorState *const z80, LLZ80R
 	llz80_schedule8BitReadFromPC(z80, &targetRegister->bytes.high);
 }
 
-LLZ80iop(llz80_iop_finishPopAF)
+LLZ80iop_restrict(llz80_iop_finishPopAF)
 {
 	llz80_setF(z80, z80->temporary8bitValue);
 	z80->spRegister.fullValue++;
@@ -73,7 +73,7 @@ LLZ80iop(llz80_copyTemporaryAddressToRegister)
 	*instruction->extraData.referenceToIndexRegister.indexRegister = z80->temporaryAddress;
 }
 
-LLZ80iop(llz80_doALUOp)
+LLZ80iop_restrict(llz80_doALUOp)
 {
 	switch(instruction->extraData.ALUOrShiftOp.operation)
 	{
@@ -89,17 +89,17 @@ LLZ80iop(llz80_doALUOp)
 	}
 }
 
-LLZ80iop(llz80_incrementTemporary8BitValue)
+LLZ80iop_restrict(llz80_incrementTemporary8BitValue)
 {
 	llz80_increment_8bit(z80, &z80->temporary8bitValue);
 }
 
-LLZ80iop(llz80_decrementTemporary8BitValue)
+LLZ80iop_restrict(llz80_decrementTemporary8BitValue)
 {
 	llz80_decrement_8bit(z80, &z80->temporary8bitValue);
 }
 
-LLZ80iop(llz80_jrConditional)
+LLZ80iop_restrict(llz80_jrConditional)
 {
 	z80->pcRegister.fullValue++;
 
@@ -134,7 +134,7 @@ static void llz80_scheduleCalculationOfSourceAddress(LLZ80ProcessorState *const 
 		z80->temporaryAddress = *indexRegister;
 }
 
-LLZ80iop(llz80_djnz)
+LLZ80iop_restrict(llz80_djnz)
 {
 	z80->pcRegister.fullValue++;
 	z80->bcRegister.bytes.high--;

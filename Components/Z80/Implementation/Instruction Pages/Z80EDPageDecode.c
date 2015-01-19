@@ -25,7 +25,7 @@ static void llz80_setLDFlags(LLZ80ProcessorState *const z80)
 	z80->bit5And3Flags = (uint8_t)((n&0x8) | ((n&0x2) << 4));
 }
 
-LLZ80iop(llz80_iop_finishLDI)
+LLZ80iop_restrict(llz80_iop_finishLDI)
 {
 	z80->bcRegister.fullValue--;
 	z80->deRegister.fullValue++;
@@ -34,7 +34,7 @@ LLZ80iop(llz80_iop_finishLDI)
 	llz80_setLDFlags(z80);
 }
 
-LLZ80iop(llz80_iop_finishLDIR)
+LLZ80iop_restrict(llz80_iop_finishLDIR)
 {
 	z80->bcRegister.fullValue--;
 	z80->deRegister.fullValue++;
@@ -49,7 +49,7 @@ LLZ80iop(llz80_iop_finishLDIR)
 	}
 }
 
-LLZ80iop(llz80_iop_finishLDD)
+LLZ80iop_restrict(llz80_iop_finishLDD)
 {
 	z80->bcRegister.fullValue--;
 	z80->deRegister.fullValue--;
@@ -58,7 +58,7 @@ LLZ80iop(llz80_iop_finishLDD)
 	llz80_setLDFlags(z80);
 }
 
-LLZ80iop(llz80_iop_finishLDDR)
+LLZ80iop_restrict(llz80_iop_finishLDDR)
 {
 	z80->bcRegister.fullValue--;
 	z80->deRegister.fullValue--;
@@ -91,7 +91,7 @@ static void llz80_setCPFlags(LLZ80ProcessorState *const z80)
 	z80->lastSignResult = z80->lastZeroResult = result;
 }
 
-LLZ80iop(llz80_iop_finishCPI)
+LLZ80iop_restrict(llz80_iop_finishCPI)
 {
 	z80->bcRegister.fullValue--;
 	z80->hlRegister.fullValue++;
@@ -99,7 +99,7 @@ LLZ80iop(llz80_iop_finishCPI)
 	llz80_setCPFlags(z80);
 }
 
-LLZ80iop(llz80_iop_finishCPIR)
+LLZ80iop_restrict(llz80_iop_finishCPIR)
 {
 	z80->bcRegister.fullValue--;
 	z80->hlRegister.fullValue++;
@@ -113,7 +113,7 @@ LLZ80iop(llz80_iop_finishCPIR)
 	}
 }
 
-LLZ80iop(llz80_iop_finishCPD)
+LLZ80iop_restrict(llz80_iop_finishCPD)
 {
 	z80->bcRegister.fullValue--;
 	z80->hlRegister.fullValue--;
@@ -121,7 +121,7 @@ LLZ80iop(llz80_iop_finishCPD)
 	llz80_setCPFlags(z80);
 }
 
-LLZ80iop(llz80_iop_finishCPDR)
+LLZ80iop_restrict(llz80_iop_finishCPDR)
 {
 	z80->bcRegister.fullValue--;
 	z80->hlRegister.fullValue--;
@@ -151,13 +151,13 @@ static void llz80_setINFlags(LLZ80ProcessorState *const z80, int cAdder)
 	z80->generalFlags |= parity;
 }
 
-LLZ80iop(llz80_iop_finishINI)
+LLZ80iop_restrict(llz80_iop_finishINI)
 {
 	z80->hlRegister.fullValue++;
 	llz80_setINFlags(z80, 1);
 }
 
-LLZ80iop(llz80_iop_finishINIR)
+LLZ80iop_restrict(llz80_iop_finishINIR)
 {
 	z80->hlRegister.fullValue++;
 	llz80_setINFlags(z80, 1);
@@ -169,13 +169,13 @@ LLZ80iop(llz80_iop_finishINIR)
 	}
 }
 
-LLZ80iop(llz80_iop_finishIND)
+LLZ80iop_restrict(llz80_iop_finishIND)
 {
 	z80->hlRegister.fullValue--;
 	llz80_setINFlags(z80, -1);
 }
 
-LLZ80iop(llz80_iop_finishINDR)
+LLZ80iop_restrict(llz80_iop_finishINDR)
 {
 	z80->hlRegister.fullValue--;
 	llz80_setINFlags(z80, -1);
@@ -204,13 +204,13 @@ static void llz80_setOUTFlags(LLZ80ProcessorState *const z80)
 	z80->generalFlags |= parity;
 }
 
-LLZ80iop(llz80_iop_finishOUTI)
+LLZ80iop_restrict(llz80_iop_finishOUTI)
 {
 	z80->hlRegister.fullValue++;
 	llz80_setOUTFlags(z80);
 }
 
-LLZ80iop(llz80_iop_finishOUTIR)
+LLZ80iop_restrict(llz80_iop_finishOUTIR)
 {
 	z80->hlRegister.fullValue++;
 	llz80_setOUTFlags(z80);
@@ -222,13 +222,13 @@ LLZ80iop(llz80_iop_finishOUTIR)
 	}
 }
 
-LLZ80iop(llz80_iop_finishOUTD)
+LLZ80iop_restrict(llz80_iop_finishOUTD)
 {
 	z80->hlRegister.fullValue--;
 	llz80_setOUTFlags(z80);
 }
 
-LLZ80iop(llz80_iop_finishOUTDR)
+LLZ80iop_restrict(llz80_iop_finishOUTDR)
 {
 	z80->hlRegister.fullValue--;
 	llz80_setOUTFlags(z80);
@@ -240,7 +240,7 @@ LLZ80iop(llz80_iop_finishOUTDR)
 	}
 }
 
-LLZ80iop(llz80_iop_doRRD)
+LLZ80iop_restrict(llz80_iop_doRRD)
 {
 	int lowNibble = z80->aRegister&0xf;
 	z80->aRegister = (z80->aRegister&0xf0) | (z80->temporary8bitValue & 0xf);
@@ -254,7 +254,7 @@ LLZ80iop(llz80_iop_doRRD)
 	z80->bit5And3Flags = z80->aRegister;
 }
 
-LLZ80iop(llz80_iop_doRLD)
+LLZ80iop_restrict(llz80_iop_doRLD)
 {
 	int lowNibble = z80->aRegister&0xf;
 	z80->aRegister = (z80->aRegister&0xf0) | (z80->temporary8bitValue >> 4);
@@ -268,7 +268,7 @@ LLZ80iop(llz80_iop_doRLD)
 	z80->bit5And3Flags = z80->aRegister;
 }
 
-LLZ80iop(llz80_iop_setInputFlags)
+LLZ80iop_restrict(llz80_iop_setInputFlags)
 {
 	// the input will still be on the data lines, so...
 	z80->lastSignResult = z80->lastZeroResult =
@@ -317,7 +317,7 @@ static const LLZ80InternalInstructionFunction outInstructions[4] =
 	llz80_iop_finishOUTDR
 };
 
-LLZ80iop(llz80_iop_EDPageDecode_imp)
+LLZ80iop_restrict(llz80_iop_EDPageDecode_imp)
 {
 	// the ed page isn't affected by an fd or dd prefix,
 	// so this is all always HL

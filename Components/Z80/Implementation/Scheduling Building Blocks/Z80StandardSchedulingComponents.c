@@ -8,37 +8,37 @@
 
 #include "Z80StandardSchedulingComponents.h"
 
-LLZ80iop(llz80_iop_setReadAndMemoryRequest_imp)
+LLZ80iop_restrict(llz80_iop_setReadAndMemoryRequest_imp)
 {
 	llz80_setLinesActive(z80, LLZ80SignalRead | LLZ80SignalMemoryRequest);
 }
 
-LLZ80iop(llz80_iop_setMemoryRequest_imp)
+LLZ80iop_restrict(llz80_iop_setMemoryRequest_imp)
 {
 	llz80_setLinesActive(z80, LLZ80SignalMemoryRequest);
 }
 
-LLZ80iop(llz80_iop_incrementProgramCounter_imp)
+LLZ80iop_restrict(llz80_iop_incrementProgramCounter_imp)
 {
 	z80->pcRegister.fullValue++;
 }
 
-LLZ80iop(llz80_iop_incrementTemporaryAddress_imp)
+LLZ80iop_restrict(llz80_iop_incrementTemporaryAddress_imp)
 {
 	z80->temporaryAddress.fullValue++;
 }
 
-LLZ80iop(llz80_iop_incrementStackPointer_imp)
+LLZ80iop_restrict(llz80_iop_incrementStackPointer_imp)
 {
 	z80->spRegister.fullValue++;
 }
 
-LLZ80iop(llz80_iop_decrementStackPointer_imp)
+LLZ80iop_restrict(llz80_iop_decrementStackPointer_imp)
 {
 	z80->spRegister.fullValue--;
 }
 
-LLZ80iop(llz80_iop_setPCToTemporaryAddress_imp)
+LLZ80iop_restrict(llz80_iop_setPCToTemporaryAddress_imp)
 {
 	z80->pcRegister.fullValue = z80->temporaryAddress.fullValue;
 }

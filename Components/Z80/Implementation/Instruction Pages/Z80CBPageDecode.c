@@ -20,7 +20,7 @@ LLZ80iop(llz80_iop_copyTemporary8BitValueToRegister)
 	*instruction->extraData.referenceToRegister.registerReference = z80->temporary8bitValue;
 }
 
-LLZ80iop(llz80_iop_doShiftOp)
+LLZ80iop_restrict(llz80_iop_doShiftOp)
 {
 	switch(instruction->extraData.ALUOrShiftOp.operation)
 	{
@@ -39,7 +39,7 @@ LLZ80iop(llz80_iop_doShiftOp)
 	(metadata)->extraData.bitOp.mask = (uint8_t)(maskVal);\
 	(metadata)->extraData.bitOp.value = (valueVal);
 
-LLZ80iop(llz80_iop_CBPageDecode_imp)
+LLZ80iop_restrict(llz80_iop_CBPageDecode_imp)
 {
 	uint8_t opcode = z80->temporary8bitValue;
 	bool addOffset = instruction->extraData.opcodeDecode.addOffset;

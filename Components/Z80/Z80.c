@@ -93,12 +93,12 @@ LLZ80iop_restrict(llz80_iop_advanceHalfCycleCounter_imp)
 		z80->isWaiting = llz80_linesAreActive(z80, LLZ80SignalWait);
 }
 
-LLZ80iop(llz80_iop_setupForInterruptMode1)
+LLZ80iop_restrict(llz80_iop_setupForInterruptMode1)
 {
 	z80->temporary8bitValue = 0xff;
 }
 
-LLZ80iop(llz80_iop_setupForInterruptMode2)
+LLZ80iop_restrict(llz80_iop_setupForInterruptMode2)
 {
 	z80->temporaryAddress.bytes.high = z80->iRegister;
 	z80->temporaryAddress.bytes.low = z80->temporary8bitValue;

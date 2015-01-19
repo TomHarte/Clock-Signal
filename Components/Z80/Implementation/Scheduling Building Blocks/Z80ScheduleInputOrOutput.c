@@ -19,7 +19,7 @@ LLZ80iop(llz80_iop_inputOrOutputHalfCycle1)
 	llz80_setAddress(z80, *instruction->extraData.readOrWriteAddress.address);
 }
 
-LLZ80iop(llz80_iop_inputHalfCycle3)
+LLZ80iop_restrict(llz80_iop_inputHalfCycle3)
 {
 	llz80_setLinesActive(z80, LLZ80SignalRead | LLZ80SignalInputOutputRequest);
 }
@@ -65,12 +65,12 @@ LLZ80iop(llz80_iop_outputHalfCycle2)
 	llz80_setDataOutput(z80, *instruction->extraData.readOrWriteValue.value);
 }
 
-LLZ80iop(llz80_iop_outputHalfCycle3)
+LLZ80iop_restrict(llz80_iop_outputHalfCycle3)
 {
 	llz80_setLinesActive(z80, LLZ80SignalInputOutputRequest | LLZ80SignalWrite);
 }
 
-LLZ80iop(llz80_iop_outputHalfCycle7)
+LLZ80iop_restrict(llz80_iop_outputHalfCycle7)
 {
 	llz80_setLinesInactive(z80, LLZ80SignalInputOutputRequest | LLZ80SignalWrite);
 }

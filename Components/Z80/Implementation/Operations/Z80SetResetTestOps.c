@@ -20,12 +20,12 @@ LLZ80iop(llz80_iop_bit_imp)
 		(result ? 0 : LLZ80FlagParityOverflow);
 }
 
-LLZ80iop(llz80_iop_set_imp)
+LLZ80iop_restrict(llz80_iop_set_imp)
 {
 	*instruction->extraData.bitOp.value |= instruction->extraData.bitOp.mask;
 }
 
-LLZ80iop(llz80_iop_res_imp)
+LLZ80iop_restrict(llz80_iop_res_imp)
 {
 	*instruction->extraData.bitOp.value &= ~instruction->extraData.bitOp.mask;
 }

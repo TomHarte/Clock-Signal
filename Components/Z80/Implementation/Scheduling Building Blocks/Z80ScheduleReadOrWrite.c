@@ -57,12 +57,12 @@ LLZ80iop(llz80_iop_writeHalfCycle2)
 	llz80_setLinesActive(z80, LLZ80SignalMemoryRequest);
 }
 
-LLZ80iop(llz80_iop_writeHalfCycle4)
+LLZ80iop_restrict(llz80_iop_writeHalfCycle4)
 {
 	llz80_setLinesActive(z80, LLZ80SignalWrite);
 }
 
-LLZ80iop(llz80_iop_writeHalfCycle6)
+LLZ80iop_restrict(llz80_iop_writeHalfCycle6)
 {
 	llz80_setLinesInactive(z80, LLZ80SignalWrite | LLZ80SignalMemoryRequest);
 }
