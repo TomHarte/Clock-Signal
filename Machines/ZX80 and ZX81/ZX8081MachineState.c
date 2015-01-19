@@ -295,7 +295,7 @@ static void llzx80ula_romAddressShuffle(void *const opaquePassthroughNode, CSBus
 	}
 
 	CSBusComponent *childComponent = node->childComponent;
-	childComponent->handlerFunction(childComponent->context, internalState, startToPassOn, conditionIsTrue);
+	childComponent->handlerFunction(childComponent->context, internalState, startToPassOn, conditionIsTrue, timeSinceLaunch);
 }
 
 static void llzx8081_destroyMachineState(void *opaqueMachineState)

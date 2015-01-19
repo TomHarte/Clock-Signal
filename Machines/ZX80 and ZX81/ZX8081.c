@@ -17,7 +17,6 @@
 #include "TapePlayer.h"
 #include "ReferenceCountedObject.h"
 #include "BusNode.h"
-#include "ClockGenerator.h"
 #include "ZX8081MachineState.h"
 #include "StaticMemory.h"
 #include "FlatBus.h"
