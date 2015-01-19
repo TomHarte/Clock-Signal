@@ -158,12 +158,12 @@ csComponent_observer(llz80_observeClock)
 		{
 			while(z80->instructionReadPointer != z80->instructionWritePointer)
 			{
-				const LLZ80InternalInstruction *const instruction =
-					&z80->scheduledInstructions[z80->instructionReadPointer];
+				const LLZ80InternalInstruction *const instruction = &z80->scheduledInstructions[z80->instructionReadPointer];
+				LLZ80InternalInstructionFunction function = z80->scheduledInstructions[z80->instructionReadPointer].function;
 				z80->instructionReadPointer = (z80->instructionReadPointer+1)%kLLZ80HalfCycleQueueLength;
 
-				instruction->function(z80, instruction);
-				if(instruction->function == llz80_iop_advanceHalfCycleCounter_imp) goto doubleBreak;
+				function(z80, instruction);
+				if(function == llz80_iop_advanceHalfCycleCounter_imp) goto doubleBreak;
 			}
 
 			if(	(z80->proposedInterruptState == LLZ80InterruptStateIRQ) ||
