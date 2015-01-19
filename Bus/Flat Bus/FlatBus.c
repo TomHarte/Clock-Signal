@@ -206,7 +206,7 @@ void csFlatBus_runForHalfCycles(void *context, unsigned int halfCycles)
 		flatBus->trueComponents.lastExternalState = totalState;
 
 		setLines = totalState.lineValues & changedLines;
-		resetLines = ~totalState.lineValues & changedLines;
+		resetLines = setLines ^ changedLines;
 
 		// is it possible some are now true that weren't a moment ago from the true set?
 		if(flatBus->trueComponents.allObservedSetLines&setLines || flatBus->trueComponents.allObservedResetLines&resetLines)
@@ -242,7 +242,7 @@ void csFlatBus_runForHalfCycles(void *context, unsigned int halfCycles)
 		flatBus->trueFalseComponents.lastExternalState = totalState;
 
 		setLines = totalState.lineValues & changedLines;
-		resetLines = ~totalState.lineValues & changedLines;
+		resetLines = setLines ^ changedLines;
 
 		// maybe some have gone true or mutated while true from the true/false set?
 		if(
@@ -340,16 +340,16 @@ void csFlatBus_runForHalfCycles(void *context, unsigned int halfCycles)
 	flatBus->time = time;
 }
 
-/*static void csFlatBus_addChangeFlagsFromSet(struct CSFlatBusComponentSet *set, uint64_t *outputLines, uint64_t *observedLines)
-{
-	unsigned int numberOfComponents;
-	void **components = csArray_getCArray(set->components, &numberOfComponents);
-	for(unsigned int c = 0; c < numberOfComponents; c++)
-	{
-		*outputLines |= ((CSBusComponent *)components[c])->outputLines;
-		*observedLines |= csBusCondition_observedLines(((CSBusComponent *)components[c])->condition);
-	}
-}*/
+//static void csFlatBus_addChangeFlagsFromSet(struct CSFlatBusComponentSet *set, uint64_t *outputLines, uint64_t *observedLines)
+//{
+//	unsigned int numberOfComponents;
+//	void **components = csArray_getCArray(set->components, &numberOfComponents);
+//	for(unsigned int c = 0; c < numberOfComponents; c++)
+//	{
+//		*outputLines |= ((CSBusComponent *)components[c])->outputLines;
+//		*observedLines |= csBusCondition_observedLines(((CSBusComponent *)components[c])->condition);
+//	}
+//}
 
 static void *csFlatBus_createComponent(void *node)
 {
