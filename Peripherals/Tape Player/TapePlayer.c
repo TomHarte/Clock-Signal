@@ -135,10 +135,10 @@ void cstapePlayer_runToTime(void *opaquePlayer, unsigned int timeStamp)
 								level = 0;
 							break;
 							case CSTapeLevelHigh:
-								level = 32767;
+								level = 1024;
 							break;
 							case CSTapeLevelLow:
-								level = (-32767)&0xffff;
+								level = (-1024)&0xffff;
 							break;
 						}
 						level |= level << 16;

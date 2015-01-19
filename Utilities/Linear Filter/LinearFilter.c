@@ -13,6 +13,10 @@
 #include "LinearFilter.h"
 #include "RateConverter.h"
 
+#ifdef VDSP
+#include <Accelerate/Accelerate.h>
+#endif
+
 /*
 
 	A Kaiser-Bessel filter is a real time window filter. It looks at the last n samples
@@ -46,8 +50,8 @@ struct CSLinearFilter
 };
 
 // our little fixed point scheme
-#define kCSKaiserBesselFilterFixedMultiplier	16384.0f
-#define kCSKaiserBesselFilterFixedShift			14
+#define kCSKaiserBesselFilterFixedMultiplier	32767.0f
+#define kCSKaiserBesselFilterFixedShift			15
 
 /* ino evaluates the 0th order Bessel function at a */
 static float csfilter_ino(float a)
@@ -101,11 +105,19 @@ static void csfilter_setIdealisedFilterResponse(short *restrict filterCoefficien
 	{
 		filterCoefficientsFloat[i] = filterCoefficientsFloat[numberOfTaps - 1 - i];
 	}
-
-	/* we'll also need integer versions, potentially */
+	
+	/* scale back up so that we retain 100% of input volume */
+	float coefficientTotal = 0.0f;
 	for(unsigned int i = 0; i < numberOfTaps; i++)
 	{
-		filterCoefficients[i] = (short)(filterCoefficientsFloat[i] * kCSKaiserBesselFilterFixedMultiplier);
+		coefficientTotal += filterCoefficientsFloat[i];
+	}
+
+	/* we'll also need integer versions, potentially */
+	float coefficientMultiplier = 1.0f / coefficientTotal;
+	for(unsigned int i = 0; i < numberOfTaps; i++)
+	{
+		filterCoefficients[i] = (short)(filterCoefficientsFloat[i] * kCSKaiserBesselFilterFixedMultiplier * coefficientMultiplier);
 	}
 
 	free(filterCoefficientsFloat);
@@ -216,13 +228,17 @@ unsigned int csfilter_applyToBuffer(void *opaqueFilter, short *targetBuffer, con
 	{
 		size_t shortReadPosition = (size_t)csRateConverter_getLocation(filter->rateConverter);
 
+#ifdef VDSP
+		vDSP_dotpr_s1_15(filter->filterCoefficients, 1, &sourceBuffer[shortReadPosition], 1, &targetBuffer[sampleToWrite], filter->numberOfTaps);
+#else
 		int outputValue = 0;
 		for(unsigned int c = 0; c < filter->numberOfTaps; c++)
 		{
 			outputValue += filter->filterCoefficients[c] * sourceBuffer[shortReadPosition + c];
 		}
-
 		targetBuffer[sampleToWrite] = (short)(outputValue >> kCSKaiserBesselFilterFixedShift);
+#endif
+
 		csRateConverter_advance(filter->rateConverter)
 	}
 

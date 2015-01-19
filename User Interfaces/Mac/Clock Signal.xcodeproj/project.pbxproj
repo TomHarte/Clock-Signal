@@ -12,6 +12,7 @@
 		4B11846A146DD4C700CDBD1A /* Z80Disassembler.c in Sources */ = {isa = PBXBuildFile; fileRef = 4B118469146DD4C700CDBD1A /* Z80Disassembler.c */; };
 		4B1A4A59145C49B700340AD2 /* BusNode.c in Sources */ = {isa = PBXBuildFile; fileRef = 4B1A4A58145C49B700340AD2 /* BusNode.c */; };
 		4B49FE5A1A6D8F4F00F615F2 /* CoreVideo.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4BBD8E0214198AC7002ADB76 /* CoreVideo.framework */; };
+		4B49FE5E1A6DCBF700F615F2 /* Accelerate.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4B49FE5D1A6DCBF700F615F2 /* Accelerate.framework */; };
 		4B78985A141C6C3D006B4E39 /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4B789859141C6C3D006B4E39 /* OpenGL.framework */; };
 		4BA04D7A1451E63B00DA159C /* Z80CBPageDecode.c in Sources */ = {isa = PBXBuildFile; fileRef = 4BA04D541451E63B00DA159C /* Z80CBPageDecode.c */; };
 		4BA04D7B1451E63B00DA159C /* Z80EDPageDecode.c in Sources */ = {isa = PBXBuildFile; fileRef = 4BA04D561451E63B00DA159C /* Z80EDPageDecode.c */; };
@@ -68,6 +69,8 @@
 		4B1A4A57145C480F00340AD2 /* BusNodeInternals.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BusNodeInternals.h; path = "Bus Node/BusNodeInternals.h"; sourceTree = "<group>"; };
 		4B1A4A58145C49B700340AD2 /* BusNode.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = BusNode.c; path = "Bus Node/BusNode.c"; sourceTree = "<group>"; };
 		4B49FE581A6D7B6400F615F2 /* RateConverter.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = RateConverter.h; path = "Rate Converter/RateConverter.h"; sourceTree = "<group>"; };
+		4B49FE5C1A6DC5F100F615F2 /* Clock Signal.profdata */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Clock Signal.profdata"; sourceTree = "<group>"; };
+		4B49FE5D1A6DCBF700F615F2 /* Accelerate.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Accelerate.framework; path = System/Library/Frameworks/Accelerate.framework; sourceTree = SDKROOT; };
 		4B789859141C6C3D006B4E39 /* OpenGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGL.framework; path = System/Library/Frameworks/OpenGL.framework; sourceTree = SDKROOT; };
 		4BA04D541451E63B00DA159C /* Z80CBPageDecode.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = Z80CBPageDecode.c; sourceTree = "<group>"; };
 		4BA04D551451E63B00DA159C /* Z80CBPageDecode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Z80CBPageDecode.h; sourceTree = "<group>"; };
@@ -161,6 +164,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4B49FE5E1A6DCBF700F615F2 /* Accelerate.framework in Frameworks */,
 				4B49FE5A1A6D8F4F00F615F2 /* CoreVideo.framework in Frameworks */,
 				4BE26CAE1437D3AD0047B4F3 /* AudioToolbox.framework in Frameworks */,
 				4B78985A141C6C3D006B4E39 /* OpenGL.framework in Frameworks */,
@@ -204,6 +208,14 @@
 				4B49FE581A6D7B6400F615F2 /* RateConverter.h */,
 			);
 			name = "Rate Converter";
+			sourceTree = "<group>";
+		};
+		4B49FE5B1A6DC5F100F615F2 /* OptimizationProfiles */ = {
+			isa = PBXGroup;
+			children = (
+				4B49FE5C1A6DC5F100F615F2 /* Clock Signal.profdata */,
+			);
+			path = OptimizationProfiles;
 			sourceTree = "<group>";
 		};
 		4BA04D501451E63B00DA159C /* Components */ = {
@@ -427,6 +439,7 @@
 				4BE22A04141986CE00F3A516 /* Supporting Files */,
 				4BE229FC141986CE00F3A516 /* Frameworks */,
 				4BE229FA141986CE00F3A516 /* Products */,
+				4B49FE5B1A6DC5F100F615F2 /* OptimizationProfiles */,
 			);
 			sourceTree = "<group>";
 		};
@@ -441,6 +454,7 @@
 		4BE229FC141986CE00F3A516 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				4B49FE5D1A6DCBF700F615F2 /* Accelerate.framework */,
 				4BE26CAD1437D3AD0047B4F3 /* AudioToolbox.framework */,
 				4B789859141C6C3D006B4E39 /* OpenGL.framework */,
 				4BBD8E0214198AC7002ADB76 /* CoreVideo.framework */,
@@ -860,6 +874,10 @@
 				COMBINE_HIDPI_IMAGES = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "Clock Signal-Prefix.pch";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					VDSP,
+					"DEBUG=1",
+				);
 				GCC_WARN_ABOUT_MISSING_NEWLINE = YES;
 				GCC_WARN_PEDANTIC = YES;
 				GCC_WARN_SHADOW = YES;
@@ -877,12 +895,14 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_USE_OPTIMIZATION_PROFILE = YES;
 				CLANG_WARN_IMPLICIT_SIGN_CONVERSION = YES;
 				CLANG_WARN_SUSPICIOUS_IMPLICIT_CONVERSION = YES;
 				COMBINE_HIDPI_IMAGES = YES;
 				GCC_OPTIMIZATION_LEVEL = fast;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "Clock Signal-Prefix.pch";
+				GCC_PREPROCESSOR_DEFINITIONS = VDSP;
 				GCC_WARN_ABOUT_MISSING_NEWLINE = YES;
 				GCC_WARN_PEDANTIC = YES;
 				GCC_WARN_SHADOW = YES;
