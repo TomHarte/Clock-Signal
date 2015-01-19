@@ -529,7 +529,8 @@ static void ZX80DocumentCRTBreakIn(
 	NSDictionary *infoDictionary =
 		@{@"widthOfBuffer": @(widthOfBuffer),
 			@"heightOfBuffer": @(heightOfBuffer),
-			@"buffer": [NSData dataWithBytes:buffer length:widthOfBuffer*heightOfBuffer]};
+			@"buffer": [NSData dataWithBytes:buffer length:widthOfBuffer*heightOfBuffer],
+			@"isOdd" : @(isOddField)};
 
 	dispatch_async(dispatch_get_main_queue(),
 	^{
