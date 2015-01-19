@@ -17,8 +17,8 @@ typedef struct
 {
 	CSReferenceCountedObject referenceCountedObject;
 
-	// the clock generator, CRT and tape player
-	void *clockGenerator;
+	// the bus, CRT and tape player
+	void *bus;
 	void *CRT;
 	void *tapePlayer;
 	void *ROM;

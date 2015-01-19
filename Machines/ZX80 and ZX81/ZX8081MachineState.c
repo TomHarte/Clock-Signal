@@ -9,7 +9,7 @@
 #include "ZX8081MachineState.h"
 #include "CRT.h"
 #include "TapePlayer.h"
-#include "ClockGenerator.h"
+#include "FlatBus.h"
 #include "BusState.h"
 #include "Z80.h"
 #include "BusNode.h"
@@ -33,7 +33,7 @@ static void inline llzx80ula_considerSync(LLZX8081MachineState *const restrict m
 	machineState->lastHSyncLevel = machineState->hsyncIsActive;
 
 	// set the current output level on the CRT
-	unsigned int currentTime = csClockGenerator_getHalfCyclesToDate(machineState->clockGenerator);
+	unsigned int currentTime = csFlatBus_getHalfCyclesToDate(machineState->bus);
 	if(newSyncLevel)
 		llcrt_setSyncLevel(machineState->CRT, currentTime);
 	else
@@ -88,7 +88,7 @@ csComponent_observer(llzx80ula_observeRefresh)
 			// and push it out to the CRT
 			llcrt_output1BitLuminanceByte(
 				machineState->CRT,
-				csClockGenerator_getHalfCyclesToDate(machineState->clockGenerator),
+				csFlatBus_getHalfCyclesToDate(machineState->bus),
 				videoByte);
 		}
 	}
@@ -130,7 +130,7 @@ csComponent_observer(llzx80ula_observeIORead)
 				void *tape = cstapePlayer_getTape(machineState->tapePlayer);
 				if(tape)
 				{
-					unsigned int currentTime = csClockGenerator_getHalfCyclesToDate(machineState->clockGenerator);
+					unsigned int currentTime = csFlatBus_getHalfCyclesToDate(machineState->bus);
 					uint64_t tapeTime = cstapePlayer_getTapeTime(machineState->tapePlayer, currentTime);
 
 					if(cstape_getLevelAtTime(tape, tapeTime) == CSTapeLevelLow)

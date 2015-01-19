@@ -44,7 +44,7 @@ typedef struct LLZX80ULAState
 
 static int16_t llzx80ula_lookAheadForTapeByte(LLZX8081MachineState *machineState)
 {
-	unsigned int currentTime = csClockGenerator_getHalfCyclesToDate(machineState->clockGenerator);
+	unsigned int currentTime = csFlatBus_getHalfCyclesToDate(machineState->bus);
 	uint64_t tapeTime = cstapePlayer_getTapeTime(machineState->tapePlayer, currentTime);
 
 	void *tape = cstapePlayer_getTape(machineState->tapePlayer);
@@ -166,7 +166,7 @@ static void llzx8081_destroy(void *opaqueULA)
 	LLZX80ULAState *ula = (LLZX80ULAState *)opaqueULA;
 
 	csObject_release(ula->CPU);
-	csObject_release(ula->machineState->clockGenerator);
+	csObject_release(ula->machineState->bus);
 	csObject_release(ula->machineState);
 	csObject_release(ula->CRT);
 	csObject_release(ula->tapePlayer);
@@ -203,8 +203,8 @@ static void llzx80801_createMachine(LLZX80ULAState *ula)
 	}*/
 
 	// get a tree from that
-	ula->machineState->clockGenerator = csClockGenerator_createWithBus(bus, 3250000);
-	csObject_release(bus);
+	csFlatBus_setTicksPerSecond(bus, 3250000);
+	ula->machineState->bus = bus;
 
 	// install the current ROM
 	csStaticMemory_setContents(ula->machineState->ROM, 0, ula->ROM, ula->ROMSize);
@@ -306,9 +306,9 @@ void llzx8081_runForHalfCycles(void *opaqueULA, unsigned int numberOfHalfCycles)
 	// (we'll respond to events as they arise through the
 	// observer), then ensure the CRT is up-to-date on
 	// the current output time
-	csClockGenerator_runForHalfCycles(ula->machineState->clockGenerator, numberOfHalfCycles);
+	csFlatBus_runForHalfCycles(ula->machineState->bus, numberOfHalfCycles);
 
-	unsigned int timeNow = csClockGenerator_getHalfCyclesToDate(ula->machineState->clockGenerator);
+	unsigned int timeNow = csFlatBus_getHalfCyclesToDate(ula->machineState->bus);
 	llcrt_runToTime(ula->CRT, timeNow);
 	cstapePlayer_runToTime(ula->tapePlayer, timeNow);
 }
@@ -360,5 +360,5 @@ void *llzx8081_getTapePlayer(void *ula)
 unsigned int llzx8081_getTimeStamp(void *opaqueULA)
 {
 	LLZX80ULAState *ula = (LLZX80ULAState *)opaqueULA;
-	return ula->machineState ? csClockGenerator_getHalfCyclesToDate(ula->machineState->clockGenerator) : 0;
+	return ula->machineState ? csFlatBus_getHalfCyclesToDate(ula->machineState->bus) : 0;
 }

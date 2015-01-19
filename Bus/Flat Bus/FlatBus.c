@@ -32,6 +32,15 @@ typedef struct
 		uint64_t allObservedSetLines, allObservedResetLines, allObservedChangeLines;
 	} clockedComponents, trueFalseComponents, trueComponents;
 
+	CSBusState currentBusState;
+	struct CSFlatBusTimeRecord
+	{
+		unsigned int halfCyclesToDate;
+
+		CSComponentNanoseconds timeToNow, wholeStep;
+		int64_t accumulatedError, adjustmentUp, adjustmentDown;
+	} time;
+
 } CSFlatBus;
 
 static void csFlatBus_addComponentToSet(struct CSFlatBusComponentSet *set, void *newComponent)
@@ -163,151 +172,162 @@ static void csFlatBus_addComponent(void *node, void *opaqueComponent)
 	}
 }*/
 
-csComponent_observer(csFlatBus_message)
+//csComponent_observer(csFlatBus_message)
+
+unsigned int csFlatBus_getHalfCyclesToDate(void *opaqueBus)
+{
+	return ((CSFlatBus *)opaqueBus)->time.halfCyclesToDate;
+}
+
+void csFlatBus_runForHalfCycles(void *context, unsigned int halfCycles)
 {
 	CSFlatBus *const restrict flatBus = (CSFlatBus *)context;
 	CSBusState totalState;
 	uint64_t changedLines, setLines, resetLines;
+	struct CSFlatBusTimeRecord time = flatBus->time;
 
-	// get total state as viewed from the true and true/false components
-	totalState.lineValues = externalState.lineValues & flatBus->trueComponents.state.lineValues & flatBus->trueFalseComponents.state.lineValues & flatBus->clockedComponents.state.lineValues;
+	unsigned int numberOfClockedComponents;
+	void **clockedComponents = csArray_getCArray(flatBus->clockedComponents.components, &numberOfClockedComponents);
+	
+	unsigned int numberOfTrueFalseComponents;
+	void **trueFalseComponents = csArray_getCArray(flatBus->trueFalseComponents.components, &numberOfTrueFalseComponents);
 
-	// hence get the changed, set and reset lines
-	changedLines = flatBus->trueComponents.lastExternalState.lineValues ^ totalState.lineValues;
-	flatBus->trueComponents.lastExternalState = totalState;
+	unsigned int numberOfTrueComponents;
+	void **trueComponents = csArray_getCArray(flatBus->trueComponents.components, &numberOfTrueComponents);
 
-	setLines = totalState.lineValues & changedLines;
-	resetLines = ~totalState.lineValues & changedLines;
+	unsigned int numberOfComponents;
 
-	// is it possible some are now true that weren't a moment ago from the true set?
-	if(flatBus->trueComponents.allObservedSetLines&setLines || flatBus->trueComponents.allObservedResetLines&resetLines)
+	while(halfCycles--)
 	{
-		flatBus->trueComponents.state.lineValues = ~0llu;
+		flatBus->currentBusState.lineValues ^= CSBusStandardClockLine;
 
-		unsigned int numberOfComponents;
-		void **components = csArray_getCArray(flatBus->trueComponents.components, &numberOfComponents);
-		while(numberOfComponents--)
+		// get total state as viewed from the true and true/false components
+		totalState.lineValues = flatBus->currentBusState.lineValues & flatBus->trueComponents.state.lineValues & flatBus->trueFalseComponents.state.lineValues & flatBus->clockedComponents.state.lineValues;
+
+		// hence get the changed, set and reset lines
+		changedLines = flatBus->trueComponents.lastExternalState.lineValues ^ totalState.lineValues;
+		flatBus->trueComponents.lastExternalState = totalState;
+
+		setLines = totalState.lineValues & changedLines;
+		resetLines = ~totalState.lineValues & changedLines;
+
+		// is it possible some are now true that weren't a moment ago from the true set?
+		if(flatBus->trueComponents.allObservedSetLines&setLines || flatBus->trueComponents.allObservedResetLines&resetLines)
 		{
-			CSBusComponent *component = (CSBusComponent *)components[numberOfComponents];
+			flatBus->trueComponents.state.lineValues = ~0llu;
 
-			// if one of the monitored lines just changed and the condition is now true,
-			// it can't have been before so this is a time to message
-			if(
-				(component->condition.lineMask&changedLines) &&
-				(component->condition.lineValues == (component->condition.lineMask&totalState.lineValues)))
+			numberOfComponents = numberOfTrueComponents;
+			while(numberOfComponents--)
 			{
-				component->handlerFunction(
-					component->context,
-					&component->currentInternalState,
-					totalState,
-					true,
-					timeSinceLaunch);
+				CSBusComponent *component = (CSBusComponent *)trueComponents[numberOfComponents];
+
+				// if one of the monitored lines just changed and the condition is now true,
+				// it can't have been before so this is a time to message
+				if(
+					(component->condition.lineMask&changedLines) &&
+					(component->condition.lineValues == (component->condition.lineMask&totalState.lineValues)))
+				{
+					component->handlerFunction(
+						component->context,
+						&component->currentInternalState,
+						totalState,
+						true,
+						time.timeToNow);
+				}
+
+				flatBus->trueComponents.state.lineValues &= component->currentInternalState.lineValues;
 			}
-
-			flatBus->trueComponents.state.lineValues &= component->currentInternalState.lineValues;
 		}
-	}
 
-	// get total state as viewed from the true and true/false components
-	totalState.lineValues = externalState.lineValues & flatBus->trueComponents.state.lineValues & flatBus->trueFalseComponents.state.lineValues & flatBus->clockedComponents.state.lineValues;
+		// get total state as viewed from the true and true/false components
+		totalState.lineValues = flatBus->currentBusState.lineValues & flatBus->trueComponents.state.lineValues & flatBus->trueFalseComponents.state.lineValues & flatBus->clockedComponents.state.lineValues;
 
-	// hence get the changed, set and reset lines
-	changedLines = flatBus->trueFalseComponents.lastExternalState.lineValues ^ totalState.lineValues;
-	flatBus->trueFalseComponents.lastExternalState = totalState;
+		// hence get the changed, set and reset lines
+		changedLines = flatBus->trueFalseComponents.lastExternalState.lineValues ^ totalState.lineValues;
+		flatBus->trueFalseComponents.lastExternalState = totalState;
 
-	setLines = totalState.lineValues & changedLines;
-	resetLines = ~totalState.lineValues & changedLines;
+		setLines = totalState.lineValues & changedLines;
+		resetLines = ~totalState.lineValues & changedLines;
 
-	// maybe some have gone true or mutated while true from the true/false set?
-	if(
-		(flatBus->trueFalseComponents.allObservedSetLines&setLines) || 
-		(flatBus->trueFalseComponents.allObservedResetLines&resetLines) ||
-		(flatBus->trueFalseComponents.allObservedChangeLines&changedLines))
-	{
-		flatBus->trueFalseComponents.state.lineValues = ~0llu;
-
-		unsigned int numberOfComponents;
-		void **components = csArray_getCArray(flatBus->trueFalseComponents.components, &numberOfComponents);
-		
-		while(numberOfComponents--)
-		{
-			CSBusComponent *component = (CSBusComponent *)components[numberOfComponents];
-
-			// so, logic is:
-			//
-			//	if
-			//			mask condition has changed, or
-			//			mask condition is true and one of the other monitored lines has changed
-			bool newEvaluation = component->condition.lineValues == (component->condition.lineMask&totalState.lineValues);
-
-			if(
-				(newEvaluation != component->lastResult) || (newEvaluation && component->condition.changedLines&changedLines))
-			{
-				component->handlerFunction(
-					component->context,
-					&component->currentInternalState,
-					totalState,
-					newEvaluation,
-					timeSinceLaunch);
-				component->lastResult = newEvaluation;
-			}
-
-			flatBus->trueFalseComponents.state.lineValues &= component->currentInternalState.lineValues;
-		}
-	}
-	else
-	{
-		// nobody has become true or mutated, so check everyone that's currently true to see if they've become false
-		if( (flatBus->trueFalseComponents.allObservedSetLines | flatBus->trueFalseComponents.allObservedResetLines)&changedLines)
+		// maybe some have gone true or mutated while true from the true/false set?
+		if(
+			(flatBus->trueFalseComponents.allObservedSetLines&setLines) || 
+			(flatBus->trueFalseComponents.allObservedResetLines&resetLines) ||
+			(flatBus->trueFalseComponents.allObservedChangeLines&changedLines))
 		{
 			flatBus->trueFalseComponents.state.lineValues = ~0llu;
 
-			unsigned int numberOfComponents;
-			void **components = csArray_getCArray(flatBus->trueFalseComponents.components, &numberOfComponents);
+			numberOfComponents = numberOfTrueFalseComponents;
 			while(numberOfComponents--)
 			{
-				CSBusComponent *component = (CSBusComponent *)components[numberOfComponents];
-				if(component->lastResult)
+				CSBusComponent *component = (CSBusComponent *)trueFalseComponents[numberOfComponents];
+
+				// so, logic is:
+				//
+				//	if
+				//			mask condition has changed, or
+				//			mask condition is true and one of the other monitored lines has changed
+				bool newEvaluation = component->condition.lineValues == (component->condition.lineMask&totalState.lineValues);
+
+				if(
+					(newEvaluation != component->lastResult) || (newEvaluation && component->condition.changedLines&changedLines))
 				{
-					bool newEvaluation = 
-							component->condition.lineValues == (component->condition.lineMask&totalState.lineValues);
+					component->handlerFunction(
+						component->context,
+						&component->currentInternalState,
+						totalState,
+						newEvaluation,
+						time.timeToNow);
+					component->lastResult = newEvaluation;
+				}
 
-					if(!newEvaluation)
+				flatBus->trueFalseComponents.state.lineValues &= component->currentInternalState.lineValues;
+			}
+		}
+		else
+		{
+			// nobody has become true or mutated, so check everyone that's currently true to see if they've become false
+			if( (flatBus->trueFalseComponents.allObservedSetLines | flatBus->trueFalseComponents.allObservedResetLines)&changedLines)
+			{
+				flatBus->trueFalseComponents.state.lineValues = ~0llu;
+
+				numberOfComponents = numberOfTrueFalseComponents;
+				while(numberOfComponents--)
+				{
+					CSBusComponent *component = (CSBusComponent *)trueFalseComponents[numberOfComponents];
+					if(component->lastResult)
 					{
-						component->handlerFunction(
-							component->context,
-							&component->currentInternalState,
-							totalState,
-							newEvaluation,
-							timeSinceLaunch);
-						component->lastResult = newEvaluation;
-					}
+						bool newEvaluation = 
+								component->condition.lineValues == (component->condition.lineMask&totalState.lineValues);
 
-					flatBus->trueFalseComponents.state.lineValues &= component->currentInternalState.lineValues;
+						if(!newEvaluation)
+						{
+							component->handlerFunction(
+								component->context,
+								&component->currentInternalState,
+								totalState,
+								newEvaluation,
+								time.timeToNow);
+							component->lastResult = newEvaluation;
+						}
+
+						flatBus->trueFalseComponents.state.lineValues &= component->currentInternalState.lineValues;
+					}
 				}
 			}
 		}
-	}
 
-	// get total state as viewed from the true and true/false components
-	totalState.lineValues = externalState.lineValues & flatBus->trueComponents.state.lineValues & flatBus->trueFalseComponents.state.lineValues & flatBus->clockedComponents.state.lineValues;
+		// get total state as viewed from the true and true/false components
+		totalState.lineValues = flatBus->currentBusState.lineValues & flatBus->trueComponents.state.lineValues & flatBus->trueFalseComponents.state.lineValues & flatBus->clockedComponents.state.lineValues;
 
-	// hence get the changed, set and reset lines
-	changedLines = flatBus->clockedComponents.lastExternalState.lineValues ^ totalState.lineValues;
-	
-	if(changedLines&CSBusStandardClockLine)
-	{
+		// hence get the changed, set and reset lines
 		flatBus->clockedComponents.lastExternalState = totalState;
 		flatBus->clockedComponents.state.lineValues = ~0llu;
 
-		// figure out the total internal state again
-		internalState->lineValues = flatBus->clockedComponents.state.lineValues & flatBus->trueComponents.state.lineValues & flatBus->trueFalseComponents.state.lineValues;
-
-		unsigned int numberOfComponents;
-		void **components = csArray_getCArray(flatBus->clockedComponents.components, &numberOfComponents);
+		numberOfComponents = numberOfClockedComponents;
 		while(numberOfComponents--)
 		{
-			CSBusComponent *component = (CSBusComponent *)components[numberOfComponents];
+			CSBusComponent *component = (CSBusComponent *)clockedComponents[numberOfComponents];
 			bool newResult = component->condition.lineValues == (component->condition.lineMask&totalState.lineValues);
 			if(!component->condition.signalOnTrueOnly || newResult)
 				component->handlerFunction(
@@ -315,11 +335,28 @@ csComponent_observer(csFlatBus_message)
 					&component->currentInternalState,
 					totalState,
 					newResult,
-					timeSinceLaunch);
+					time.timeToNow);
 
 			flatBus->clockedComponents.state.lineValues &= component->currentInternalState.lineValues;
 		}
+
+		time.halfCyclesToDate++;
+		flatBus->time.halfCyclesToDate = time.halfCyclesToDate;
+
+		// this is standard Bresenham run-slice stuff; add the
+		// whole step, which is floor(y/x), then see whether
+		// doing so has accumulated enough error to push us
+		// up an extra spot
+		time.timeToNow += time.wholeStep;
+		time.accumulatedError += time.adjustmentUp;
+		if(time.accumulatedError > 0)
+		{
+			time.timeToNow++;
+			time.accumulatedError -= time.adjustmentDown;
+		}
 	}
+
+	flatBus->time = time;
 }
 
 static void csFlatBus_addChangeFlagsFromSet(struct CSFlatBusComponentSet *set, uint64_t *outputLines, uint64_t *observedLines)
@@ -335,20 +372,21 @@ static void csFlatBus_addChangeFlagsFromSet(struct CSFlatBusComponentSet *set, u
 
 static void *csFlatBus_createComponent(void *node)
 {
-	CSFlatBus *flatBus = (CSFlatBus *)node;
-
-	uint64_t outputLines = 0;
-	uint64_t observedLines = 0;
-
-	csFlatBus_addChangeFlagsFromSet(&flatBus->clockedComponents, &outputLines, &observedLines);
-	csFlatBus_addChangeFlagsFromSet(&flatBus->trueFalseComponents, &outputLines, &observedLines);
-	csFlatBus_addChangeFlagsFromSet(&flatBus->trueComponents, &outputLines, &observedLines);
-
-	return csComponent_create(
-		csFlatBus_message,
-		csBus_changeCondition(observedLines),
-		outputLines,
-		node);
+//	CSFlatBus *flatBus = (CSFlatBus *)node;
+//
+//	uint64_t outputLines = 0;
+//	uint64_t observedLines = 0;
+//
+//	csFlatBus_addChangeFlagsFromSet(&flatBus->clockedComponents, &outputLines, &observedLines);
+//	csFlatBus_addChangeFlagsFromSet(&flatBus->trueFalseComponents, &outputLines, &observedLines);
+//	csFlatBus_addChangeFlagsFromSet(&flatBus->trueComponents, &outputLines, &observedLines);
+//
+//	return csComponent_create(
+//		csFlatBus_message,
+//		csBus_changeCondition(observedLines),
+//		outputLines,
+//		node);
+	return NULL;
 }
 
 static int csFlatBus_getNumberOfChildren(void *node)
@@ -390,7 +428,19 @@ void *csFlatBus_create(void)
 		flatBus->busNode.addComponent = csFlatBus_addComponent;
 		flatBus->busNode.createComponent = csFlatBus_createComponent;
 		flatBus->busNode.getNumberOfChildren = csFlatBus_getNumberOfChildren;
+
+		// for the purposes of clock signal generation...
+		flatBus->currentBusState = csBus_defaultState();
 	}
 
 	return flatBus;
+}
+
+void csFlatBus_setTicksPerSecond(void *bus, uint32_t ticksPerSecond)
+{
+	CSFlatBus *flatBus = (CSFlatBus *)calloc(1, sizeof(CSFlatBus));
+	flatBus->time.wholeStep = 1000000000 / ticksPerSecond;
+	flatBus->time.adjustmentUp = (1000000000 % ticksPerSecond) << 1;
+	flatBus->time.adjustmentDown = ticksPerSecond << 1;
+	flatBus->time.accumulatedError = flatBus->time.adjustmentUp - flatBus->time.adjustmentDown;
 }

@@ -11,4 +11,9 @@
 
 void *csFlatBus_create(void);
 
+void csFlatBus_setTicksPerSecond(void *, uint32_t ticksPerSecond);
+
+void csFlatBus_runForHalfCycles(void *, unsigned int halfCycles);
+unsigned int csFlatBus_getHalfCyclesToDate(void *);
+
 #endif
