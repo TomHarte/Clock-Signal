@@ -104,17 +104,16 @@ void cstapePlayer_runToTime(void *opaquePlayer, unsigned int timeStamp)
 		uint64_t tapeLength = cstape_getLength(player->tape);
 		if(player->tapeTime < tapeLength)
 		{
+			uint64_t timeToSample = player->tapeTime;
 			while(timeToRunFor)
 			{
 				unsigned int samplesToWrite = timeToRunFor;
 				unsigned int samplesLeftToFill = player->minimumAudioSamplesToProcess - player->audioBufferWritePointer;
 				if(samplesToWrite > samplesLeftToFill) samplesToWrite = samplesLeftToFill;
 				timeToRunFor -= samplesToWrite;
-			
+
 				if(player->tapeIsRunning)
 				{
-					uint64_t timeToSample = player->tapeTime;
-
 					// add tape waveform to buffer
 					while(samplesToWrite)
 					{
@@ -137,7 +136,7 @@ void cstapePlayer_runToTime(void *opaquePlayer, unsigned int timeStamp)
 								level = 32767;
 							break;
 							case CSTapeLevelLow:
-								level = 32769;	// which is -32767 if the low 16bits are cut off
+								level = (-32767)&0xffff;
 							break;
 						}
 						level |= level << 16;
@@ -145,7 +144,7 @@ void cstapePlayer_runToTime(void *opaquePlayer, unsigned int timeStamp)
 						unsigned int count = (unsigned int)(endTime - timeToSample);
 						if(count > samplesToWrite) count = samplesToWrite;
 
-						memset_pattern4(&player->audioBuffer[player->audioBufferWritePointer], &level, count << 1);
+						memset_pattern4(&player->audioBuffer[player->audioBufferWritePointer], &level, count * sizeof(short));
 
 						player->audioBufferWritePointer += count;
 						timeToSample += count;
@@ -178,6 +177,7 @@ void cstapePlayer_runToTime(void *opaquePlayer, unsigned int timeStamp)
 					player->audioBufferWritePointer = residue;
 
 					player->audioDelegate(player, player->audioBufferOutputSize, outputBuffer, player->audioDelegateContext);
+					free(outputBuffer);
 				}			
 			}
 		}
