@@ -432,7 +432,7 @@ void *csFlatBus_create(void)
 
 void csFlatBus_setTicksPerSecond(void *bus, uint32_t ticksPerSecond)
 {
-	CSFlatBus *flatBus = (CSFlatBus *)calloc(1, sizeof(CSFlatBus));
+	CSFlatBus *flatBus = (CSFlatBus *)bus;
 	flatBus->time.wholeStep = 1000000000 / ticksPerSecond;
 	flatBus->time.adjustmentUp = (1000000000 % ticksPerSecond) << 1;
 	flatBus->time.adjustmentDown = ticksPerSecond << 1;
