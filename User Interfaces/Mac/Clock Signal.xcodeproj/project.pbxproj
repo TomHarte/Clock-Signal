@@ -11,7 +11,6 @@
 		4B0A5231146575840058F817 /* FlatBus.c in Sources */ = {isa = PBXBuildFile; fileRef = 4B0A5230146575840058F817 /* FlatBus.c */; };
 		4B11846A146DD4C700CDBD1A /* Z80Disassembler.c in Sources */ = {isa = PBXBuildFile; fileRef = 4B118469146DD4C700CDBD1A /* Z80Disassembler.c */; };
 		4B1A4A59145C49B700340AD2 /* BusNode.c in Sources */ = {isa = PBXBuildFile; fileRef = 4B1A4A58145C49B700340AD2 /* BusNode.c */; };
-		4B1A4A5D145C90FA00340AD2 /* ClockGenerator.c in Sources */ = {isa = PBXBuildFile; fileRef = 4B1A4A5C145C90FA00340AD2 /* ClockGenerator.c */; };
 		4B78985A141C6C3D006B4E39 /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4B789859141C6C3D006B4E39 /* OpenGL.framework */; };
 		4BA04D7A1451E63B00DA159C /* Z80CBPageDecode.c in Sources */ = {isa = PBXBuildFile; fileRef = 4BA04D541451E63B00DA159C /* Z80CBPageDecode.c */; };
 		4BA04D7B1451E63B00DA159C /* Z80EDPageDecode.c in Sources */ = {isa = PBXBuildFile; fileRef = 4BA04D561451E63B00DA159C /* Z80EDPageDecode.c */; };
@@ -67,8 +66,6 @@
 		4B1A4A54145C466E00340AD2 /* BusNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BusNode.h; sourceTree = "<group>"; };
 		4B1A4A57145C480F00340AD2 /* BusNodeInternals.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BusNodeInternals.h; path = "Bus Node/BusNodeInternals.h"; sourceTree = "<group>"; };
 		4B1A4A58145C49B700340AD2 /* BusNode.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = BusNode.c; path = "Bus Node/BusNode.c"; sourceTree = "<group>"; };
-		4B1A4A5C145C90FA00340AD2 /* ClockGenerator.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = ClockGenerator.c; path = "Clock Generator/ClockGenerator.c"; sourceTree = "<group>"; };
-		4B1A4A5E145C910D00340AD2 /* ClockGenerator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ClockGenerator.h; path = "Clock Generator/ClockGenerator.h"; sourceTree = "<group>"; };
 		4B789859141C6C3D006B4E39 /* OpenGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGL.framework; path = System/Library/Frameworks/OpenGL.framework; sourceTree = SDKROOT; };
 		4BA04D541451E63B00DA159C /* Z80CBPageDecode.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = Z80CBPageDecode.c; sourceTree = "<group>"; };
 		4BA04D551451E63B00DA159C /* Z80CBPageDecode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Z80CBPageDecode.h; sourceTree = "<group>"; };
@@ -196,15 +193,6 @@
 				4B1A4A58145C49B700340AD2 /* BusNode.c */,
 			);
 			name = "Bus Node";
-			sourceTree = "<group>";
-		};
-		4B1A4A5F145C911200340AD2 /* Clock Generator */ = {
-			isa = PBXGroup;
-			children = (
-				4B1A4A5C145C90FA00340AD2 /* ClockGenerator.c */,
-				4B1A4A5E145C910D00340AD2 /* ClockGenerator.h */,
-			);
-			name = "Clock Generator";
 			sourceTree = "<group>";
 		};
 		4BA04D501451E63B00DA159C /* Components */ = {
@@ -413,7 +401,6 @@
 				4B1A4A54145C466E00340AD2 /* BusNode.h */,
 				4BB84DC814532C770088DC19 /* BusState.c */,
 				4B1A4A56145C47F400340AD2 /* Bus Node */,
-				4B1A4A5F145C911200340AD2 /* Clock Generator */,
 				4BEA0182145DBE6E00B3E6E1 /* Passthrough Node */,
 				4BFE159E146097CC0096FA78 /* Component */,
 				4B0A52371465774D0058F817 /* Flat Bus */,
@@ -707,7 +694,6 @@
 				4BBC16491452E01B00B12D3E /* ReferenceCountedObject.c in Sources */,
 				4BB84DC914532C770088DC19 /* BusState.c in Sources */,
 				4B1A4A59145C49B700340AD2 /* BusNode.c in Sources */,
-				4B1A4A5D145C90FA00340AD2 /* ClockGenerator.c in Sources */,
 				4BEA017F145D982E00B3E6E1 /* ZX8081MachineState.c in Sources */,
 				4BEA0181145DBE5100B3E6E1 /* PassthroughBusNode.c in Sources */,
 				4BEA0194145DFF5600B3E6E1 /* Array.c in Sources */,
