@@ -127,7 +127,7 @@ LLZ80iop_restrict(llz80_iop_setupForInterruptMode2)
 	llz80_scheduleRead(z80, &z80->pcRegister.bytes.high, &z80->temporaryAddress.fullValue);
 }
 
-const LLZ80InternalInstructionFunction llz80_iop_advanceHalfCycleCounter = llz80_iop_advanceHalfCycleCounter_imp;
+const LLZ80InternalInstructionFunction llz80_iop_advanceHalfCycleCounter = NULL;
 static LLZ80InternalInstruction waitCycles[2];
 
 csComponent_observer(llz80_observeClock)
@@ -162,8 +162,13 @@ csComponent_observer(llz80_observeClock)
 				LLZ80InternalInstructionFunction function = z80->scheduledInstructions[z80->instructionReadPointer].function;
 				z80->instructionReadPointer = (z80->instructionReadPointer+1)%kLLZ80HalfCycleQueueLength;
 
-				function(z80, instruction);
-				if(function == llz80_iop_advanceHalfCycleCounter_imp) goto doubleBreak;
+				if(function)
+					function(z80, instruction);
+				else
+				{
+					llz80_iop_advanceHalfCycleCounter_imp(z80, instruction);
+					goto doubleBreak;
+				}
 			}
 
 			if(	(z80->proposedInterruptState == LLZ80InterruptStateIRQ) ||
