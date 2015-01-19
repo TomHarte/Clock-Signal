@@ -50,6 +50,7 @@ struct LLZ80InternalInstruction;
 typedef void (* LLZ80InternalInstructionFunction)(struct LLZ80ProcessorState *const z80, const struct LLZ80InternalInstruction *const metadata);
 extern const LLZ80InternalInstructionFunction llz80_iop_advanceHalfCycleCounter;
 #define LLZ80iop(x) static void x(LLZ80ProcessorState *const z80, const LLZ80InternalInstruction *const instruction)
+#define LLZ80iop_restrict(x) static void x(LLZ80ProcessorState *const restrict z80, const LLZ80InternalInstruction *const restrict instruction)
 
 typedef struct LLZ80InternalInstruction
 {
@@ -189,8 +190,8 @@ typedef struct LLZ80ProcessorState
 static inline LLZ80InternalInstruction *llz80_scheduleFunction(LLZ80ProcessorState *const z80, LLZ80InternalInstructionFunction function)
 {
 	LLZ80InternalInstruction *const instruction = &z80->scheduledInstructions[z80->instructionWritePointer];
+	z80->scheduledInstructions[z80->instructionWritePointer].function = function;
 	z80->instructionWritePointer = (z80->instructionWritePointer + 1)%kLLZ80HalfCycleQueueLength;
-	instruction->function = function;
 
 	return instruction;
 }
