@@ -66,6 +66,7 @@
 		4B1A4A54145C466E00340AD2 /* BusNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BusNode.h; sourceTree = "<group>"; };
 		4B1A4A57145C480F00340AD2 /* BusNodeInternals.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BusNodeInternals.h; path = "Bus Node/BusNodeInternals.h"; sourceTree = "<group>"; };
 		4B1A4A58145C49B700340AD2 /* BusNode.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = BusNode.c; path = "Bus Node/BusNode.c"; sourceTree = "<group>"; };
+		4B49FE581A6D7B6400F615F2 /* RateConverter.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = RateConverter.h; path = "Rate Converter/RateConverter.h"; sourceTree = "<group>"; };
 		4B789859141C6C3D006B4E39 /* OpenGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGL.framework; path = System/Library/Frameworks/OpenGL.framework; sourceTree = SDKROOT; };
 		4BA04D541451E63B00DA159C /* Z80CBPageDecode.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = Z80CBPageDecode.c; sourceTree = "<group>"; };
 		4BA04D551451E63B00DA159C /* Z80CBPageDecode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Z80CBPageDecode.h; sourceTree = "<group>"; };
@@ -193,6 +194,14 @@
 				4B1A4A58145C49B700340AD2 /* BusNode.c */,
 			);
 			name = "Bus Node";
+			sourceTree = "<group>";
+		};
+		4B49FE591A6D7CDD00F615F2 /* Rate Converter */ = {
+			isa = PBXGroup;
+			children = (
+				4B49FE581A6D7B6400F615F2 /* RateConverter.h */,
+			);
+			name = "Rate Converter";
 			sourceTree = "<group>";
 		};
 		4BA04D501451E63B00DA159C /* Components */ = {
@@ -537,6 +546,7 @@
 				4BBCCFA714411B0D001EC07C /* Parallel Dispatch */,
 				4BE3E1E614389F30004FC04F /* Linear Filter */,
 				4B11846B146DD4CA00CDBD1A /* Z80 Disassembler */,
+				4B49FE591A6D7CDD00F615F2 /* Rate Converter */,
 			);
 			name = Utilities;
 			path = ../../Utilities;

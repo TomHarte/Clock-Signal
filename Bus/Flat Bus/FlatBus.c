@@ -15,6 +15,7 @@
 #include "Array.h"
 #include "BusState.h"
 #include "StandardBusLines.h"
+#include "RateConverter.h"
 
 #ifdef __BLOCKS__
 #include <dispatch/dispatch.h>
@@ -33,13 +34,8 @@ typedef struct
 	} clockedComponents, trueFalseComponents, trueComponents;
 
 	CSBusState currentBusState;
-	struct CSFlatBusTimeRecord
-	{
-		unsigned int halfCyclesToDate;
-
-		CSComponentNanoseconds timeToNow, wholeStep;
-		int64_t accumulatedError, adjustmentUp, adjustmentDown;
-	} time;
+	unsigned int halfCyclesToDate;
+	CSRateConverterState time;
 
 } CSFlatBus;
 
@@ -176,7 +172,7 @@ static void csFlatBus_addComponent(void *node, void *opaqueComponent)
 
 unsigned int csFlatBus_getHalfCyclesToDate(void *opaqueBus)
 {
-	return ((CSFlatBus *)opaqueBus)->time.halfCyclesToDate;
+	return ((CSFlatBus *)opaqueBus)->halfCyclesToDate;
 }
 
 void csFlatBus_runForHalfCycles(void *context, unsigned int halfCycles)
@@ -184,7 +180,8 @@ void csFlatBus_runForHalfCycles(void *context, unsigned int halfCycles)
 	CSFlatBus *const restrict flatBus = (CSFlatBus *)context;
 	CSBusState totalState;
 	uint64_t changedLines, setLines, resetLines;
-	struct CSFlatBusTimeRecord time = flatBus->time;
+	CSRateConverterState time = flatBus->time;
+	unsigned int halfCyclesToDate = flatBus->halfCyclesToDate;
 
 	unsigned int numberOfClockedComponents;
 	CSBusComponent **const restrict clockedComponents = (CSBusComponent **)csArray_getCArray(flatBus->clockedComponents.components, &numberOfClockedComponents);
@@ -230,7 +227,7 @@ void csFlatBus_runForHalfCycles(void *context, unsigned int halfCycles)
 						&trueComponents[componentIndex]->currentInternalState,
 						totalState,
 						true,
-						time.timeToNow);
+						csRateConverter_getLocation(time));
 				}
 
 				flatBus->trueComponents.state.lineValues &= trueComponents[componentIndex]->currentInternalState.lineValues;
@@ -273,7 +270,7 @@ void csFlatBus_runForHalfCycles(void *context, unsigned int halfCycles)
 						&trueFalseComponents[componentIndex]->currentInternalState,
 						totalState,
 						newEvaluation,
-						time.timeToNow);
+						csRateConverter_getLocation(time));
 					trueFalseComponents[componentIndex]->lastResult = newEvaluation;
 				}
 
@@ -302,7 +299,7 @@ void csFlatBus_runForHalfCycles(void *context, unsigned int halfCycles)
 								&trueFalseComponents[componentIndex]->currentInternalState,
 								totalState,
 								newEvaluation,
-								time.timeToNow);
+								csRateConverter_getLocation(time));
 							trueFalseComponents[componentIndex]->lastResult = newEvaluation;
 						}
 					}
@@ -329,31 +326,21 @@ void csFlatBus_runForHalfCycles(void *context, unsigned int halfCycles)
 					&clockedComponents[componentIndex]->currentInternalState,
 					totalState,
 					newClockLine,
-					time.timeToNow);
+					csRateConverter_getLocation(time));
 
 			flatBus->clockedComponents.state.lineValues &= clockedComponents[componentIndex]->currentInternalState.lineValues;
 		}
 
-		time.halfCyclesToDate++;
-		flatBus->time.halfCyclesToDate = time.halfCyclesToDate;
+		halfCyclesToDate++;
+		flatBus->halfCyclesToDate = halfCyclesToDate;
 
-		// this is standard Bresenham run-slice stuff; add the
-		// whole step, which is floor(y/x), then see whether
-		// doing so has accumulated enough error to push us
-		// up an extra spot
-		time.timeToNow += time.wholeStep;
-		time.accumulatedError += time.adjustmentUp;
-		if(time.accumulatedError > 0)
-		{
-			time.timeToNow++;
-			time.accumulatedError -= time.adjustmentDown;
-		}
+		csRateConverter_advance(time)
 	}
 
 	flatBus->time = time;
 }
 
-static void csFlatBus_addChangeFlagsFromSet(struct CSFlatBusComponentSet *set, uint64_t *outputLines, uint64_t *observedLines)
+/*static void csFlatBus_addChangeFlagsFromSet(struct CSFlatBusComponentSet *set, uint64_t *outputLines, uint64_t *observedLines)
 {
 	unsigned int numberOfComponents;
 	void **components = csArray_getCArray(set->components, &numberOfComponents);
@@ -362,7 +349,7 @@ static void csFlatBus_addChangeFlagsFromSet(struct CSFlatBusComponentSet *set, u
 		*outputLines |= ((CSBusComponent *)components[c])->outputLines;
 		*observedLines |= csBusCondition_observedLines(((CSBusComponent *)components[c])->condition);
 	}
-}
+}*/
 
 static void *csFlatBus_createComponent(void *node)
 {
@@ -433,8 +420,5 @@ void *csFlatBus_create(void)
 void csFlatBus_setTicksPerSecond(void *bus, uint32_t ticksPerSecond)
 {
 	CSFlatBus *flatBus = (CSFlatBus *)bus;
-	flatBus->time.wholeStep = 1000000000 / ticksPerSecond;
-	flatBus->time.adjustmentUp = (1000000000 % ticksPerSecond) << 1;
-	flatBus->time.adjustmentDown = ticksPerSecond << 1;
-	flatBus->time.accumulatedError = flatBus->time.adjustmentUp - flatBus->time.adjustmentDown;
+	csRateConverter_setup(flatBus->time, 1000000000, ticksPerSecond)
 }
