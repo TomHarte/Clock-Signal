@@ -36,6 +36,7 @@ typedef struct
 	short *audioBuffer;
 
 	void *audioFilter;
+	short *outputBuffer;
 
 } CSTapePlayer;
 
@@ -49,6 +50,7 @@ static void cstapePlayer_destroy(void *opaquePlayer)
 	if(player->tape)			cstape_release(player->tape);
 	if(player->audioCopyOfTape)	cstape_release(player->audioCopyOfTape);
 	if(player->audioFilter)		csfilter_release(player->audioFilter);
+	if(player->outputBuffer)	free(player->outputBuffer);
 }
 
 void *cstapePlayer_create(unsigned int sampleRate)
@@ -163,12 +165,10 @@ void cstapePlayer_runToTime(void *opaquePlayer, unsigned int timeStamp)
 				// pass a segment on to the delegate
 				if(player->audioBufferWritePointer == player->minimumAudioSamplesToProcess)
 				{
-					short *outputBuffer = (short *)malloc(sizeof(short)*player->audioBufferOutputSize);
-
 					unsigned int samplesTaken =
 						csfilter_applyToBuffer(
 							player->audioFilter,
-							outputBuffer,
+							player->outputBuffer,
 							player->audioBuffer,
 							player->audioBufferOutputSize);
 
@@ -176,9 +176,8 @@ void cstapePlayer_runToTime(void *opaquePlayer, unsigned int timeStamp)
 					memcpy(player->audioBuffer, &player->audioBuffer[samplesTaken], residue * sizeof(short));
 					player->audioBufferWritePointer = residue;
 
-					player->audioDelegate(player, player->audioBufferOutputSize, outputBuffer, player->audioDelegateContext);
-					free(outputBuffer);
-				}			
+					player->audioDelegate(player, player->audioBufferOutputSize, player->outputBuffer, player->audioDelegateContext);
+				}
 			}
 		}
 	}
@@ -260,6 +259,7 @@ void cstapePlayer_setAudioDelegate(
 		{
 			player->audioBuffer = (short *)malloc(sizeof(short) * player->minimumAudioSamplesToProcess);
 			player->audioFilter = csfilter_createBandPass(kCSTapeNumTaps, player->tapeSampleRate, player->audioSampleRate, 0, outputSampleRate >> 1, kCSFilterDefaultAttenuation);
+			player->outputBuffer = (short *)malloc(sizeof(short)*player->audioBufferOutputSize);
 		}
 	}
 	else
@@ -271,6 +271,9 @@ void cstapePlayer_setAudioDelegate(
 
 			csfilter_release(player->audioFilter);
 			player->audioFilter = NULL;
+
+			free(player->outputBuffer);
+			player->outputBuffer = NULL;
 		}
 	}
 }

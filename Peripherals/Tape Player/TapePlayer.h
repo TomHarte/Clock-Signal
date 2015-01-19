@@ -67,7 +67,7 @@ void cstapePlayer_runToTime(void *player, unsigned int timeStamp);
 typedef void (* cstapePlayer_audioDelegate)(
 	void *tapePlayer,
 	unsigned int numberOfSamples,
-	short *sampleBuffer,
+	const short *sampleBuffer,
 	void *context);
 
 void cstapePlayer_setAudioDelegate(

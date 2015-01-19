@@ -664,7 +664,7 @@ static void audioOutputCallback(
 #pragma mark -
 #pragma mark ULA audio callbacks; for receiving audio in
 
-- (void)enqueueAudioBuffer:(short *)buffer numberOfSamples:(unsigned int)lengthInSamples
+- (void)enqueueAudioBuffer:(const short *)buffer numberOfSamples:(unsigned int)lengthInSamples
 {
 	@synchronized(self)
 	{
@@ -685,7 +685,7 @@ static void audioOutputCallback(
 static void	ZX80DocumentAudioCallout(
 	void *tapePlayer,
 	unsigned int numberOfSamples,
-	short *sampleBuffer,
+	const short *sampleBuffer,
 	void *context)
 {
 	[(__bridge ZX80Document *)context enqueueAudioBuffer:sampleBuffer numberOfSamples:numberOfSamples];
