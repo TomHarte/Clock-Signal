@@ -187,15 +187,15 @@ void csFlatBus_runForHalfCycles(void *context, unsigned int halfCycles)
 	struct CSFlatBusTimeRecord time = flatBus->time;
 
 	unsigned int numberOfClockedComponents;
-	void **clockedComponents = csArray_getCArray(flatBus->clockedComponents.components, &numberOfClockedComponents);
+	CSBusComponent **const restrict clockedComponents = (CSBusComponent **)csArray_getCArray(flatBus->clockedComponents.components, &numberOfClockedComponents);
 	
 	unsigned int numberOfTrueFalseComponents;
-	void **trueFalseComponents = csArray_getCArray(flatBus->trueFalseComponents.components, &numberOfTrueFalseComponents);
+	CSBusComponent **const restrict trueFalseComponents = (CSBusComponent **)csArray_getCArray(flatBus->trueFalseComponents.components, &numberOfTrueFalseComponents);
 
 	unsigned int numberOfTrueComponents;
-	void **trueComponents = csArray_getCArray(flatBus->trueComponents.components, &numberOfTrueComponents);
+	CSBusComponent **const restrict trueComponents = (CSBusComponent **)csArray_getCArray(flatBus->trueComponents.components, &numberOfTrueComponents);
 
-	unsigned int numberOfComponents;
+	unsigned int componentIndex;
 
 	while(halfCycles--)
 	{
@@ -216,26 +216,24 @@ void csFlatBus_runForHalfCycles(void *context, unsigned int halfCycles)
 		{
 			flatBus->trueComponents.state.lineValues = ~0llu;
 
-			numberOfComponents = numberOfTrueComponents;
-			while(numberOfComponents--)
+			componentIndex = numberOfTrueComponents;
+			while(componentIndex--)
 			{
-				CSBusComponent *component = (CSBusComponent *)trueComponents[numberOfComponents];
-
 				// if one of the monitored lines just changed and the condition is now true,
 				// it can't have been before so this is a time to message
 				if(
-					(component->condition.lineMask&changedLines) &&
-					(component->condition.lineValues == (component->condition.lineMask&totalState.lineValues)))
+					(trueComponents[componentIndex]->condition.lineMask&changedLines) &&
+					(trueComponents[componentIndex]->condition.lineValues == (trueComponents[componentIndex]->condition.lineMask&totalState.lineValues)))
 				{
-					component->handlerFunction(
-						component->context,
-						&component->currentInternalState,
+					trueComponents[componentIndex]->handlerFunction(
+						trueComponents[componentIndex]->context,
+						&trueComponents[componentIndex]->currentInternalState,
 						totalState,
 						true,
 						time.timeToNow);
 				}
 
-				flatBus->trueComponents.state.lineValues &= component->currentInternalState.lineValues;
+				flatBus->trueComponents.state.lineValues &= trueComponents[componentIndex]->currentInternalState.lineValues;
 			}
 		}
 
@@ -257,31 +255,29 @@ void csFlatBus_runForHalfCycles(void *context, unsigned int halfCycles)
 		{
 			flatBus->trueFalseComponents.state.lineValues = ~0llu;
 
-			numberOfComponents = numberOfTrueFalseComponents;
-			while(numberOfComponents--)
+			componentIndex = numberOfTrueFalseComponents;
+			while(componentIndex--)
 			{
-				CSBusComponent *component = (CSBusComponent *)trueFalseComponents[numberOfComponents];
-
 				// so, logic is:
 				//
 				//	if
 				//			mask condition has changed, or
 				//			mask condition is true and one of the other monitored lines has changed
-				bool newEvaluation = component->condition.lineValues == (component->condition.lineMask&totalState.lineValues);
+				bool newEvaluation = trueFalseComponents[componentIndex]->condition.lineValues == (trueFalseComponents[componentIndex]->condition.lineMask&totalState.lineValues);
 
 				if(
-					(newEvaluation != component->lastResult) || (newEvaluation && component->condition.changedLines&changedLines))
+					(newEvaluation != trueFalseComponents[componentIndex]->lastResult) || (newEvaluation && trueFalseComponents[componentIndex]->condition.changedLines&changedLines))
 				{
-					component->handlerFunction(
-						component->context,
-						&component->currentInternalState,
+					trueFalseComponents[componentIndex]->handlerFunction(
+						trueFalseComponents[componentIndex]->context,
+						&trueFalseComponents[componentIndex]->currentInternalState,
 						totalState,
 						newEvaluation,
 						time.timeToNow);
-					component->lastResult = newEvaluation;
+					trueFalseComponents[componentIndex]->lastResult = newEvaluation;
 				}
 
-				flatBus->trueFalseComponents.state.lineValues &= component->currentInternalState.lineValues;
+				flatBus->trueFalseComponents.state.lineValues &= trueFalseComponents[componentIndex]->currentInternalState.lineValues;
 			}
 		}
 		else
@@ -291,27 +287,26 @@ void csFlatBus_runForHalfCycles(void *context, unsigned int halfCycles)
 			{
 				flatBus->trueFalseComponents.state.lineValues = ~0llu;
 
-				numberOfComponents = numberOfTrueFalseComponents;
-				while(numberOfComponents--)
+				componentIndex = numberOfTrueFalseComponents;
+				while(componentIndex--)
 				{
-					CSBusComponent *component = (CSBusComponent *)trueFalseComponents[numberOfComponents];
-					if(component->lastResult)
+					if(trueFalseComponents[componentIndex]->lastResult)
 					{
 						bool newEvaluation = 
-								component->condition.lineValues == (component->condition.lineMask&totalState.lineValues);
+								trueFalseComponents[componentIndex]->condition.lineValues == (trueFalseComponents[componentIndex]->condition.lineMask&totalState.lineValues);
 
 						if(!newEvaluation)
 						{
-							component->handlerFunction(
-								component->context,
-								&component->currentInternalState,
+							trueFalseComponents[componentIndex]->handlerFunction(
+								trueFalseComponents[componentIndex]->context,
+								&trueFalseComponents[componentIndex]->currentInternalState,
 								totalState,
 								newEvaluation,
 								time.timeToNow);
-							component->lastResult = newEvaluation;
+							trueFalseComponents[componentIndex]->lastResult = newEvaluation;
 						}
 
-						flatBus->trueFalseComponents.state.lineValues &= component->currentInternalState.lineValues;
+						flatBus->trueFalseComponents.state.lineValues &= trueFalseComponents[componentIndex]->currentInternalState.lineValues;
 					}
 				}
 			}
@@ -324,20 +319,19 @@ void csFlatBus_runForHalfCycles(void *context, unsigned int halfCycles)
 		flatBus->clockedComponents.lastExternalState = totalState;
 		flatBus->clockedComponents.state.lineValues = ~0llu;
 
-		numberOfComponents = numberOfClockedComponents;
-		while(numberOfComponents--)
+		componentIndex = numberOfClockedComponents;
+		while(componentIndex--)
 		{
-			CSBusComponent *component = (CSBusComponent *)clockedComponents[numberOfComponents];
-			bool newResult = component->condition.lineValues == (component->condition.lineMask&totalState.lineValues);
-			if(!component->condition.signalOnTrueOnly || newResult)
-				component->handlerFunction(
-					component->context,
-					&component->currentInternalState,
+			bool newResult = clockedComponents[componentIndex]->condition.lineValues == (clockedComponents[componentIndex]->condition.lineMask&totalState.lineValues);
+			if(!clockedComponents[componentIndex]->condition.signalOnTrueOnly || newResult)
+				clockedComponents[componentIndex]->handlerFunction(
+					clockedComponents[componentIndex]->context,
+					&clockedComponents[componentIndex]->currentInternalState,
 					totalState,
 					newResult,
 					time.timeToNow);
 
-			flatBus->clockedComponents.state.lineValues &= component->currentInternalState.lineValues;
+			flatBus->clockedComponents.state.lineValues &= clockedComponents[componentIndex]->currentInternalState.lineValues;
 		}
 
 		time.halfCyclesToDate++;
