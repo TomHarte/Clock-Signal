@@ -22,22 +22,25 @@
 
 static void inline llzx80ula_considerSync(LLZX8081MachineState *const restrict machineState)
 {
-	// decide the new output sync level
-	bool newSyncLevel = (machineState->vsyncIsActive || machineState->hsyncIsActive);
-
-	// if this is a leading edge of hsync then increment
-	// the line counter
-	if(machineState->hsyncIsActive && !machineState->lastHSyncLevel)
-		machineState->lineCounter++;
-
-	machineState->lastHSyncLevel = machineState->hsyncIsActive;
-
 	// set the current output level on the CRT
 	unsigned int currentTime = csFlatBus_getHalfCyclesToDate(machineState->bus);
-	if(newSyncLevel)
+	if(machineState->vsyncIsActive || machineState->hsyncIsActive)
 		llcrt_setSyncLevel(machineState->CRT, currentTime);
 	else
 		llcrt_setLuminanceLevel(machineState->CRT, currentTime, 0xff);
+}
+
+static void inline llz80ula_setHsyncActive(LLZX8081MachineState *const restrict machineState)
+{
+	machineState->hsyncIsActive = true;
+	if(!machineState->lastHSyncLevel)
+		machineState->lineCounter++;
+	machineState->lastHSyncLevel = true;
+}
+
+static void inline llz80ula_resetHsyncActive(LLZX8081MachineState *const restrict machineState)
+{
+	machineState->hsyncIsActive = machineState->lastHSyncLevel = false;
 }
 
 /*
@@ -204,13 +207,13 @@ csComponent_observer(llzx80ula_observeMachineCycleOne)
 	{
 		if(machineState->hsyncCounter == 1)
 		{
-			machineState->hsyncIsActive = true;
+			llz80ula_setHsyncActive(machineState);
 			llzx80ula_considerSync(machineState);
 		}
 
 		if(machineState->hsyncCounter == 3)
 		{
-			machineState->hsyncIsActive = false;
+			llz80ula_resetHsyncActive(machineState);
 			llzx80ula_considerSync(machineState);
 		}
 
@@ -228,7 +231,10 @@ csComponent_observer(llzx80ula_observeClock)
 	machineState->hsyncCounter++;
 	if(machineState->hsyncCounter == 207) machineState->hsyncCounter = 0;
 
-	machineState->hsyncIsActive = (machineState->hsyncCounter >= 16) && (machineState->hsyncCounter < 32);
+	if( (machineState->hsyncCounter >= 16) && (machineState->hsyncCounter < 32) )
+		llz80ula_setHsyncActive(machineState);
+	else
+		llz80ula_resetHsyncActive(machineState);
 
 	if(machineState->nmiIsEnabled && machineState->hsyncIsActive)
 	{
@@ -289,7 +295,7 @@ static void llzx80ula_romAddressShuffle(void *const opaquePassthroughNode, CSBus
 	}
 
 	CSBusComponent *childComponent = node->childComponent;
-	childComponent->handlerFunction(childComponent->context, internalState, startToPassOn, conditionIsTrue, timeSinceLaunch);
+	childComponent->handlerFunction(childComponent->context, internalState, startToPassOn, conditionIsTrue);
 }
 
 static void llzx8081_destroyMachineState(void *opaqueMachineState)
