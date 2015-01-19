@@ -185,6 +185,16 @@ csComponent_observer(llzx80ula_observeIOWrite)
 			llzx80ula_considerSync(machineState);
 		}
 	}
+
+//	if(!(address&0x80))
+//	{
+//		printf("AY index? %02x", address);
+//	}
+//	
+//	if(!(address&0x80))
+//	{
+//		printf("AY data? %02x", address);
+//	}
 }
 
 csComponent_observer(llzx80ula_observeIntAck)
@@ -456,4 +466,3 @@ LLZX8081MachineState *llzx8081_createMachineStateOnBus(void *bus, LLZX8081Machin
 
 	return machineState;
 }
-
