@@ -20,7 +20,7 @@
 #include "StaticMemory.h"
 #include "StandardBusLines.h"
 
-static void llzx80ula_considerSync(LLZX8081MachineState *machineState)
+static void inline llzx80ula_considerSync(LLZX8081MachineState *const restrict machineState)
 {
 	// decide the new output sync level
 	bool newSyncLevel = (machineState->vsyncIsActive || machineState->hsyncIsActive);
@@ -221,7 +221,7 @@ csComponent_observer(llzx80ula_observeMachineCycleOne)
 // This one is hooked up for the ZX81 only
 csComponent_observer(llzx80ula_observeClock)
 {
-	LLZX8081MachineState *const machineState = (LLZX8081MachineState *const)context;
+	LLZX8081MachineState *const restrict machineState = (LLZX8081MachineState *const)context;
 
 	// increment the hsync counter, check whether sync output is
 	// currently active as a result
