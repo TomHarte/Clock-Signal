@@ -11,6 +11,7 @@
 		4B0A5231146575840058F817 /* FlatBus.c in Sources */ = {isa = PBXBuildFile; fileRef = 4B0A5230146575840058F817 /* FlatBus.c */; };
 		4B11846A146DD4C700CDBD1A /* Z80Disassembler.c in Sources */ = {isa = PBXBuildFile; fileRef = 4B118469146DD4C700CDBD1A /* Z80Disassembler.c */; };
 		4B1A4A59145C49B700340AD2 /* BusNode.c in Sources */ = {isa = PBXBuildFile; fileRef = 4B1A4A58145C49B700340AD2 /* BusNode.c */; };
+		4B49FE5A1A6D8F4F00F615F2 /* CoreVideo.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4BBD8E0214198AC7002ADB76 /* CoreVideo.framework */; };
 		4B78985A141C6C3D006B4E39 /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4B789859141C6C3D006B4E39 /* OpenGL.framework */; };
 		4BA04D7A1451E63B00DA159C /* Z80CBPageDecode.c in Sources */ = {isa = PBXBuildFile; fileRef = 4BA04D541451E63B00DA159C /* Z80CBPageDecode.c */; };
 		4BA04D7B1451E63B00DA159C /* Z80EDPageDecode.c in Sources */ = {isa = PBXBuildFile; fileRef = 4BA04D561451E63B00DA159C /* Z80EDPageDecode.c */; };
@@ -160,6 +161,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4B49FE5A1A6D8F4F00F615F2 /* CoreVideo.framework in Frameworks */,
 				4BE26CAE1437D3AD0047B4F3 /* AudioToolbox.framework in Frameworks */,
 				4B78985A141C6C3D006B4E39 /* OpenGL.framework in Frameworks */,
 				4BE229FE141986CE00F3A516 /* Cocoa.framework in Frameworks */,

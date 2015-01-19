@@ -66,6 +66,9 @@ typedef enum
 
 	NSConditionLock *_runningLock;
 	BOOL _isRunning;
+
+	CVDisplayLinkRef _displayLink;
+	NSTimeInterval _lastRunTimeInterval;
 }
 
 #pragma mark -
@@ -88,6 +91,11 @@ typedef enum
 
 		// build a locking mechanism for cross-queue communications
 		_runningLock = [[NSConditionLock alloc] initWithCondition:ZX80DocumentRunningStatePaused];
+
+		// start a display link, for timing
+		CVDisplayLinkCreateWithActiveCGDisplays(&_displayLink);
+
+		CVDisplayLinkSetOutputCallback(_displayLink, displayLinkCalback, (__bridge void *)self);
     }
 
     return self;
@@ -101,6 +109,8 @@ typedef enum
 		dispatch_release(_serialDispatchQueue);
 		_serialDispatchQueue = NULL;
 	}
+	CVDisplayLinkRelease(_displayLink);
+	_displayLink = NULL;
 	[super close];
 }
 
@@ -237,7 +247,47 @@ typedef enum
 }
 
 #pragma mark -
-#pragma mark 'Timer' logic
+#pragma mark Timing logic; CVDisplayLink based
+
+static CVReturn displayLinkCalback(
+								CVDisplayLinkRef displayLink,
+								const CVTimeStamp *inNow,
+								const CVTimeStamp *inOutputTime,
+								CVOptionFlags flagsIn,
+								CVOptionFlags *flagsOut,
+								void *displayLinkContext)
+{
+	return [(__bridge ZX80Document *)displayLinkContext displayLinkCallbackTimeNow:inNow];
+}
+
+- (CVReturn)displayLinkCallbackTimeNow:(const CVTimeStamp *)timeNow
+{
+	NSTimeInterval timeIntervalNow = (double)timeNow->hostTime / CVGetHostClockFrequency();
+	if(_lastRunTimeInterval < DBL_EPSILON)
+	{
+		_lastRunTimeInterval = timeIntervalNow;
+	}
+	else
+	{
+		NSTimeInterval timeToRunFor = timeIntervalNow - _lastRunTimeInterval;
+		_lastRunTimeInterval = timeIntervalNow;
+		// because multiplier is a percentage there's a hidden multiply by 100 here
+		unsigned int cyclesToRunFor = (unsigned int)(_speedMultiplier * 65000 * timeToRunFor);
+
+		__typeof(self) __weak weakSelf = self;
+		dispatch_async(_serialDispatchQueue,
+		^{
+			__typeof(self) strongSelf = weakSelf;
+			if(!strongSelf) return;
+			if([strongSelf->_runningLock tryLockWhenCondition:ZX80DocumentRunningStateRunning])
+			{
+				llzx8081_runForHalfCycles(strongSelf->_ULA, cyclesToRunFor);
+				[strongSelf->_runningLock unlockWithCondition:ZX80DocumentRunningStateRunning];
+			}
+		});
+	}
+	return kCVReturnSuccess;
+}
 
 - (void)startRunning
 {
@@ -246,7 +296,7 @@ typedef enum
 
 	[_runningLock lockWhenCondition:ZX80DocumentRunningStatePaused];
 	_isRunning = YES;
-	[self scheduleNextRunForHalfField];
+	CVDisplayLinkStart(_displayLink);
 	[_runningLock unlockWithCondition:ZX80DocumentRunningStateRunning];
 }
 
@@ -257,36 +307,9 @@ typedef enum
 
 	[_runningLock lockWhenCondition:ZX80DocumentRunningStateRunning];
 	_isRunning = NO;
+	CVDisplayLinkStop(_displayLink);
+	_lastRunTimeInterval = 0.0;
 	[_runningLock unlockWithCondition:ZX80DocumentRunningStatePaused];
-}
-
-- (void)scheduleNextRunForHalfField
-{
-	// the point here is: each dispatch is 0.01 seconds apart; i.e. there are 100 in a second;
-	// i.e. given that each one runs for half a field, there are 50 fields in a second
-	dispatch_after(
-		dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.01 * NSEC_PER_SEC)),
-		_serialDispatchQueue,
-		^{
-			[self runForHalfField];
-		});
-}
-
-- (void)runForHalfField
-{
-	if([_runningLock tryLockWhenCondition:ZX80DocumentRunningStateRunning])
-	{
-		[self scheduleNextRunForHalfField];
-
-		unsigned int cyclesToRunFor = (unsigned int)(_speedMultiplier * 325);
-																	// because multiplier is
-																	// a percentage there's a
-																	// hidden multiply by 100 here
-
-		llzx8081_runForHalfCycles(_ULA, cyclesToRunFor << 1);
-
-		[_runningLock unlockWithCondition:ZX80DocumentRunningStateRunning];
-	}
 }
 
 #pragma mark -
@@ -566,7 +589,7 @@ static void ZX80DocumentCRTBreakIn(
 {
 	@synchronized(self)
 	{
-		if(_queuedAudioStreamSegments > 2) _isOutputtingAudio = YES;
+		if(_queuedAudioStreamSegments > kZX80DocumentNumAudioBuffers-1) _isOutputtingAudio = YES;
 
 		if(_isOutputtingAudio && _queuedAudioStreamSegments)
 		{
