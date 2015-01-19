@@ -174,8 +174,6 @@ typedef struct LLZ80ProcessorState
 
 	struct LLZ80InstructionObserverRecord *instructionObservers;
 
-	int halfCyclesToRunFor;
-
 	unsigned int internalTime;
 	bool isWaiting;
 	

@@ -74,10 +74,8 @@ static void llz80_destroy(void *const opaqueZ80)
 
 LLZ80iop(llz80_iop_advanceHalfCycleCounter_imp)
 {
-	// set flag changed mask back to 0, ready for the next
-	// half cycle, and decrement the relevant counter
+	// increment the internal time counter
 	z80->internalTime++;
-	z80->halfCyclesToRunFor=0;
 
 	// if this is a leading edge, check for interrupts and
 	// work out what we'd do if this does turn out to be
@@ -136,7 +134,6 @@ csComponent_observer(llz80_observeClock)
 {
 	LLZ80ProcessorState *const z80 = (LLZ80ProcessorState *const)context;
 
-	z80->halfCyclesToRunFor = 1;
 	z80->externalBusState = externalState;
 
 	// NMI is edge sampled, continuously
@@ -166,7 +163,7 @@ csComponent_observer(llz80_observeClock)
 				z80->instructionReadPointer = (z80->instructionReadPointer+1)%kLLZ80HalfCycleQueueLength;
 
 				instruction->function(z80, instruction);
-				if(!z80->halfCyclesToRunFor) goto doubleBreak;
+				if(instruction->function == llz80_iop_advanceHalfCycleCounter_imp) goto doubleBreak;
 			}
 
 			if(	(z80->proposedInterruptState == LLZ80InterruptStateIRQ) ||
