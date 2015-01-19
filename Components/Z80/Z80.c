@@ -154,13 +154,15 @@ csComponent_observer(llz80_observeClock)
 	}
 	else
 	{
+		unsigned int instructionReadPointer = z80->instructionReadPointer;
+
 		while(1)
 		{
-			while(z80->instructionReadPointer != z80->instructionWritePointer)
+			while(instructionReadPointer != z80->instructionWritePointer)
 			{
-				const LLZ80InternalInstruction *const instruction = &z80->scheduledInstructions[z80->instructionReadPointer];
-				LLZ80InternalInstructionFunction function = z80->scheduledInstructions[z80->instructionReadPointer].function;
-				z80->instructionReadPointer = (z80->instructionReadPointer+1)%kLLZ80HalfCycleQueueLength;
+				const LLZ80InternalInstruction *const instruction = &z80->scheduledInstructions[instructionReadPointer];
+				LLZ80InternalInstructionFunction function = z80->scheduledInstructions[instructionReadPointer].function;
+				instructionReadPointer = (instructionReadPointer+1)%kLLZ80HalfCycleQueueLength;
 
 				if(function)
 					function(z80, instruction);
@@ -275,9 +277,11 @@ csComponent_observer(llz80_observeClock)
 				break;
 			}
 		}
+
+		doubleBreak:
+		z80->instructionReadPointer = instructionReadPointer;
 	}
 
-	doubleBreak:
 	*internalState = z80->internalBusState;
 }
 
