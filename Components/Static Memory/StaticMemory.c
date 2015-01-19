@@ -21,7 +21,7 @@ typedef struct
 	CSReferenceCountedObject referenceCountedObject;
 
 	uint8_t *contents;
-	unsigned int size;
+	unsigned int sizeMinusOne;
 
 } CSStaticMemory;
 
@@ -38,7 +38,7 @@ csComponent_observer(csStaticMemory_observeMemoryRead)
 
 		// reduce that down to an address in our range
 		const CSStaticMemory *const memory = (CSStaticMemory *const)context;
-		address &= (memory->size - 1);
+		address &= memory->sizeMinusOne;
 
 //		if(externalState.lineValues&0x200000000000)
 //			printf("r %04x\n", address);
@@ -67,7 +67,7 @@ csComponent_observer(csStaticMemory_observeMemoryWrite)
 
 		// reduce that down to an address in our range
 		const CSStaticMemory *const memory = (CSStaticMemory *const)context;
-		address &= (memory->size - 1);
+		address &= memory->sizeMinusOne;
 
 		// and load the data lines
 		memory->contents[address] = (uint8_t)(externalState.lineValues >> CSBusStandardDataShift);
@@ -86,8 +86,8 @@ void csStaticMemory_setContents(void *opaqueMemory, unsigned int dest, const uin
 	CSStaticMemory *memory = (CSStaticMemory *)opaqueMemory;
 
 	// do some trivial bounds checking and adjustment
-	if(dest > memory->size) return;
-	if(dest + length > memory->size) length = memory->size - dest;
+	if(dest > memory->sizeMinusOne + 1) return;
+	if(dest + length > memory->sizeMinusOne + 1) length = memory->sizeMinusOne + 1 - dest;
 
 	// copy
 	memcpy(&memory->contents[dest], source, length);
@@ -98,8 +98,8 @@ void csStaticMemory_getContents(void *opaqueMemory, uint8_t *dest, unsigned int 
 	CSStaticMemory *memory = (CSStaticMemory *)opaqueMemory;
 
 	// do some trivial bounds checking and adjustment
-	if(source > memory->size) return;
-	if(source + length > memory->size) length = memory->size - source;
+	if(source > memory->sizeMinusOne + 1) return;
+	if(source + length > memory->sizeMinusOne + 1) length = memory->sizeMinusOne + 1 - source;
 
 	// copy
 	memcpy(dest, &memory->contents[source], length);
@@ -118,8 +118,8 @@ void *csStaticMemory_createOnBus(void *bus, unsigned int size, CSBusCondition re
 
 		// allocate space and store the length
 		memory->contents = (uint8_t *)malloc(size);
-		memory->size = size;
-		
+		memory->sizeMinusOne = size-1;
+
 		// if this is readonly, add just the read component;
 		// otherwise create a read/write node
 		void *readComponent = csComponent_create(
