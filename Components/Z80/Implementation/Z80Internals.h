@@ -209,6 +209,13 @@ static inline LLZ80InternalInstruction *llz80_scheduleHalfCycleForFunction(LLZ80
 	return llz80_scheduleFunction(z80, function);
 }
 
+#define llz80m_beginScheduling()					unsigned int writePointer = z80->instructionWritePointer
+#define llz80m_advanceWritePointer()				writePointer = (writePointer + 1) % kLLZ80HalfCycleQueueLength
+#define llz80m_scheduleFunction(func)				z80->scheduledInstructions[writePointer].function = func; llz80m_advanceWritePointer()
+#define llz80m_beginNewHalfCycle(isWait)			z80->scheduledInstructions[writePointer].function = llz80_iop_advanceHalfCycleCounter; z80->scheduledInstructions[writePointer].extraData.advance.isWaitCycle = isWait; llz80m_advanceWritePointer()
+#define llz80m_scheduleHalfCycleForFunction(func)	llz80m_beginNewHalfCycle(false); llz80m_scheduleFunction(func)
+#define llz80m_endScheduling()						z80->instructionWritePointer = writePointer
+
 extern bool llz80_conditionIsTrue(const LLZ80ProcessorState *const z80, LLZ80Condition condition);
 extern uint8_t llz80_getF(const LLZ80ProcessorState *const z80);
 extern void llz80_setF(LLZ80ProcessorState *const z80, uint8_t value);

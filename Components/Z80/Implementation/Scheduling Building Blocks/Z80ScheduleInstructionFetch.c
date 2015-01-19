@@ -66,22 +66,27 @@ void llz80_scheduleInstructionFetchForFunction(
 	LLZ80RegisterPair *const indexRegister,
 	bool addOffset)
 {
-	llz80_scheduleHalfCycleForFunction(z80, llz80_iop_instructionfetchHalfCycle1);
-	llz80_scheduleHalfCycleForFunction(z80, llz80_iop_setReadAndMemoryRequest);
-	
-	llz80_beginNewHalfCycle(z80);
-	llz80_beginNewHalfCycle(z80)->extraData.advance.isWaitCycle = true;
+	llz80m_beginScheduling();
 
-	llz80_scheduleHalfCycleForFunction(z80, llz80_iop_instructionfetchHalfCycle5);
-	llz80_scheduleHalfCycleForFunction(z80, llz80_iop_setMemoryRequest);
+	llz80m_scheduleHalfCycleForFunction(llz80_iop_instructionfetchHalfCycle1);
+	llz80m_scheduleHalfCycleForFunction(llz80_iop_setReadAndMemoryRequest);
 
-	llz80_beginNewHalfCycle(z80);
-	llz80_scheduleHalfCycleForFunction(z80, llz80_iop_instructionfetchHalfCycle8);
+	llz80m_beginNewHalfCycle(false);
+	llz80m_beginNewHalfCycle(true);
 
-	LLZ80InternalInstruction *instruction = llz80_scheduleFunction(z80, function);
-	instruction->extraData.opcodeDecode.indexRegister = indexRegister;
-	instruction->extraData.opcodeDecode.addOffset = addOffset;
-	
+	llz80m_scheduleHalfCycleForFunction(llz80_iop_instructionfetchHalfCycle5);
+	llz80m_scheduleHalfCycleForFunction(llz80_iop_setMemoryRequest);
+
+	llz80m_beginNewHalfCycle(false);
+	llz80m_scheduleHalfCycleForFunction(llz80_iop_instructionfetchHalfCycle8);
+
+	z80->scheduledInstructions[writePointer].function = function;
+	z80->scheduledInstructions[writePointer].extraData.opcodeDecode.indexRegister = indexRegister;
+	z80->scheduledInstructions[writePointer].extraData.opcodeDecode.addOffset = addOffset;
+	llz80m_advanceWritePointer();
+
+	llz80m_endScheduling();
+
 	// TODO: refresh should actually last a half cycle longer
 }
 
