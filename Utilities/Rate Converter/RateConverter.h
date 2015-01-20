@@ -22,9 +22,9 @@ typedef struct
 
 #define csRateConverter_setup(state, inputRate, outputRate)	\
 	{\
-		state.wholeStep = inputRate / outputRate; \
-		state.adjustmentUp = (inputRate % outputRate) << 1; \
-		state.adjustmentDown = outputRate << 1; \
+		state.wholeStep = (uint64_t)outputRate / (uint64_t)inputRate; \
+		state.adjustmentUp = (int64_t)((uint64_t)outputRate % (uint64_t)inputRate) << 1; \
+		state.adjustmentDown = (int64_t)inputRate << 1; \
 		state.accumulatedError = state.adjustmentUp - state.adjustmentDown; \
 	}
 #define csRateConverter_advance(state) \

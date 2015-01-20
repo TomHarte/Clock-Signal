@@ -143,7 +143,10 @@ void *csfilter_createBandPass(unsigned int numberOfTaps, unsigned int inputSampl
 		filter->filterCoefficients = (short *)malloc(sizeof(short)*numberOfTaps);
 		filter->valueQueue = (short *)malloc(sizeof(short)*numberOfTaps);
 		filter->retainCount = 1;
-		csRateConverter_setup(filter->rateConverter, inputSampleRate, outputSampleRate);
+
+		// we'll be stepping through the output when we filter so the output
+		// sample rate will be the input to the rate converter
+		csRateConverter_setup(filter->rateConverter, outputSampleRate, inputSampleRate);
 
 		if(!filter->filterCoefficients || !filter->valueQueue)
 		{

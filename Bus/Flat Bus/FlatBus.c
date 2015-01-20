@@ -420,5 +420,6 @@ void *csFlatBus_create(void)
 void csFlatBus_setTicksPerSecond(void *bus, uint32_t ticksPerSecond)
 {
 	CSFlatBus *flatBus = (CSFlatBus *)bus;
-	csRateConverter_setup(flatBus->time, 1000000000, ticksPerSecond)
+	ticksPerSecond <<= 1;
+	csRateConverter_setup(flatBus->time, ticksPerSecond, 1000000000)
 }
