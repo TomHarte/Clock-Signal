@@ -344,19 +344,25 @@ static NSString *columnFill = @"Hat";
 {
 	void *z80 = [self.delegate z80ForDebugInterface:self];
 	uint16_t programCounter = (uint16_t)llz80_monitor_getInternalValue(z80, LLZ80MonitorValuePCRegister);
-	
-	if(programCounter > 16)
-		programCounter -= 16;
-	else
-		programCounter = 0;
+	uint16_t startAddress;
 
-	NSData *surroundingMemory = [self.delegate debugInterface:self memoryContentsFromStartAddress:programCounter length:1024];
-	void *rawDisassembly = csZ80Disassembler_createDisassembly((uint8_t *)[surroundingMemory bytes], programCounter, 1024);
+	if(programCounter > 16)
+		startAddress = programCounter - 16;
+	else
+		startAddress = 0;
+
+	NSData *surroundingMemory = [self.delegate debugInterface:self memoryContentsFromStartAddress:startAddress length:1024];
+	void *rawDisassembly = csZ80Disassembler_createDisassembly((uint8_t *)[surroundingMemory bytes], startAddress, 1024);
 
 	unsigned int numberOfInstructions;
 	Z80AssemblyLine **instructions = (Z80AssemblyLine **)csArray_getCArray(rawDisassembly, &numberOfInstructions);
 	NSMutableArray *disassembly = [NSMutableArray arrayWithCapacity:numberOfInstructions];
-	for(unsigned int c = 0; c < numberOfInstructions; c++)
+	
+	unsigned int firstInstruction = 0;
+	while(firstInstruction < numberOfInstructions && instructions[firstInstruction]->address <= programCounter) firstInstruction++;
+	firstInstruction--;
+	
+	for(unsigned int c = firstInstruction; c < numberOfInstructions; c++)
 	{
 		NSDictionary *newLine =
 		@{

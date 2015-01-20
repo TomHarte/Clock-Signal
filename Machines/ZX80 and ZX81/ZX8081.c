@@ -371,8 +371,14 @@ bool llzx8081_copyMemory(void *opaqueULA, uint8_t *dest, uint16_t startAddress, 
 	{
 		uint16_t address = startAddress + offset;
 		uint8_t value = 0xff;
-		if(address < 8192)
-			value = ula->ROM[address];
+
+		if(address < 16384)
+			value = ula->ROM[address&8191];
+
+		if(address > 32768)
+		{
+			csStaticMemory_getContents(ula->machineState->RAM, &value, address - 32768, 1);
+		}
 		
 		dest[offset] = value;
 	}
