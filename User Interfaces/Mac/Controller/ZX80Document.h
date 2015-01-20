@@ -9,8 +9,8 @@
 #import <Cocoa/Cocoa.h>
 
 #define kZX80DocumentNumAudioBuffers	3
-#define kZX80DocumentAudioStreamLength	16384
-#define kZX80DocumentAudioBufferLength	2048
+#define kZX80DocumentAudioStreamLength	1024
+#define kZX80DocumentAudioBufferLength	256
 
 @interface ZX80Document : NSDocument 
 

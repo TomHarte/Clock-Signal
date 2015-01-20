@@ -645,28 +645,32 @@ static void audioOutputCallback(
 	outputDescription.mReserved = 0;
 
 	// create an audio output queue along those lines
-	AudioQueueNewOutput(
+	if(!AudioQueueNewOutput(
 		&outputDescription,
 		audioOutputCallback,
 		(__bridge void *)(self),
 		NULL,
 		kCFRunLoopCommonModes,
 		0,
-		&_audioQueue);
-
-	_audioStreamWritePosition = kZX80DocumentAudioBufferLength;
-	UInt32 bufferBytes = kZX80DocumentAudioBufferLength * sizeof(short);
-
-	int c = kZX80DocumentNumAudioBuffers;
-	while(c--)
+		&_audioQueue))
 	{
-		AudioQueueAllocateBuffer(_audioQueue, bufferBytes, &_audioBuffers[c]);
-		memset(_audioBuffers[c]->mAudioData, 0, bufferBytes);
-		_audioBuffers[c]->mAudioDataByteSize = bufferBytes;
-		AudioQueueEnqueueBuffer(_audioQueue, _audioBuffers[c], 0, NULL);
-	}
+		if(_ULA)
+			[self setupAudioInput];
 
-	AudioQueueStart(_audioQueue, NULL);
+		_audioStreamWritePosition = kZX80DocumentAudioBufferLength;
+		UInt32 bufferBytes = kZX80DocumentAudioBufferLength * sizeof(short);
+
+		int c = kZX80DocumentNumAudioBuffers;
+		while(c--)
+		{
+			AudioQueueAllocateBuffer(_audioQueue, bufferBytes, &_audioBuffers[c]);
+			memset(_audioBuffers[c]->mAudioData, 0, bufferBytes);
+			_audioBuffers[c]->mAudioDataByteSize = bufferBytes;
+			AudioQueueEnqueueBuffer(_audioQueue, _audioBuffers[c], 0, NULL);
+		}
+
+		AudioQueueStart(_audioQueue, NULL);
+	}
 }
 
 #pragma mark -
@@ -702,7 +706,7 @@ static void	ZX80DocumentAudioCallout(
 - (void)setupAudioInput
 {
 	void *tapePlayer = llzx8081_getTapePlayer(_ULA);
-	cstapePlayer_setAudioDelegate(tapePlayer, ZX80DocumentAudioCallout, 44100, 2048, (__bridge void *)(self));
+	cstapePlayer_setAudioDelegate(tapePlayer, ZX80DocumentAudioCallout, 44100, kZX80DocumentAudioBufferLength, (__bridge void *)(self));
 }
 
 #pragma mark -
@@ -800,7 +804,8 @@ static void	ZX80DocumentAudioCallout(
 	}
 
 	// set ourself to receive audio
-	[self setupAudioInput];
+	if(_audioQueue)
+		[self setupAudioInput];
 
 	// configure tape button and fast loading state
 	[self.pauseOrPlayButton setTitle:@"Play Tape"];
