@@ -243,6 +243,7 @@ static void cszx80tape_getLevelPeriodAroundTime(void *opaqueTape, uint64_t sampl
 }
 
 static void *cszx80tape_copy(void *tape);
+static void cszx80tape_destroy(void *tape);
 
 static void *cszx80tape_abstractInterfaceForTape(void *tape)
 {
@@ -257,6 +258,7 @@ static void *cszx80tape_abstractInterfaceForTape(void *tape)
 		abstractTape->waveType = CSTapeWaveTypeSquare;
 		abstractTape->minimumAccurateSampleRate = kCSZ80TapeInternalSampleRate;
 		abstractTape->copy = cszx80tape_copy;
+		abstractTape->destroy = cszx80tape_destroy;
 	}
 
 	return abstractTape;
@@ -344,5 +346,11 @@ static void *cszx80tape_copy(void *opaqueOldTape)
 	else return NULL;
 
 	return cszx80tape_abstractInterfaceForTape(tape);
+}
+
+static void cszx80tape_destroy(void *opaqueTape)
+{
+	CSZX80Tape *tape = (CSZX80Tape *)opaqueTape;
+	if(tape->data) free(tape->data);
 }
 

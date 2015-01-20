@@ -313,6 +313,8 @@ static void llzx8081_destroyMachineState(void *opaqueMachineState)
 	LLZX8081MachineState *const machineState = (LLZX8081MachineState *const )opaqueMachineState;
 	csObject_release(machineState->tapePlayer);
 	csObject_release(machineState->CRT);
+	csObject_release(machineState->ROM);
+	csObject_release(machineState->RAM);
 }
 
 LLZX8081MachineState *llzx8081_createMachineStateOnBus(void *bus, LLZX8081MachineType machineType, LLZX8081RAMSize ramSize, void *CRT, void *tapePlayer)

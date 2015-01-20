@@ -13,7 +13,7 @@
 #include "stdbool.h"
 
 // these both return a suitable pointer for use with the abstract tape
-// interface defined in AbstractTape.h. createWithData tapes a copy of
+// interface defined in AbstractTape.h. createWithData takes a copy of
 // the data passed in; length is in bytes.
 // 
 // P files aren't a complete copy of the data stored to tape, they're
