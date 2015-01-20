@@ -18,6 +18,7 @@
 - (void)debugInterfaceRunForOneInstruction:(Z80DebugInterface *)debugInterface;
 - (void)debugInterfaceRunForHalfACycle:(Z80DebugInterface *)debugInterface;
 - (void *)z80ForDebugInterface:(Z80DebugInterface *)debugInterface;
+- (NSData *)debugInterface:(Z80DebugInterface *)debugInterface memoryContentsFromStartAddress:(uint16_t)startAddress length:(uint16_t)length;
 
 @end
 

@@ -361,3 +361,21 @@ unsigned int llzx8081_getTimeStamp(void *opaqueULA)
 	LLZX80ULAState *ula = (LLZX80ULAState *)opaqueULA;
 	return ula->machineState ? csFlatBus_getHalfCyclesToDate(ula->machineState->bus) : 0;
 }
+
+bool llzx8081_copyMemory(void *opaqueULA, uint8_t *dest, uint16_t startAddress, uint16_t length)
+{
+	LLZX80ULAState *ula = (LLZX80ULAState *)opaqueULA;
+
+	// TODO: block copies here; no need to step through
+	for(uint16_t offset = 0; offset < length; offset++)
+	{
+		uint16_t address = startAddress + offset;
+		uint8_t value = 0xff;
+		if(address < 8192)
+			value = ula->ROM[address];
+		
+		dest[offset] = value;
+	}
+
+	return true;
+}

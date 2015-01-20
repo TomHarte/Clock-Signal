@@ -12,6 +12,9 @@
 #include "Z80.h"
 #include "StandardBusLines.h"
 
+#import "Z80Disassembler.h"
+#import "Array.h"
+
 @interface Z80DebugInterface ()
 @property (nonatomic, weak) IBOutlet NSTextField *aRegisterField;
 @property (nonatomic, weak) IBOutlet NSTextField *fRegisterField;
@@ -88,6 +91,8 @@
 @property (nonatomic, weak) IBOutlet CSLineGraph *a1Line;
 @property (nonatomic, weak) IBOutlet CSLineGraph *a0Line;
 
+@property (nonatomic, weak) IBOutlet NSTableView *disassemblyTableView;
+
 @end
 
 @implementation Z80DebugInterface
@@ -96,6 +101,7 @@
 	unsigned int _lastBusTime;
 
 	NSArray *_allLines;
+	NSArray *_disassembly;
 }
 
 
@@ -288,6 +294,7 @@
 
 	[self updateBus];
 	[_allLines makeObjectsPerformSelector:@selector(setNeedsDisplay:) withObject:@YES];
+	[self updateDisassembly];
 //	NSMutableString *totalString = [NSMutableString string];
 //	for(NSString *line in memoryCommentLines)
 //	{
@@ -328,14 +335,52 @@
 	return returnObject;
 }
 
+#pragma mark -
+#pragma mark Disassembly
+
+static NSString *columnFill = @"Hat";
+
+- (void)updateDisassembly
+{
+	void *z80 = [self.delegate z80ForDebugInterface:self];
+	uint16_t programCounter = (uint16_t)llz80_monitor_getInternalValue(z80, LLZ80MonitorValuePCRegister);
+	
+	if(programCounter > 16)
+		programCounter -= 16;
+	else
+		programCounter = 0;
+
+	NSData *surroundingMemory = [self.delegate debugInterface:self memoryContentsFromStartAddress:programCounter length:1024];
+	void *rawDisassembly = csZ80Disassembler_createDisassembly((uint8_t *)[surroundingMemory bytes], programCounter, 1024);
+
+	unsigned int numberOfInstructions;
+	Z80AssemblyLine **instructions = (Z80AssemblyLine **)csArray_getCArray(rawDisassembly, &numberOfInstructions);
+	NSMutableArray *disassembly = [NSMutableArray arrayWithCapacity:numberOfInstructions];
+	for(unsigned int c = 0; c < numberOfInstructions; c++)
+	{
+		NSDictionary *newLine =
+		@{
+			@"address" : [NSString stringWithFormat:@"%04x", instructions[c]->address],
+			@"operation" : [NSString stringWithUTF8String:instructions[c]->text]
+		};
+		[disassembly addObject:newLine];
+	}
+	_disassembly = disassembly;
+
+	csObject_release(rawDisassembly);
+
+	columnFill = [NSString stringWithFormat:@"%04x", programCounter];
+	[self.disassemblyTableView reloadData];
+}
+
 - (NSInteger)numberOfRowsInTableView:(NSTableView *)tableView
 {
-	return 15;
+	return (NSInteger)[_disassembly count];
 }
 
 - (id)tableView:(NSTableView *)tableView objectValueForTableColumn:(NSTableColumn *)tableColumn row:(NSInteger)row
 {
-	return @"Hat";
+	return _disassembly[(NSUInteger)row][tableColumn.identifier];
 }
 
 @end

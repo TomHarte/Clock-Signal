@@ -413,6 +413,13 @@ static void ZX80DocumentInstructionObserverBreakIn(void *z80, void *context)
 	[debugInterface refresh];
 }
 
+- (NSData *)debugInterface:(Z80DebugInterface *)debugInterface memoryContentsFromStartAddress:(uint16_t)startAddress length:(uint16_t)length
+{
+	uint8_t *memory = (uint8_t *)malloc(length);
+	llzx8081_copyMemory(_ULA, memory, startAddress, length);
+	return [NSData dataWithBytesNoCopy:memory length:length freeWhenDone:YES];
+}
+
 #pragma mark -
 #pragma mark Keyboard Input
 
