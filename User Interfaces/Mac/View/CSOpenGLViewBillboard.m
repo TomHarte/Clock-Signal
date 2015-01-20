@@ -31,7 +31,7 @@
 		glMatrixMode(GL_TEXTURE);
 		glScalef(1.0f / 32767.0f, 1.0f / 32767.0f, 1.0f / 32767.0f);
 
-		glColor3f(1.0, 1.0, 1.0);
+		glColor3f(1.0f, 1.0f, 1.0f);
 
 		[self setMinimumSourceRect:NSMakeRect(0.0, 0.0, 1.0, 1.0)];
 
