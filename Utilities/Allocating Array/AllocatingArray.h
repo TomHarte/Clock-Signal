@@ -18,6 +18,6 @@
 void *csAllocatingArray_createWithObjectSize(size_t objectSize);
 
 void *csAllocatingArray_newObject(void *array);
-void *csAllocatingArray(void *array, unsigned int *numberOfObjects);
+void *csAllocatingArray_getCArray(void *array, unsigned int *numberOfObjects);
 
 #endif /* defined(__Clock_Signal__AllocatingArray__) */
