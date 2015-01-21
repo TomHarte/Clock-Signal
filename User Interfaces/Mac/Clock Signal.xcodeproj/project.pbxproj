@@ -14,6 +14,7 @@
 		4B49FE5A1A6D8F4F00F615F2 /* CoreVideo.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4BBD8E0214198AC7002ADB76 /* CoreVideo.framework */; };
 		4B49FE5E1A6DCBF700F615F2 /* Accelerate.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4B49FE5D1A6DCBF700F615F2 /* Accelerate.framework */; };
 		4B78985A141C6C3D006B4E39 /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4B789859141C6C3D006B4E39 /* OpenGL.framework */; };
+		4B8AB0351A6F40CE005C2D07 /* AllocatingArray.c in Sources */ = {isa = PBXBuildFile; fileRef = 4B8AB0331A6F40CE005C2D07 /* AllocatingArray.c */; };
 		4BA04D7A1451E63B00DA159C /* Z80CBPageDecode.c in Sources */ = {isa = PBXBuildFile; fileRef = 4BA04D541451E63B00DA159C /* Z80CBPageDecode.c */; };
 		4BA04D7B1451E63B00DA159C /* Z80EDPageDecode.c in Sources */ = {isa = PBXBuildFile; fileRef = 4BA04D561451E63B00DA159C /* Z80EDPageDecode.c */; };
 		4BA04D7C1451E63B00DA159C /* Z80StandardPageDecode.c in Sources */ = {isa = PBXBuildFile; fileRef = 4BA04D581451E63B00DA159C /* Z80StandardPageDecode.c */; };
@@ -72,6 +73,8 @@
 		4B49FE5C1A6DC5F100F615F2 /* Clock Signal.profdata */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Clock Signal.profdata"; sourceTree = "<group>"; };
 		4B49FE5D1A6DCBF700F615F2 /* Accelerate.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Accelerate.framework; path = System/Library/Frameworks/Accelerate.framework; sourceTree = SDKROOT; };
 		4B789859141C6C3D006B4E39 /* OpenGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGL.framework; path = System/Library/Frameworks/OpenGL.framework; sourceTree = SDKROOT; };
+		4B8AB0331A6F40CE005C2D07 /* AllocatingArray.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = AllocatingArray.c; path = "Allocating Array/AllocatingArray.c"; sourceTree = "<group>"; };
+		4B8AB0341A6F40CE005C2D07 /* AllocatingArray.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AllocatingArray.h; path = "Allocating Array/AllocatingArray.h"; sourceTree = "<group>"; };
 		4BA04D541451E63B00DA159C /* Z80CBPageDecode.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = Z80CBPageDecode.c; sourceTree = "<group>"; };
 		4BA04D551451E63B00DA159C /* Z80CBPageDecode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Z80CBPageDecode.h; sourceTree = "<group>"; };
 		4BA04D561451E63B00DA159C /* Z80EDPageDecode.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = Z80EDPageDecode.c; sourceTree = "<group>"; };
@@ -216,6 +219,15 @@
 				4B49FE5C1A6DC5F100F615F2 /* Clock Signal.profdata */,
 			);
 			path = OptimizationProfiles;
+			sourceTree = "<group>";
+		};
+		4B8AB0361A6F40D4005C2D07 /* Allocating Array */ = {
+			isa = PBXGroup;
+			children = (
+				4B8AB0331A6F40CE005C2D07 /* AllocatingArray.c */,
+				4B8AB0341A6F40CE005C2D07 /* AllocatingArray.h */,
+			);
+			name = "Allocating Array";
 			sourceTree = "<group>";
 		};
 		4BA04D501451E63B00DA159C /* Components */ = {
@@ -557,6 +569,7 @@
 		4BE3E1E514389F30004FC04F /* Utilities */ = {
 			isa = PBXGroup;
 			children = (
+				4B8AB0361A6F40D4005C2D07 /* Allocating Array */,
 				4BEA0191145DFF5600B3E6E1 /* Array */,
 				4BBC16441452DFF400B12D3E /* Reference Counted Object */,
 				4BBCCFA714411B0D001EC07C /* Parallel Dispatch */,
@@ -710,6 +723,7 @@
 				4BA04D821451E63B00DA159C /* Z80ScheduleInputOrOutput.c in Sources */,
 				4BA04D831451E63B00DA159C /* Z80ScheduleInstructionFetch.c in Sources */,
 				4BA04D841451E63B00DA159C /* Z80ScheduleReadOrWrite.c in Sources */,
+				4B8AB0351A6F40CE005C2D07 /* AllocatingArray.c in Sources */,
 				4BA04D851451E63B00DA159C /* Z80StandardSchedulingComponents.c in Sources */,
 				4BA04D861451E63B00DA159C /* Z80Internals.c in Sources */,
 				4BA04D871451E63B00DA159C /* Z80.c in Sources */,
