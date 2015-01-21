@@ -12,7 +12,7 @@
 #include "ReferenceCountedObject.h"
 #include "BusState.h"
 #include "StandardBusLines.h"
-#include "BusNode.h"
+#include "FlatBus.h"
 #include "Component.h"
 #include <stdio.h>
 
@@ -122,26 +122,24 @@ void *csStaticMemory_createOnBus(void *bus, unsigned int size, CSBusCondition re
 
 		// if this is readonly, add just the read component;
 		// otherwise create a read/write node
-		void *readComponent = csComponent_create(
+		csFlatBus_createComponent(
+			bus,
 			csStaticMemory_observeMemoryRead,
 			readCondition,
 			CSBusStandardDataMask,
 			memory
 		);
-		csBusNode_addComponent(bus, readComponent);
-		csObject_release(readComponent);
 
 		// don't bother adding the write observer if the
 		// condition is impossible to satisfy
 		if(!csBusCondition_isImpossible(writeCondition))
 		{
-			void *writeComponent = csComponent_create(
+			csFlatBus_createComponent(
+				bus,
 				csStaticMemory_observeMemoryWrite,
 				writeCondition,
 				CSBusStandardDataMask,
 				memory);
-			csBusNode_addComponent(bus, writeComponent);
-			csObject_release(writeComponent);
 		}
 	}
 

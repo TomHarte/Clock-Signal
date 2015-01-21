@@ -25,8 +25,8 @@
 #include <stdlib.h>
 
 #include "BusState.h"
-#include "BusNode.h"
 #include "Component.h"
+#include "FlatBus.h"
 
 typedef struct
 {
@@ -152,17 +152,14 @@ void *csDynamicRAM_createOnBus(void *bus, CSDynamicRAMType type)
 		memory->lastRefreshTimes = (CSComponentNanoseconds *)calloc((size_t)memory->casMask, sizeof(CSComponentNanoseconds));
 
 		// component to handle the strobes
-		void *component = 
-			csComponent_create(
-				csDynamicRAM_observeStrobes,
-				csBus_resetCondition(
-					CSComponentDynamicRAMSignalRAS |
-					CSComponentDynamicRAMSignalCAS, false),
+		csFlatBus_createComponent(
+			bus,
+			csDynamicRAM_observeStrobes,
+			csBus_resetCondition(
+				CSComponentDynamicRAMSignalRAS |
+				CSComponentDynamicRAMSignalCAS, false),
 				CSComponentDynamicRAMSignalDataInput | CSComponentDynamicRAMSignalDataOutput,
-				memory);
-
-		csBusNode_addComponent(bus, component);
-		csObject_release(component);
+			memory);
 	}
 
 	return memory;

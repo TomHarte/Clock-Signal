@@ -8,17 +8,19 @@
 
 #include "ComponentInternals.h"
 #include "ReferenceCountedObject.h"
-#include "BusNode.h"
 #include <stdlib.h>
 
-static void csComponent_destroy(void *component)
+static void csComponent_destroy(void *opaqueComponent)
 {
-	csObject_release(((CSBusComponent *)component)->context);
+	CSBusComponent *component = (CSBusComponent *)opaqueComponent;
+
+	csObject_release(component->context);
+	csObject_release(component->preFilterContext);
 }
 
-void *csComponent_create(csComponent_handlerFunction function, CSBusCondition necessaryCondition, uint64_t outputLines, void *context)
+void *csComponent_init(void *opaqueComponent, csComponent_handlerFunction function, CSBusCondition necessaryCondition, uint64_t outputLines, void *context)
 {
-	CSBusComponent *component = (CSBusComponent *)calloc(1, sizeof(CSBusComponent));
+	CSBusComponent *component = (CSBusComponent *)opaqueComponent;
 
 	if(component)
 	{
@@ -35,10 +37,11 @@ void *csComponent_create(csComponent_handlerFunction function, CSBusCondition ne
 	return component;
 }
 
-void csComponent_addToBus(void *bus, csComponent_handlerFunction function, CSBusCondition necessaryCondition, uint64_t outputLines, void *context)
+void csComponent_setPreFilter(void *opaqueComponent, csComponent_prefilter filterFunction, void *context)
 {
-	void *component = 
-		csComponent_create(function, necessaryCondition, outputLines, context);
-	csBusNode_addComponent(bus, component);
-	csObject_release(component);
+	CSBusComponent *component = (CSBusComponent *)opaqueComponent;
+
+	csObject_release(component->preFilterContext);
+	component->preFilterContext = csObject_retain(context);
+	component->preFilter = filterFunction;
 }

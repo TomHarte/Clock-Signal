@@ -10,7 +10,6 @@
 		4B04BD281469E84F007B41BA /* LineGraph.m in Sources */ = {isa = PBXBuildFile; fileRef = 4B04BD271469E84F007B41BA /* LineGraph.m */; };
 		4B0A5231146575840058F817 /* FlatBus.c in Sources */ = {isa = PBXBuildFile; fileRef = 4B0A5230146575840058F817 /* FlatBus.c */; };
 		4B11846A146DD4C700CDBD1A /* Z80Disassembler.c in Sources */ = {isa = PBXBuildFile; fileRef = 4B118469146DD4C700CDBD1A /* Z80Disassembler.c */; };
-		4B1A4A59145C49B700340AD2 /* BusNode.c in Sources */ = {isa = PBXBuildFile; fileRef = 4B1A4A58145C49B700340AD2 /* BusNode.c */; };
 		4B49FE5A1A6D8F4F00F615F2 /* CoreVideo.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4BBD8E0214198AC7002ADB76 /* CoreVideo.framework */; };
 		4B49FE5E1A6DCBF700F615F2 /* Accelerate.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4B49FE5D1A6DCBF700F615F2 /* Accelerate.framework */; };
 		4B78985A141C6C3D006B4E39 /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4B789859141C6C3D006B4E39 /* OpenGL.framework */; };
@@ -54,7 +53,6 @@
 		4BE3E21A1438A070004FC04F /* zx80rom.bin in Resources */ = {isa = PBXBuildFile; fileRef = 4BE3E2181438A070004FC04F /* zx80rom.bin */; };
 		4BE3E21B1438A070004FC04F /* zx81rom.bin in Resources */ = {isa = PBXBuildFile; fileRef = 4BE3E2191438A070004FC04F /* zx81rom.bin */; };
 		4BEA017F145D982E00B3E6E1 /* ZX8081MachineState.c in Sources */ = {isa = PBXBuildFile; fileRef = 4BEA017E145D982E00B3E6E1 /* ZX8081MachineState.c */; };
-		4BEA0181145DBE5100B3E6E1 /* PassthroughBusNode.c in Sources */ = {isa = PBXBuildFile; fileRef = 4BEA0180145DBE5100B3E6E1 /* PassthroughBusNode.c */; };
 		4BEA0194145DFF5600B3E6E1 /* Array.c in Sources */ = {isa = PBXBuildFile; fileRef = 4BEA0192145DFF5600B3E6E1 /* Array.c */; };
 		4BFE159B146097AE0096FA78 /* Component.c in Sources */ = {isa = PBXBuildFile; fileRef = 4BFE159A146097AE0096FA78 /* Component.c */; };
 /* End PBXBuildFile section */
@@ -66,9 +64,6 @@
 		4B0A5230146575840058F817 /* FlatBus.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = FlatBus.c; path = "Flat Bus/FlatBus.c"; sourceTree = "<group>"; };
 		4B118467146DD4B900CDBD1A /* Z80Disassembler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Z80Disassembler.h; path = "Z80 Disassembler/Z80Disassembler.h"; sourceTree = "<group>"; };
 		4B118469146DD4C700CDBD1A /* Z80Disassembler.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = Z80Disassembler.c; path = "Z80 Disassembler/Z80Disassembler.c"; sourceTree = "<group>"; };
-		4B1A4A54145C466E00340AD2 /* BusNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BusNode.h; sourceTree = "<group>"; };
-		4B1A4A57145C480F00340AD2 /* BusNodeInternals.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BusNodeInternals.h; path = "Bus Node/BusNodeInternals.h"; sourceTree = "<group>"; };
-		4B1A4A58145C49B700340AD2 /* BusNode.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = BusNode.c; path = "Bus Node/BusNode.c"; sourceTree = "<group>"; };
 		4B49FE581A6D7B6400F615F2 /* RateConverter.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = RateConverter.h; path = "Rate Converter/RateConverter.h"; sourceTree = "<group>"; };
 		4B49FE5C1A6DC5F100F615F2 /* Clock Signal.profdata */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Clock Signal.profdata"; sourceTree = "<group>"; };
 		4B49FE5D1A6DCBF700F615F2 /* Accelerate.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Accelerate.framework; path = System/Library/Frameworks/Accelerate.framework; sourceTree = SDKROOT; };
@@ -150,10 +145,8 @@
 		4BE3E2191438A070004FC04F /* zx81rom.bin */ = {isa = PBXFileReference; lastKnownFileType = archive.macbinary; path = zx81rom.bin; sourceTree = "<group>"; };
 		4BE3E2411438A088004FC04F /* Clock Signal-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "Clock Signal-Info.plist"; sourceTree = "<group>"; };
 		4BE3E2421438A088004FC04F /* Clock Signal-Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "Clock Signal-Prefix.pch"; sourceTree = "<group>"; };
-		4BEA017B145D913D00B3E6E1 /* PassthroughBusNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PassthroughBusNode.h; path = "Passthrough Node/PassthroughBusNode.h"; sourceTree = "<group>"; };
 		4BEA017D145D976500B3E6E1 /* ZX8081MachineState.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZX8081MachineState.h; sourceTree = "<group>"; };
 		4BEA017E145D982E00B3E6E1 /* ZX8081MachineState.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ZX8081MachineState.c; sourceTree = "<group>"; };
-		4BEA0180145DBE5100B3E6E1 /* PassthroughBusNode.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = PassthroughBusNode.c; path = "Passthrough Node/PassthroughBusNode.c"; sourceTree = "<group>"; };
 		4BEA0192145DFF5600B3E6E1 /* Array.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = Array.c; sourceTree = "<group>"; };
 		4BEA0193145DFF5600B3E6E1 /* Array.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Array.h; sourceTree = "<group>"; };
 		4BED67BF147C694300FA2460 /* Directory Naming Scheme.rtf */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.rtf; name = "Directory Naming Scheme.rtf"; path = "../../Directory Naming Scheme.rtf"; sourceTree = "<group>"; };
@@ -194,15 +187,6 @@
 				4B118469146DD4C700CDBD1A /* Z80Disassembler.c */,
 			);
 			name = "Z80 Disassembler";
-			sourceTree = "<group>";
-		};
-		4B1A4A56145C47F400340AD2 /* Bus Node */ = {
-			isa = PBXGroup;
-			children = (
-				4B1A4A57145C480F00340AD2 /* BusNodeInternals.h */,
-				4B1A4A58145C49B700340AD2 /* BusNode.c */,
-			);
-			name = "Bus Node";
 			sourceTree = "<group>";
 		};
 		4B49FE591A6D7CDD00F615F2 /* Rate Converter */ = {
@@ -433,10 +417,7 @@
 			children = (
 				4BB84DC6145328530088DC19 /* StandardBusLines.h */,
 				4BE121521450375600117A22 /* BusState.h */,
-				4B1A4A54145C466E00340AD2 /* BusNode.h */,
 				4BB84DC814532C770088DC19 /* BusState.c */,
-				4B1A4A56145C47F400340AD2 /* Bus Node */,
-				4BEA0182145DBE6E00B3E6E1 /* Passthrough Node */,
 				4BFE159E146097CC0096FA78 /* Component */,
 				4B0A52371465774D0058F817 /* Flat Bus */,
 			);
@@ -600,15 +581,6 @@
 			path = ../../Resources;
 			sourceTree = "<group>";
 		};
-		4BEA0182145DBE6E00B3E6E1 /* Passthrough Node */ = {
-			isa = PBXGroup;
-			children = (
-				4BEA017B145D913D00B3E6E1 /* PassthroughBusNode.h */,
-				4BEA0180145DBE5100B3E6E1 /* PassthroughBusNode.c */,
-			);
-			name = "Passthrough Node";
-			sourceTree = "<group>";
-		};
 		4BEA0191145DFF5600B3E6E1 /* Array */ = {
 			isa = PBXGroup;
 			children = (
@@ -733,9 +705,7 @@
 				4BBC16421452DF7D00B12D3E /* StaticMemory.c in Sources */,
 				4BBC16491452E01B00B12D3E /* ReferenceCountedObject.c in Sources */,
 				4BB84DC914532C770088DC19 /* BusState.c in Sources */,
-				4B1A4A59145C49B700340AD2 /* BusNode.c in Sources */,
 				4BEA017F145D982E00B3E6E1 /* ZX8081MachineState.c in Sources */,
-				4BEA0181145DBE5100B3E6E1 /* PassthroughBusNode.c in Sources */,
 				4BEA0194145DFF5600B3E6E1 /* Array.c in Sources */,
 				4BFE159B146097AE0096FA78 /* Component.c in Sources */,
 				4B0A5231146575840058F817 /* FlatBus.c in Sources */,

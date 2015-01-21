@@ -28,13 +28,14 @@ static void csAllocatingArray_destroy(void *opaqueArray)
 void *csAllocatingArray_createWithObjectSize(size_t objectSize)
 {
 	CSAllocatingArray *array = (CSAllocatingArray *)calloc(1, sizeof(CSAllocatingArray));
-	
+
 	if(array)
 	{
 		csObject_init(array);
 		array->referenceCountedObject.dealloc = csAllocatingArray_destroy;
+		array->objectSize = objectSize;
 	}
-	
+
 	return array;
 }
 
@@ -50,7 +51,10 @@ void *csAllocatingArray_newObject(void *opaqueArray)
 		newBuffer = (uint8_t *)realloc(array->objects, array->objectSize*newNumberOfAllocatedObjects);
 
 		if(!newBuffer) return NULL;
-		
+
+		uint32_t zero = 0;
+		memset_pattern4(&newBuffer[array->numberOfAllocatedObjects * array->objectSize], &zero, (newNumberOfAllocatedObjects - array->numberOfAllocatedObjects) * array->objectSize);
+
 		array->objects = newBuffer;
 		array->numberOfAllocatedObjects = newNumberOfAllocatedObjects;
 	}

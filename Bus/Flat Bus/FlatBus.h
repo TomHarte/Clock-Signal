@@ -9,7 +9,15 @@
 #ifndef ClockSignal_FlatBus_h
 #define ClockSignal_FlatBus_h
 
+#include "Component.h"
+
 void *csFlatBus_create(void);
+void *csFlatBus_createComponent(
+   void *,
+   csComponent_handlerFunction function,
+   CSBusCondition necessaryCondition,
+   uint64_t outputLines,
+   void *context);
 
 void csFlatBus_setTicksPerSecond(void *, uint32_t ticksPerSecond);
 

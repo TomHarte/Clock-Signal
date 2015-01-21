@@ -8,7 +8,7 @@
 
 #include "Z80Internals.h"
 #include "BusState.h"
-#include "BusNode.h"
+#include "FlatBus.h"
 #include "Component.h"
 #include <stdlib.h>
 #include <string.h>
@@ -306,17 +306,15 @@ void *llz80_createOnBus(void *const bus)
 
 		// add to the bus
 		z80->internalBusState = csBus_defaultState();
-		void *component = 
-			csComponent_create(
-				llz80_observeClock,
-				csBus_resetCondition(CSBusStandardClockLine, false),
-				CSBusStandardDataMask | CSBusStandardAddressMask | LLZ80SignalInputOutputRequest |
-				LLZ80SignalMachineCycleOne | LLZ80SignalRead | LLZ80SignalWrite |
-				LLZ80SignalMemoryRequest | LLZ80SignalRefresh | LLZ80SignalBusAcknowledge |
-				LLZ80SignalHalt,
-				z80);
-		csBusNode_addComponent(bus, component);
-		csObject_release(component);
+		csFlatBus_createComponent(
+			bus,
+			llz80_observeClock,
+			csBus_resetCondition(CSBusStandardClockLine, false),
+			CSBusStandardDataMask | CSBusStandardAddressMask | LLZ80SignalInputOutputRequest |
+			LLZ80SignalMachineCycleOne | LLZ80SignalRead | LLZ80SignalWrite |
+			LLZ80SignalMemoryRequest | LLZ80SignalRefresh | LLZ80SignalBusAcknowledge |
+			LLZ80SignalHalt,
+			z80);
 	}
 
 	return z80;

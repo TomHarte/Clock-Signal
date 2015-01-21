@@ -12,6 +12,8 @@
 #include "BusState.h"
 
 typedef uint64_t CSComponentNanoseconds;
+typedef CSBusState (* csComponent_prefilter)(void *context, CSBusState busState);
+
 
 // this is the standard form of a 'component' — anything
 // that can receive a change record and overall status,
@@ -36,8 +38,7 @@ typedef void (* csComponent_handlerFunction)(
 												// components that also have time-dependant characteristics (such as dynamic RAM), it can
 												// be helpful to be able to track real time rather than clock time
 
-void *csComponent_create(csComponent_handlerFunction function, CSBusCondition necessaryCondition, uint64_t outputLines, void *context);
-void csComponent_addToBus(void *bus, csComponent_handlerFunction function, CSBusCondition necessaryCondition, uint64_t outputLines, void *context);
+void csComponent_setPreFilter(void *component, csComponent_prefilter filterFunction, void *context);
 
 #define csComponent_observer(x)	static void x (void *const restrict context, CSBusState *const restrict internalState, const CSBusState externalState, const bool conditionIsTrue, const CSComponentNanoseconds timeSinceLaunch)
 

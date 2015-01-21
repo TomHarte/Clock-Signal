@@ -12,11 +12,9 @@
 #include "FlatBus.h"
 #include "BusState.h"
 #include "Z80.h"
-#include "BusNode.h"
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
-#include "PassthroughBusNode.h"
 #include "StaticMemory.h"
 #include "StandardBusLines.h"
 
@@ -290,22 +288,18 @@ csComponent_observer(llzx80ula_observeVideoRead)
 	}
 }
 
-static void llzx80ula_romAddressShuffle(void *const opaquePassthroughNode, CSBusState *const internalState, const CSBusState externalState, const bool conditionIsTrue, const CSComponentNanoseconds timeSinceLaunch)
+static CSBusState llzx80ula_romAddressShuffle(void *const context, CSBusState externalState)
 {
-	const CSBusPassthroughNode *node = (CSBusPassthroughNode *)opaquePassthroughNode;
-	const LLZX8081MachineState *const machineState = (LLZX8081MachineState *const)node->context;
-
-	CSBusState startToPassOn = externalState;
+	const LLZX8081MachineState *const machineState = (LLZX8081MachineState *const)context;
 	if(machineState->fetchVideoByte)
 	{
 		// we replace the low 9 bits of the address, so...
-		startToPassOn.lineValues =
+		externalState.lineValues =
 			(externalState.lineValues & ~(511u << CSBusStandardAddressShift)) |
 			(uint64_t)(machineState->videoFetchAddress << CSBusStandardAddressShift);
 	}
-
-	CSBusComponent *childComponent = node->childComponent;
-	childComponent->handlerFunction(childComponent->context, internalState, startToPassOn, conditionIsTrue, timeSinceLaunch);
+	
+	return externalState;
 }
 
 static void llzx8081_destroyMachineState(void *opaqueMachineState)
@@ -337,13 +331,12 @@ LLZX8081MachineState *llzx8081_createMachineStateOnBus(void *bus, LLZX8081Machin
 		// the top two address lines being zero,
 		// memory request being active (ie, low) and
 		// write being inactive (ie, high)
-		void *passthroughBus = csPassthroughNode_createWithFilter(machineState, llzx80ula_romAddressShuffle, NULL);
 		if(ramSize != LLZX8081RAMSize64Kb)
 		{
 			// responds when the top two bits of the address bus are clear,
 			// i.e. occupies the lowest 16kb of address space
 			machineState->ROM = csStaticMemory_createOnBus(
-				passthroughBus, 8192, 
+				bus, 8192,
 				csBus_testCondition(LLZ80SignalMemoryRequest | LLZ80SignalWrite | (0xc000 << CSBusStandardAddressShift), LLZ80SignalWrite, false),
 				csBus_impossibleCondition() 
 				);
@@ -353,13 +346,12 @@ LLZX8081MachineState *llzx8081_createMachineStateOnBus(void *bus, LLZX8081Machin
 			// responds when the top three bits of the address bus are clear,
 			// i.e. occupies the lowest 8kb of address space
 			machineState->ROM = csStaticMemory_createOnBus(
-				passthroughBus, 8192, 
+				bus, 8192,
 				csBus_testCondition(LLZ80SignalMemoryRequest | LLZ80SignalWrite | (0xe000 << CSBusStandardAddressShift), LLZ80SignalWrite, false),
 				csBus_impossibleCondition() 
 				);
 		}
-		csBusNode_addChildNode(bus, passthroughBus);
-		csObject_release(passthroughBus);
+//		csComponent_setPreFilter(machineState->ROM, llzx80ula_romAddressShuffle, machineState);
 
 		// RAM can be up to 64kb! That's more than
 		// anybody could or would ever want
@@ -405,21 +397,21 @@ LLZX8081MachineState *llzx8081_createMachineStateOnBus(void *bus, LLZX8081Machin
 		memset(machineState->keyLines, 0xff, 8);
 
 		// add machine emulation components to the bus
-		csComponent_addToBus(
+		csFlatBus_createComponent(
 			bus,
 			llzx80ula_observeIntAck,
 			csBus_resetCondition(LLZ80SignalMachineCycleOne | LLZ80SignalInputOutputRequest, true), 
 			0,
 			machineState);
 
-		csComponent_addToBus(
+		csFlatBus_createComponent(
 			bus,
 			llzx80ula_observeRefresh,
 			csBus_resetCondition(LLZ80SignalRefresh, false), 
 			LLZ80SignalInterruptRequest,
 			machineState);
 
-		csComponent_addToBus(
+		csFlatBus_createComponent(
 			bus,
 			llzx80ula_observeVideoRead,
 			csBus_testCondition(
@@ -429,14 +421,14 @@ LLZX8081MachineState *llzx8081_createMachineStateOnBus(void *bus, LLZX8081Machin
 			CSBusStandardDataMask,
 			machineState);
 
-		csComponent_addToBus(
+		csFlatBus_createComponent(
 			bus,
 			llzx80ula_observeIORead,
 			csBus_resetCondition(LLZ80SignalInputOutputRequest | LLZ80SignalRead, false), 
 			CSBusStandardDataMask,
 			machineState);
 
-		csComponent_addToBus(
+		csFlatBus_createComponent(
 			bus,
 			llzx80ula_observeIOWrite,
 			csBus_resetCondition(LLZ80SignalInputOutputRequest | LLZ80SignalWrite, true), 
@@ -446,7 +438,7 @@ LLZX8081MachineState *llzx8081_createMachineStateOnBus(void *bus, LLZX8081Machin
 		if(machineType == LLZX8081MachineTypeZX80)
 		{
 			// add M1 observer to get a ZX80
-			csComponent_addToBus(
+			csFlatBus_createComponent(
 				bus,
 				llzx80ula_observeMachineCycleOne,
 				csBus_resetCondition(LLZ80SignalMachineCycleOne, true), 
@@ -456,7 +448,7 @@ LLZX8081MachineState *llzx8081_createMachineStateOnBus(void *bus, LLZX8081Machin
 		else
 		{
 			// add clock observer to get a ZX81
-			csComponent_addToBus(
+			csFlatBus_createComponent(
 				bus,
 				llzx80ula_observeClock,
 				csBus_resetCondition(CSBusStandardClockLine, true), 
