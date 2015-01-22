@@ -32,13 +32,21 @@ static void inline llz80ula_setHsyncActive(LLZX8081MachineState *const restrict 
 {
 	machineState->hsyncIsActive = true;
 	if(!machineState->lastHSyncLevel)
+	{
 		machineState->lineCounter++;
+		llzx80ula_considerSync(machineState);
+	}
 	machineState->lastHSyncLevel = true;
 }
 
 static void inline llz80ula_resetHsyncActive(LLZX8081MachineState *const restrict machineState)
 {
-	machineState->hsyncIsActive = machineState->lastHSyncLevel = false;
+	machineState->hsyncIsActive = false;
+	if(machineState->lastHSyncLevel)
+	{
+		llzx80ula_considerSync(machineState);
+	}
+	machineState->lastHSyncLevel = false;
 }
 
 /*
@@ -237,12 +245,18 @@ csComponent_observer(llzx80ula_observeClock)
 	// increment the hsync counter, check whether sync output is
 	// currently active as a result
 	machineState->hsyncCounter++;
-	if(machineState->hsyncCounter == 207) machineState->hsyncCounter = 0;
-
-	if( (machineState->hsyncCounter >= 16) && (machineState->hsyncCounter < 32) )
-		llz80ula_setHsyncActive(machineState);
-	else
+	if(machineState->hsyncCounter == 207)
+	{
+		machineState->hsyncCounter = 0;
 		llz80ula_resetHsyncActive(machineState);
+	}
+	else
+	{
+		if( (machineState->hsyncCounter >= 16) && (machineState->hsyncCounter < 32) )
+			llz80ula_setHsyncActive(machineState);
+		else
+			llz80ula_resetHsyncActive(machineState);
+	}
 
 	if(machineState->nmiIsEnabled && machineState->hsyncIsActive)
 	{
@@ -259,7 +273,7 @@ csComponent_observer(llzx80ula_observeClock)
 	}
 
 	// determine what to do about sync level output as a result
-	llzx80ula_considerSync(machineState);
+//	llzx80ula_considerSync(machineState);
 }
 
 csComponent_observer(llzx80ula_observeVideoRead)
