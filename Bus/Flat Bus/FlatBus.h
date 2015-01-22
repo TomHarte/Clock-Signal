@@ -18,6 +18,10 @@ void *csFlatBus_createComponent(
    CSBusCondition necessaryCondition,
    uint64_t outputLines,
    void *context);
+void csFlatBus_setModalComponentFilter(
+	void *,
+	csComponent_prefilter filterFunction,
+	void *context);
 
 void csFlatBus_setTicksPerSecond(void *, uint32_t ticksPerSecond);
 

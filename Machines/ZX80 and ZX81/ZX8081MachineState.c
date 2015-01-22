@@ -331,6 +331,7 @@ LLZX8081MachineState *llzx8081_createMachineStateOnBus(void *bus, LLZX8081Machin
 		// the top two address lines being zero,
 		// memory request being active (ie, low) and
 		// write being inactive (ie, high)
+		csFlatBus_setModalComponentFilter(bus, llzx80ula_romAddressShuffle, machineState);
 		if(ramSize != LLZX8081RAMSize64Kb)
 		{
 			// responds when the top two bits of the address bus are clear,
@@ -351,7 +352,7 @@ LLZX8081MachineState *llzx8081_createMachineStateOnBus(void *bus, LLZX8081Machin
 				csBus_impossibleCondition() 
 				);
 		}
-//		csComponent_setPreFilter(machineState->ROM, llzx80ula_romAddressShuffle, machineState);
+		csFlatBus_setModalComponentFilter(bus, NULL, NULL);
 
 		// RAM can be up to 64kb! That's more than
 		// anybody could or would ever want

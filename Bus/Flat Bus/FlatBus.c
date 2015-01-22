@@ -40,6 +40,8 @@ typedef struct
 	unsigned int halfCyclesToDate;
 	CSRateConverterState time;
 
+	csComponent_prefilter filterFunction;
+	void *filterFunctionContext;
 } CSFlatBus;
 
 static void csFlatBus_updateSetForNewComponent(struct CSFlatBusComponentSet *set)
@@ -78,6 +80,18 @@ static void csFlatBus_destroySet(struct CSFlatBusComponentSet *set)
 	csObject_release(set->components);
 }
 
+void csFlatBus_setModalComponentFilter(
+	void *opaqueBus,
+	csComponent_prefilter filterFunction,
+	void *context)
+{
+	CSFlatBus *flatBus = (CSFlatBus *)opaqueBus;
+
+	csObject_release(flatBus->filterFunctionContext);
+	flatBus->filterFunctionContext = csObject_retain(context);
+	flatBus->filterFunction = filterFunction;
+}
+
 void *csFlatBus_createComponent(
 	void *opaqueBus,
 	csComponent_handlerFunction function,
@@ -107,6 +121,11 @@ void *csFlatBus_createComponent(
 	component = csAllocatingArray_newObject(set->components);
 	csComponent_init(component, function, necessaryCondition, outputLines, context);
 	csFlatBus_updateSetForNewComponent(set);
+
+	if(flatBus->filterFunction)
+	{
+		csComponent_setPreFilter(component, flatBus->filterFunction, flatBus->filterFunctionContext);
+	}
 
 	return component;
 }
@@ -277,6 +296,7 @@ static void csFlatBus_destroy(void *bus)
 	csFlatBus_destroySet(&flatBus->clockedComponents);
 	csFlatBus_destroySet(&flatBus->trueComponents);
 	csFlatBus_destroySet(&flatBus->trueFalseComponents);
+	csObject_release(flatBus->filterFunctionContext);
 }
 
 void *csFlatBus_create(void)
