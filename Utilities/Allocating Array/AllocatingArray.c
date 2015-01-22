@@ -8,6 +8,7 @@
 
 #include "AllocatingArray.h"
 #include "ReferenceCountedObject.h"
+#include <string.h>
 
 typedef struct
 {
@@ -16,16 +17,30 @@ typedef struct
 	uint8_t *objects;
 	unsigned int numberOfObjects, numberOfAllocatedObjects;
 	size_t objectSize;
+	
+	bool shouldReleaseObjects;
 
 } CSAllocatingArray;
 
 static void csAllocatingArray_destroy(void *opaqueArray)
 {
 	CSAllocatingArray *array = (CSAllocatingArray *)opaqueArray;
+	
+	if(array->shouldReleaseObjects)
+	{
+		unsigned int numberOfObjects;
+		uint8_t *objects = (uint8_t *)csAllocatingArray_getCArray(opaqueArray, &numberOfObjects);
+		while(numberOfObjects--)
+		{
+			csObject_release(objects);
+			objects += array->objectSize;
+		}
+	}
+
 	free(array->objects);
 }
 
-void *csAllocatingArray_createWithObjectSize(size_t objectSize)
+void *csAllocatingArray_createWithObjectSize(size_t objectSize, bool shouldReleaseObjects)
 {
 	CSAllocatingArray *array = (CSAllocatingArray *)calloc(1, sizeof(CSAllocatingArray));
 

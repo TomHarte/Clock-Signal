@@ -70,7 +70,7 @@ static void csFlatBus_updateSetForNewComponent(struct CSFlatBusComponentSet *set
 
 static void csFlatBus_initialiseSet(struct CSFlatBusComponentSet *set)
 {
-	set->components = csAllocatingArray_createWithObjectSize(sizeof(CSBusComponent));
+	set->components = csAllocatingArray_createWithObjectSize(sizeof(CSBusComponent), true);
 	set->state = csBus_defaultState();
 	set->lastExternalState = csBus_defaultState();
 }
