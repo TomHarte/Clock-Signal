@@ -197,16 +197,6 @@ void csFlatBus_runForHalfCycles(void *context, unsigned int halfCycles)
 			}
 		}
 
-		// get total state as viewed from the true and true/false components
-		totalState.lineValues = flatBus->currentBusState.lineValues & flatBus->trueComponents.state.lineValues & flatBus->trueFalseComponents.state.lineValues & flatBus->clockedComponents.state.lineValues;
-
-		// hence get the changed, set and reset lines
-		changedLines = flatBus->trueFalseComponents.lastExternalState.lineValues ^ totalState.lineValues;
-		flatBus->trueFalseComponents.lastExternalState = totalState;
-
-		setLines = totalState.lineValues & changedLines;
-		resetLines = setLines ^ changedLines;
-
 		// maybe some have gone true or mutated while true from the true/false set?
 		if(
 			(flatBus->trueFalseComponents.allObservedSetLines&setLines) || 
