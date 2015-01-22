@@ -38,6 +38,7 @@ typedef void (* csComponent_handlerFunction)(
 												// components that also have time-dependant characteristics (such as dynamic RAM), it can
 												// be helpful to be able to track real time rather than clock time
 
+// context is not retained in the following; use with care
 void csComponent_setPreFilter(void *component, csComponent_prefilter filterFunction, void *context);
 
 #define csComponent_observer(x)	static void x (void *const restrict context, CSBusState *const restrict internalState, const CSBusState externalState, const bool conditionIsTrue, const CSComponentNanoseconds timeSinceLaunch)

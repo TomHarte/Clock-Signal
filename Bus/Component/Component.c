@@ -41,7 +41,6 @@ void csComponent_setPreFilter(void *opaqueComponent, csComponent_prefilter filte
 {
 	CSBusComponent *component = (CSBusComponent *)opaqueComponent;
 
-	csObject_release(component->preFilterContext);
-	component->preFilterContext = csObject_retain(context);
+	component->preFilterContext = context;
 	component->preFilter = filterFunction;
 }

@@ -86,9 +86,7 @@ void csFlatBus_setModalComponentFilter(
 	void *context)
 {
 	CSFlatBus *flatBus = (CSFlatBus *)opaqueBus;
-
-	csObject_release(flatBus->filterFunctionContext);
-	flatBus->filterFunctionContext = csObject_retain(context);
+	flatBus->filterFunctionContext = context;
 	flatBus->filterFunction = filterFunction;
 }
 
@@ -286,7 +284,6 @@ static void csFlatBus_destroy(void *bus)
 	csFlatBus_destroySet(&flatBus->clockedComponents);
 	csFlatBus_destroySet(&flatBus->trueComponents);
 	csFlatBus_destroySet(&flatBus->trueFalseComponents);
-	csObject_release(flatBus->filterFunctionContext);
 }
 
 void *csFlatBus_create(void)

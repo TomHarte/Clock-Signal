@@ -21,7 +21,7 @@ void *csFlatBus_createComponent(
 void csFlatBus_setModalComponentFilter(
 	void *,
 	csComponent_prefilter filterFunction,
-	void *context);
+	void *context);	// WARNING: context is not retained
 
 void csFlatBus_setTicksPerSecond(void *, uint32_t ticksPerSecond);
 
